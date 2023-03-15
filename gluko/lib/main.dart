@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gluko/home/view/home_page.dart';
+import 'assembleplate/view/assembleplate_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +13,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomePage(),
+      theme: ThemeData(canvasColor: Colors.white, fontFamily: "GlukoFamily"),
+      home: assembleplatepage(),
     );
   }
 }
