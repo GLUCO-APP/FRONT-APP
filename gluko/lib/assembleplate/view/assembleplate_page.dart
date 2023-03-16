@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gluko/colors/colorsGenerals.dart';
 
 import '../cubit/assembleplate_cubit.dart';
 
@@ -67,11 +69,10 @@ class _assembleplateviewState extends State<assembleplateview>{
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text(
+          actions: [Text(
             "Armar Plato",
-            style: TextStyle(color: Colors.black),
-          ),
-          centerTitle: true,
+            style: TextStyle(color: Colors.black, fontSize: 25),
+            )], systemOverlayStyle: SystemUiOverlayStyle.light
         ),
         body: BlocBuilder<AssembleplateCubit, AssembleplateState>(
           builder: (context, states) {
@@ -179,15 +180,15 @@ class _assembleplateviewState extends State<assembleplateview>{
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("Carbohidratos: ${carbohidrato}g", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                                      Text("Grasas: ${grasas}g", style: TextStyle(fontWeight: FontWeight.w500),),
+                                      Text("Carbohidratos: ${carbohidrato}g", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: ColorsGenerals().black)),
+                                      Text("Grasas: ${grasas}g", style: TextStyle(fontWeight: FontWeight.w500,color: ColorsGenerals().black),),
                                     ],
                                   ),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("Proteina: ${proteina}g", style: TextStyle(fontWeight: FontWeight.w500)),
-                                      Text("Verdura: ${verduar}g", style: TextStyle(fontWeight: FontWeight.w500)),
+                                      Text("Proteina: ${proteina}g", style: TextStyle(fontWeight: FontWeight.w500,color: ColorsGenerals().black)),
+                                      Text("Verdura: ${verduar}g", style: TextStyle(fontWeight: FontWeight.w500,color: ColorsGenerals().black)),
                                     ],
                                   )
                                 ],
@@ -272,7 +273,7 @@ class _assembleplateviewState extends State<assembleplateview>{
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Text(all[index].Nombre, style: TextStyle(fontSize: 20)),
+                  Text(all[index].Nombre, style: TextStyle(fontSize: 20,color: ColorsGenerals().black)),
                   Draggable<String>(
                     data: all[index].Fruta.toString(),
                     child:  Material(
@@ -283,7 +284,7 @@ class _assembleplateviewState extends State<assembleplateview>{
                         padding: EdgeInsets.all(10),
                         child: Text(
                           all[index].Fruta,
-                          style: TextStyle(color: Colors.black, fontSize: 30),
+                          style: TextStyle(color: Colors.black, fontSize: 30,),
                         ),
                       ),
                     ),

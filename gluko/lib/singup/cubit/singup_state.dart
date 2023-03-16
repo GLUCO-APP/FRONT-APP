@@ -1,6 +1,16 @@
 part of 'singup_cubit.dart';
+enum Singuptatus{ loading,success,error}
 
-@immutable
-abstract class SingupState {}
+ class SingupState {
 
-class SingupInitial extends SingupState {}
+   SingupState({
+     this.status = Singuptatus.success
+   });
+
+   final Singuptatus status;
+
+   Singuptatus confirmar(){
+     return Singuptatus.success;
+   }
+ }
+
