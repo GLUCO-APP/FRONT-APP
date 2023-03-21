@@ -19,14 +19,15 @@ class forgetpasswordview extends StatefulWidget {
   @override
   State<forgetpasswordview> createState() => _forgetpasswordviewState();
 }
+
 class  _forgetpasswordviewState extends State<forgetpasswordview>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
       backgroundColor: ColorsGenerals().lightgrey,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: ColorsGenerals().whith,
+        elevation: 1,
         actions: [Text(
           " Recuperar contraseña ",
           style: TextStyle(color: Colors.black, fontSize: 22),
@@ -44,17 +45,7 @@ class  _forgetpasswordviewState extends State<forgetpasswordview>{
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
-                  borderRadius:
-                  BorderRadius.only(topLeft: Radius.circular(100)),
                   color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      offset: Offset(0, -5),
-                      blurRadius: 2,
-                      spreadRadius: 0,
-                    ),
-                  ],
                 ),
               );
               break;

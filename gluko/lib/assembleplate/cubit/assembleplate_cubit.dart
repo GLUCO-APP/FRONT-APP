@@ -1,12 +1,23 @@
+
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:gluko_repository/gluko_repository.dart';
 
 part 'assembleplate_state.dart';
 
 class AssembleplateCubit extends Cubit<AssembleplateState> {
-  AssembleplateCubit() : super(AssembleplateState());
+  AssembleplateCubit(this._repository) : super(AssembleplateState());
 
-  Future<void> prueba() async{
-    emit(state.confirmar() as AssembleplateState);
+  final allfoodRepository _repository;
+
+  Future<void> getFoods() async{
+    try{
+      print("debeCargar");
+      final foods = await _repository.getFood();
+      print("no cargo");
+      emit(state.copywhit(status: Assembleplatestatus.success, foods: foods) as AssembleplateState);
+    }catch(ex){
+      emit(state.copywhit(status: Assembleplatestatus.error));
+    }
+
   }
 }

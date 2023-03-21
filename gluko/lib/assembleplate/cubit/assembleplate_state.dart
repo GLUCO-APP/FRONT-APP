@@ -3,12 +3,17 @@ enum Assembleplatestatus{ loading,success,error}
 class AssembleplateState {
 //estados de la aplicacion
 //Estados de carga, exito y error
-  AssembleplateState({
-    this.status = Assembleplatestatus.success
+  AssembleplateState( {
+    this.foods = const <FoodDetail>[],
+    this.status = Assembleplatestatus.loading,
 });
   final Assembleplatestatus status;
-  Assembleplatestatus confirmar(){
-      return Assembleplatestatus.success;
+  final List<FoodDetail> foods;
+  AssembleplateState copywhit({
+    Assembleplatestatus? status,
+        List<FoodDetail>? foods,
+  }){
+    return AssembleplateState(status: status ?? this.status, foods: foods ?? this.foods);
   }
 }
 

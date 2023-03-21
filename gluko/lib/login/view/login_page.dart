@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gluko/colors/colorsGenerals.dart';
-import '../../assembleplate/view/assembleplate_page.dart';
 import '../../forgetpassword/view/forgetpassword_page.dart';
+import '../../home/view/home_page.dart';
 import '../../singup/view/singup_page.dart';
 import '../cubit/login_cubit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -135,11 +135,12 @@ class _loginviewviewState extends State<loginview>{
                             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/300)),
                             ElevatedButton(
                                 onPressed: (){
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              assembleplatepage())
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            HomePage()),
+                                        (Route<dynamic> route) => false,
                                   );
                                 },
                                 child: Container(

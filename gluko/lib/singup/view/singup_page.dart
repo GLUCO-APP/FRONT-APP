@@ -24,8 +24,8 @@ class  _SingupviewState extends State<Singupview>{
     return Scaffold(
       backgroundColor: ColorsGenerals().lightgrey,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
+          backgroundColor: ColorsGenerals().whith,
+          elevation: 1,
           actions: [Text(
             " Crear cuenta ",
             style: TextStyle(color: Colors.black, fontSize: 22),
@@ -43,8 +43,6 @@ class  _SingupviewState extends State<Singupview>{
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
                         decoration: BoxDecoration(
-                          borderRadius:
-                          BorderRadius.only(topLeft: Radius.circular(100)),
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(

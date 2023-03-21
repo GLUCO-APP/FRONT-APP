@@ -1,6 +1,13 @@
 part of 'profile_cubit.dart';
+enum profilestatus{ loading,success,error}
+ class ProfileState {
+   ProfileState({
+     this.status = profilestatus.success
+   });
 
-@immutable
-abstract class ProfileState {}
+   final profilestatus status;
 
-class ProfileInitial extends ProfileState {}
+   profilestatus confirmar(){
+     return profilestatus.success;
+   }
+ }

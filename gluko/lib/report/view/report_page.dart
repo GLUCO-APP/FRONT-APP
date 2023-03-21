@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../colors/colorsGenerals.dart';
-import '../cubit/profile_cubit.dart';
+import '../cubit/report_cubit.dart';
 
-class profilepage extends StatelessWidget {
+class reportpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProfileCubit(),
-      child: profileview(),
+      create: (context) => ReportCubit(),
+      child: reportview(),
     );
   }
 }
 
-class profileview extends StatefulWidget {
+class reportview extends StatefulWidget {
   @override
-  State<profileview> createState() => _profileviewState();
+  State<reportview> createState() => _reportviewState();
 }
 
-class  _profileviewState extends State<profileview>{
+class  _reportviewState extends State<reportview>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      body: BlocBuilder<ProfileCubit, ProfileState>(
+      body: BlocBuilder<ReportCubit, ReportState>(
         builder: (context, states) {
           switch (states.status) {
-            case profilestatus.loading:
+            case Reportstatus.loading:
               return Center(child: CircularProgressIndicator());
               break;
-            case profilestatus.success:
+            case Reportstatus.success:
               return Container(
                 padding: EdgeInsets.all(10),
                 width: MediaQuery.of(context).size.width,
@@ -37,10 +36,10 @@ class  _profileviewState extends State<profileview>{
                 decoration: BoxDecoration(
                   color: Colors.white,
                 ),
-                child: Center(child: Text("perfil", style: TextStyle(color: ColorsGenerals().black),),),
+                child: Center(child: Text("Reportes", style: TextStyle(color: ColorsGenerals().black)),),
               );
               break;
-            case profilestatus.error:
+            case Reportstatus.error:
               return Text("Me petatie");
               break;
           }
