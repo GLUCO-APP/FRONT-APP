@@ -33,11 +33,15 @@ class Posiciones{
 });
 }
 
+var bebida = Posiciones(top: 60, left: 50);
+List<FoodDetail> bebidas = [];
+var sopa = Posiciones(top: 200, left: 200);
+List<FoodDetail> sopas = [];
 List<Posiciones> pos = [
-  Posiciones(top: 60, left: 60),
-  Posiciones(top: 40, left: 120),
-  Posiciones(top: 60, left: 170),
-  Posiciones(top: 80, left: 120)
+  Posiciones(top: 60, left: 50),
+  Posiciones(top: 40, left: 100),
+  Posiciones(top: 60, left: 150),
+  Posiciones(top: 80, left: 90)
 ];
 
 class Comida{
@@ -65,12 +69,12 @@ class assembleplateview extends StatefulWidget {
 double CalculoUnidades(double glAct, double graCarbo){
   double glucemiaObjetivo = 120;
   double glucemiaActual = glAct;
-  double sensibilidad = 189;
+  double sensibilidad = 40;
   double dosisCorreccion = (glucemiaObjetivo - glucemiaActual)/sensibilidad;
   double gramosCarbohidratos = graCarbo;
-  double ratioInsulina = 30;
+  double ratioInsulina = 14;
   double dosisInsulina = gramosCarbohidratos/ratioInsulina;
-  double unidInsulina =  dosisInsulina-dosisCorreccion;
+  double unidInsulina =  dosisInsulina.abs()+dosisCorreccion.abs();
   return unidInsulina;
 }
 
@@ -79,14 +83,7 @@ double CalculoUnidades(double glAct, double graCarbo){
 var buscar = TextEditingController();
 String glucosa = "";
 List<FoodDetail> foodsList = [];
-List<Comida> prueba = [
-  Comida(Nombre: "Manzana", Fruta: "🍏", carbo: 100, tipo: "Grasa"),
-  Comida(Nombre: "Pera", Fruta: "🍐", carbo: 70, tipo: "Proteina"),
-  Comida(Nombre: "uva", Fruta: "🍇", carbo: 50, tipo: "Proteina"),
-  Comida(Nombre: "coco", Fruta: "🥥", carbo: 20, tipo: "Verdura"),
-  Comida(Nombre: "piña", Fruta: "🍍", carbo: 150, tipo: "Verdura"),
-  Comida(Nombre: "tomate", Fruta: "🍅", carbo: 170, tipo: "Grasa")
-];
+List<FoodDetail> prueba = [];
 
 
 
@@ -255,7 +252,6 @@ Future<void> showMyPopup(BuildContext context) async {
   );
 }
 
-List<Comida> all = prueba;
 List<FoodDetail> plato=[];
 double proteina = 0;
 double carbohidrato = 0;
@@ -320,7 +316,7 @@ class _assembleplateviewState extends State<assembleplateview> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    buscar.clear();
+    buscar.text = "";
     plato=[];
     proteina = 0;
     carbohidrato = 0;
@@ -328,10 +324,16 @@ class _assembleplateviewState extends State<assembleplateview> {
     grasas = 0;
     glucosa = widget.glucosa;
   }
-
+  int p = 0;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {print("intento");
+    if(prueba.length >1 && p < 100){
+      setState(() {
+        foodsList = prueba;
+      });
+      p++;
+    }
     return Scaffold(
         resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -387,7 +389,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                 return Center(child: CircularProgressIndicator(color: ColorsGenerals().red,));
                 break;
               case Assembleplatestatus.success:
-                foodsList = states.foods;
+                prueba = states.foods.sublist(1,10);
                 return Container(
                   padding: EdgeInsets.all(10),
                   width: MediaQuery
@@ -455,22 +457,28 @@ class _assembleplateviewState extends State<assembleplateview> {
                                           ),
                                           child: Container(
                                             child: Stack(
-                                              children: plato.length < 4
+                                              children: plato.length < 6
                                                   ? ComidasEnPlato(plato)
                                                   : ComidasEnPlato(plato)
-                                                  .sublist(0, 4),
+                                                  .sublist(0, 6),
                                             ),
                                           ),
                                         ),
                                     onWillAccept: (data) => true,
                                     onAccept: (data) {
-                                      print(data);
+                                      print(data.name);
                                       for (int i = 0; i < foodsList.length; i++) {
                                         if (foodsList[i].id == data.id) {
                                           setState(() {
-                                            carbohidrato = carbohidrato + foodsList[i].carbs;
-                                            proteina =  proteina + foodsList[i].protein;
-                                            grasas = grasas + foodsList[i].fats;
+                                            carbohidrato = carbohidrato + data.carbs;
+                                            proteina =  proteina + data.protein;
+                                            grasas = grasas + data.fats;
+                                            if(data.tag == "bebida"){
+                                              bebidas.add(data);
+                                            }
+                                            if(data.tag == "sopa"){
+                                              sopas.add(data);
+                                            }
                                             plato.add(data);
                                           });
                                         }
@@ -563,14 +571,13 @@ class _assembleplateviewState extends State<assembleplateview> {
                               onChanged: (text){
                                 if(text.isEmpty){
                                   setState(() {
-                                    all = prueba;
+                                    foodsList = prueba;
                                   });
                                 }else{
                                   setState(() {
-                                    all = all.where((bus) => bus.Nombre.toLowerCase().contains(text)|| bus.tipo.toLowerCase().contains(text)).toList();
+                                    foodsList = foodsList.where((bus) => bus.name.toLowerCase().contains(text)|| bus.tag.toLowerCase().contains(text)).toList();
                                   });
                                 }
-                                
                               },
                               controller: buscar,
                               cursorColor: ColorsGenerals().black,
@@ -707,41 +714,61 @@ class _assembleplateviewState extends State<assembleplateview> {
 
   List<Widget> ComidasEnPlato(List<FoodDetail> frut) {
     List<Widget> widgets = [];
-
+    int platoPos = 0;
     for (int i = 0; i < frut.length; i++) {
       final com = frut[i];
-      if (i < pos.length) {
+      if (platoPos < pos.length && com.tag != "bebida" && com.tag != "sopa") {
         widgets.add(
           Positioned(
-            left: pos[i].left,
-            top: pos[i].top,
+            left: pos[platoPos].left,
+            top: pos[platoPos].top,
             child: Material(
               color: Colors.transparent,
-              child: Container(
-                alignment: Alignment.center,
-                height: 80,
-                padding: EdgeInsets.all(10),
-                child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
+              child:  Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
+            ),
+          ),
+        );
+        platoPos++;
+      } else {
+        if(com.tag == "bebida"){
+          print("Pone la bebida");
+          widgets.add(
+            Positioned(
+              left: 10,
+              top: 120,
+              child: Material(
+                color: Colors.transparent,
+                child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
               ),
             ),
-          ),
-        );
-      } else {
-        widgets.add(
-          Positioned(
-            left: 0,
-            top: 0,
-            child: Material(
-            color: Colors.transparent,
-            child: Container(
-              alignment: Alignment.center,
-              height: 80,
-              padding: EdgeInsets.all(10),
-              child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
-            ),
-          ),
-          ),
-        );
+          );
+        }
+        else{
+          if(com.tag == "sopa"){
+            widgets.add(
+              Positioned(
+                left: 200,
+                top: 120,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
+                ),
+              ),
+            );
+          }else{
+            widgets.add(
+              Positioned(
+                left: 0,
+                top: 0,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
+                ),
+              ),
+            );
+          }
+        }
+
       }
     }
     return widgets;
@@ -774,7 +801,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text(foodsList[index].name.length > 17 ? foodsList[index].name.substring(0,16):foodsList[index].name, style: TextStyle(
+                      Text(plato[index].name.length > 17 ? plato[index].name.substring(0,16):plato[index].name, style: TextStyle(
                           fontSize: 20, color: ColorsGenerals().black)),
                       Row(
                         children: [
@@ -785,7 +812,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                 alignment: Alignment.center,
                                 height: 80,
                                 padding: EdgeInsets.all(10),
-                                child: Image.asset("assets/Food/${foodsList[index].image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
+                                child: Image.asset("assets/Food/${plato[index].image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
                               ),
                             ),
                           ),
@@ -808,6 +835,5 @@ class _assembleplateviewState extends State<assembleplateview> {
             );
           }
       );
-
 }
 

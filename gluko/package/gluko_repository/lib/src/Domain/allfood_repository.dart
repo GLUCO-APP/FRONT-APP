@@ -9,7 +9,7 @@ class allfoodRepository{
       List<FoodDetail> all = [];
       List<dynamic> aux = await AllfoodService().getAllFood();
       for(int i = 0; i < aux.length; i++){
-        all.add(FoodDetail(int.parse(aux[i]['id'].toString()), aux[i]['name'].toString(), double.parse(aux[i]['carbs'].toString()), double.parse(aux[i]['protein'].toString()), double.parse(aux[i]['fats'].toString()), aux[i]['image'].toString(), int.parse(aux[i]['cuadrante'].toString())));
+        all.add(FoodDetail(int.parse(aux[i]['id'].toString()), aux[i]['name'].toString(), double.parse(aux[i]['carbs'].toString()), double.parse(aux[i]['protein'].toString()), double.parse(aux[i]['fats'].toString()), aux[i]['image'].toString(), int.parse(aux[i]['cuadrante'].toString()), aux[i]['tag'].toString() ));
       }
       return all;
     } on Exception{
