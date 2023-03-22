@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -10,11 +11,13 @@ import 'package:gluko_repository/gluko_repository.dart';
 import '../cubit/assembleplate_cubit.dart';
 
 class assembleplatepage extends StatelessWidget {
+  final String glucosa;
+  assembleplatepage({required this.glucosa});
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AssembleplateCubit(allfoodRepository())..getFoods(),
-      child: assembleplateview(),
+      child: assembleplateview( glucosa: glucosa ,),
     );
   }
 }
@@ -53,11 +56,26 @@ class Comida{
 
 
 class assembleplateview extends StatefulWidget {
+  final String glucosa;
+  assembleplateview({required this.glucosa});
   @override
   State<assembleplateview> createState() => _assembleplateviewState();
 }
 
+double CalculoUnidades(double glAct, double graCarbo){
+  double glucemiaObjetivo = 120;
+  double glucemiaActual = glAct;
+  double sensibilidad = 189;
+  double dosisCorreccion = (glucemiaObjetivo - glucemiaActual)/sensibilidad;
+  double gramosCarbohidratos = graCarbo;
+  double ratioInsulina = 30;
+  double dosisInsulina = gramosCarbohidratos/ratioInsulina;
+  double unidInsulina =  dosisInsulina-dosisCorreccion;
+  return unidInsulina;
+}
+
 var buscar = TextEditingController();
+String glucosa = "";
 List<Comida> prueba = [
   Comida(Nombre: "Manzana", Fruta: "🍏", carbo: 100, tipo: "Grasa"),
   Comida(Nombre: "Pera", Fruta: "🍐", carbo: 70, tipo: "Proteina"),
@@ -66,13 +84,189 @@ List<Comida> prueba = [
   Comida(Nombre: "piña", Fruta: "🍍", carbo: 150, tipo: "Verdura"),
   Comida(Nombre: "tomate", Fruta: "🍅", carbo: 170, tipo: "Grasa")
 ];
+
+class MyPopupArguments {
+  final String title;
+  final String message;
+
+  MyPopupArguments({required this.title, required this.message});
+}
+
+Future<void> showMyPopup(BuildContext context, MyPopupArguments arguments) async {
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return  Material(
+        color: Colors.transparent,
+        child: Container(
+          width: MediaQuery.of(context).size.width/3,
+          height: MediaQuery.of(context).size.height/1.5,
+          color: Colors.transparent,
+          child: Center(
+            child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    width: MediaQuery.of(context).size.width/1.2,
+                    height: MediaQuery.of(context).size.height/2,
+                    decoration: BoxDecoration(
+                      color: ColorsGenerals().whith,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 7,
+                          offset: Offset(-5, 6),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    color: ColorsGenerals().lightgrey,
+                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                    boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 7,
+                                      offset: Offset(-5, 6),
+                                    ),
+                                  ],
+                                ),
+                                  child: Text("Almuerzo", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500),),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    color: ColorsGenerals().lightgrey,
+                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 2,
+                                        blurRadius: 7,
+                                        offset: Offset(-5, 6),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text("${TimeOfDay.now().hour}:${TimeOfDay.now().minute}", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500),),
+                                )
+                              ],
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width/1.6,
+                              height: MediaQuery.of(context).size.height/5,
+                              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: ColorsGenerals().lightgrey,
+                                borderRadius: BorderRadius.all(Radius.circular(20)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 7,
+                                    offset: Offset(-5, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Text("Glucemia",textAlign: TextAlign.left, style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500)),
+                                      Text("Insulina",textAlign: TextAlign.left, style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500)),
+                                      Text("Carbohidratos",textAlign: TextAlign.left, style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500)),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 20),
+                                    width: 1,
+                                    height: MediaQuery.of(context).size.height/6,
+                                    color: ColorsGenerals().darkgrey,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Text("${glucosa}", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500),),
+                                      Text("${CalculoUnidades(double.parse(glucosa), carbohidrato).toInt()}U", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500)),
+                                      Text("${carbohidrato}g", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [ElevatedButton(
+                                onPressed: () {
+                                },
+                                child: Text("Compartir",
+                                  style: TextStyle(color: ColorsGenerals().whith),),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 8, // elevación de la sombra
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        30), // radio de la esquina redondeada
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                                  backgroundColor: Colors.red, // color de fondo
+                                ),
+
+                              ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                  },
+                                  child: Text("Guardar Registro",
+                                    style: TextStyle(color: ColorsGenerals().whith),),
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // radio de la esquina redondeada
+                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                                    backgroundColor: Colors.red, // color de fondo
+                                  ),
+
+                                ),
+                              ],
+                            )
+                          ],
+
+                    ),
+                  )
+                ]
+            ),
+          ),
+        ),
+      );
+
+    },
+  );
+}
+
+List<Comida> all = prueba;
+List<Comida> plato=[];
+double proteina = 0;
+double carbohidrato = 0;
+double verduar = 0;
+double grasas = 0;
+
+
 class _assembleplateviewState extends State<assembleplateview> {
-  List<Comida> all = prueba;
-  List<Comida> plato=[];
-  int proteina = 0;
-  int carbohidrato = 0;
-  int verduar = 0;
-  int grasas = 0;
+
   editplato(BuildContext context) {
     return showModalBottomSheet(
         shape: const ContinuousRectangleBorder(
@@ -129,7 +323,14 @@ class _assembleplateviewState extends State<assembleplateview> {
     // TODO: implement initState
     super.initState();
     buscar.clear();
+    plato=[];
+    proteina = 0;
+    carbohidrato = 0;
+    verduar = 0;
+    grasas = 0;
+    glucosa = widget.glucosa;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +341,7 @@ class _assembleplateviewState extends State<assembleplateview> {
           padding: EdgeInsets.all(20),
           child: ElevatedButton(
             onPressed: () {
-
+            showMyPopup(context ,MyPopupArguments(title: "Prueba", message: "Es una prueba"));
             },
             child: Text("Calculo Insulina",
               style: TextStyle(color: ColorsGenerals().whith),),
@@ -458,87 +659,6 @@ class _assembleplateviewState extends State<assembleplateview> {
         ));
   }
 
-  Widget PlatoEditar(BuildContext context) =>
-      ListView.builder(
-          itemCount: plato.length,
-          itemBuilder: (context, index) {
-            final favor = plato[index];
-            return Container(
-              padding: EdgeInsets.only(top: MediaQuery
-                  .of(context)
-                  .size
-                  .height / 150),
-              child: Container(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height / 10,
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: ColorsGenerals().lightgrey,
-                  ),
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(plato[index].Nombre, style: TextStyle(
-                          fontSize: 20, color: ColorsGenerals().black)),
-                      Row(
-                        children: [
-                          Container(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 80,
-                                padding: EdgeInsets.all(10),
-                                child: Text(
-                                  plato[index].Fruta,
-                                  style: TextStyle(
-                                    color: Colors.black, fontSize: 30,),
-                                ),
-                              ),
-                            ),
-                          ),
-                          IconButton(onPressed: () {
-                            setState(() {
-                              carbohidrato = carbohidrato - plato[index].carbo;
-                              switch (plato[index].tipo) {
-                                case "Proteina":
-                                  setState(() {
-                                    proteina = proteina - plato[index].carbo;
-                                  });
-                                  break;
-                                case "Grasa":
-                                  setState(() {
-                                    grasas = grasas - plato[index].carbo;
-                                  });
-                                  break;
-                                case "Verdura":
-                                  setState(() {
-                                    verduar = verduar - plato[index].carbo;
-                                  });
-                                  break;
-                              }
-                              plato.removeAt(index);
-                            });
-                            Navigator.pop(context);
-                          },
-                              icon: Icon(Icons.delete_outline,
-                                color: ColorsGenerals().red,))
-                        ],
-                      ),
-                    ],
-                  )
-              ),
-            );
-          }
-      );
 
 
   Widget Alimentos(BuildContext context) =>
@@ -665,6 +785,87 @@ class _assembleplateviewState extends State<assembleplateview> {
     }
     return widgets;
   }
+  Widget PlatoEditar(BuildContext context) =>
+      ListView.builder(
+          itemCount: plato.length,
+          itemBuilder: (context, index) {
+            final favor = plato[index];
+            return Container(
+              padding: EdgeInsets.only(top: MediaQuery
+                  .of(context)
+                  .size
+                  .height / 150),
+              child: Container(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height / 10,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: ColorsGenerals().lightgrey,
+                  ),
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text(plato[index].Nombre, style: TextStyle(
+                          fontSize: 20, color: ColorsGenerals().black)),
+                      Row(
+                        children: [
+                          Container(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 80,
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  plato[index].Fruta,
+                                  style: TextStyle(
+                                    color: Colors.black, fontSize: 30,),
+                                ),
+                              ),
+                            ),
+                          ),
+                          IconButton(onPressed: () {
+                            setState(() {
+                              carbohidrato = carbohidrato - plato[index].carbo;
+                              switch (plato[index].tipo) {
+                                case "Proteina":
+                                  setState(() {
+                                    proteina = proteina - plato[index].carbo;
+                                  });
+                                  break;
+                                case "Grasa":
+                                  setState(() {
+                                    grasas = grasas - plato[index].carbo;
+                                  });
+                                  break;
+                                case "Verdura":
+                                  setState(() {
+                                    verduar = verduar - plato[index].carbo;
+                                  });
+                                  break;
+                              }
+                              plato.removeAt(index);
+                            });
+                            Navigator.pop(context);
+                          },
+                              icon: Icon(Icons.delete_outline,
+                                color: ColorsGenerals().red,))
+                        ],
+                      ),
+                    ],
+                  )
+              ),
+            );
+          }
+      );
 
 }
 

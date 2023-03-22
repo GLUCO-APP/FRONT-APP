@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gluko/colors/colorsGenerals.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../assembleplate/view/assembleplate_page.dart';
 import '../cubit/begin_cubit.dart';
-import 'circlesprogress.dart';
 
 class beginpage extends StatelessWidget {
   @override
@@ -21,9 +21,120 @@ class beginview extends StatefulWidget {
   State<beginview> createState() => _beginviewState();
 }
 
+var glucosa = TextEditingController();
 bool _isPressed = false;
 
 class  _beginviewState extends State<beginview>{
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void armarplato() async{
+
+    var info = glucosa.text.toString();
+    print(info);
+    glucosa.clear();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                assembleplatepage(glucosa: info.toString() ))
+    );
+  }
+
+  recibirGlucosa(BuildContext context) {
+    return showModalBottomSheet(
+        shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(100.0),
+            topRight: Radius.circular(100.0),
+          ),
+        ),
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(color: ColorsGenerals().whith,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text("Registra tu nivel de Glucosa", textAlign: TextAlign.center,style: TextStyle(
+                          color: ColorsGenerals().black,
+                          fontWeight: FontWeight.w300,
+                          fontSize: MediaQuery
+                              .of(context)
+                              .size
+                              .height / 30),),
+                      Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
+                      TextField(
+                        maxLength: 3,
+                        controller: glucosa,
+                        autofocus: true,
+                        keyboardType: TextInputType.number,
+                        cursorColor: ColorsGenerals().black,
+                        style: TextStyle(color: ColorsGenerals().black),
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorsGenerals().lightgrey,
+                          hintText: 'Inserte Nivel de glucosa',
+                          hintStyle: TextStyle(
+                              color: ColorsGenerals().black),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 15.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            borderSide: BorderSide.none,
+                          ),
+                          prefixIcon: Icon(Icons.crisis_alert,
+                              color: ColorsGenerals().black),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          armarplato();
+                        },
+                        child: Text("Armar plato",
+                          style: TextStyle(color: ColorsGenerals().whith, fontSize: 15),),
+                        style: ElevatedButton.styleFrom(
+                          elevation: 8, // elevación de la sombra
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                30), // radio de la esquina redondeada
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+                          backgroundColor: Colors.red, // color de fondo
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              });
+        });
+  }
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -67,12 +178,7 @@ class  _beginviewState extends State<beginview>{
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            assembleplatepage())
-                                );
+                                recibirGlucosa(context);
                               },
                               child: Padding(
                                 padding: EdgeInsets.all(10),
@@ -113,19 +219,7 @@ class  _beginviewState extends State<beginview>{
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              CustomPaint(
-                                painter: RingPainter(
-                                  progress: 0.25, // Cambia esto al porcentaje de progreso deseado
-                                  strokeWidth: 10.0, // Cambia esto al ancho de trazo deseado
-                                  background: Colors.grey[300]!, // Cambia esto al color de fondo deseado
-                                  color: Colors.transparent,
-                                  titulo: "180g"// Esto se ignora, el color se controla por el porcentaje de progreso
-                                ),
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width/4,
-                                  height: MediaQuery.of(context).size.height/7,
-                                ),
-                              ),
+                              Container(),
                               Column(
                                 children: [
                                   Container(
@@ -152,19 +246,7 @@ class  _beginviewState extends State<beginview>{
                                   )
                                 ],
                               ),
-                              CustomPaint(
-                                painter: RingPainter(
-                                    progress: 0.25, // Cambia esto al porcentaje de progreso deseado
-                                    strokeWidth: 10.0, // Cambia esto al ancho de trazo deseado
-                                    background: Colors.grey[300]!, // Cambia esto al color de fondo deseado
-                                    color: Colors.transparent,
-                                    titulo: "1.6 u"// Esto se ignora, el color se controla por el porcentaje de progreso
-                                ),
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width/4,
-                                  height: MediaQuery.of(context).size.height/7,
-                                ),
-                              ),
+                              Container(),
                             ],
                           )
                         ],

@@ -11,9 +11,8 @@ class AssembleplateCubit extends Cubit<AssembleplateState> {
 
   Future<void> getFoods() async{
     try{
-      print("debeCargar");
       final foods = await _repository.getFood();
-      print("no cargo");
+      print(foods);
       emit(state.copywhit(status: Assembleplatestatus.success, foods: foods) as AssembleplateState);
     }catch(ex){
       emit(state.copywhit(status: Assembleplatestatus.error));

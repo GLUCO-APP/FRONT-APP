@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class calculateinsuline_page extends StatelessWidget {
   final String carbohidratos;
-  calculateinsuline_page({required Key key, required this.carbohidratos}) : super(key: key);
+  calculateinsuline_page({required this.carbohidratos}) ;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
