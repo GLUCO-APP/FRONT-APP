@@ -11,7 +11,7 @@ class AssembleplateCubit extends Cubit<AssembleplateState> {
 
   Future<void> getFoods() async{
     try{
-      final foods = await _repository.getFood();
+      List<FoodDetail> foods = await _repository.getFood();
       print(foods);
       emit(state.copywhit(status: Assembleplatestatus.success, foods: foods) as AssembleplateState);
     }catch(ex){
