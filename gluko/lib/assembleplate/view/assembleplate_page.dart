@@ -253,6 +253,7 @@ Future<void> showMyPopup(BuildContext context) async {
 }
 
 List<FoodDetail> plato=[];
+List<FoodDetail> aux=[];
 double proteina = 0;
 double carbohidrato = 0;
 double verduar = 0;
@@ -327,13 +328,14 @@ class _assembleplateviewState extends State<assembleplateview> {
   int p = 0;
 
   @override
-  Widget build(BuildContext context) {print("intento");
-    if(prueba.length >1 && p < 100){
+  Widget build(BuildContext context) {
+    if(p==0){
       setState(() {
-        foodsList = prueba;
+        foodsList = aux;
+        p++;
       });
-      p++;
     }
+
     return Scaffold(
         resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -389,7 +391,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                 return Center(child: CircularProgressIndicator(color: ColorsGenerals().red,));
                 break;
               case Assembleplatestatus.success:
-                prueba = states.foods.sublist(1,10);
+                aux = states.foods.sublist(1,10);
                 return Container(
                   padding: EdgeInsets.all(10),
                   width: MediaQuery
@@ -571,10 +573,12 @@ class _assembleplateviewState extends State<assembleplateview> {
                               onChanged: (text){
                                 if(text.isEmpty){
                                   setState(() {
+                                    print("entra aqui");
                                     foodsList = prueba;
                                   });
                                 }else{
                                   setState(() {
+                                    print("entra aqui");
                                     foodsList = foodsList.where((bus) => bus.name.toLowerCase().contains(text)|| bus.tag.toLowerCase().contains(text)).toList();
                                   });
                                 }
@@ -683,7 +687,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                             alignment: Alignment.center,
                             height: 80,
                             padding: EdgeInsets.all(10),
-                            child: Image.asset("assets/Food/${foodsList[index].image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
+                            child: Image.asset("assets/Food/${foodsList[index].image}", height: 60, width: 60,),
                           ),
                         ),
                         feedback: Material(
@@ -692,7 +696,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                             alignment: Alignment.center,
                             height: 100,
                             padding: EdgeInsets.all(10),
-                            child: Image.asset("assets/Food/${foodsList[index].image.replaceAll('.jpg', '.png')}", height: 100, width: 100,),
+                            child: Image.asset("assets/Food/${foodsList[index].image}", height: 100, width: 100,),
                           ),
                         ),
                         childWhenDragging: Material(
@@ -701,7 +705,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                             alignment: Alignment.center,
                             height: 80,
                             padding: EdgeInsets.all(10),
-                            child: Image.asset("assets/Food/${foodsList[index].image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
+                            child: Image.asset("assets/Food/${foodsList[index].image}", height: 60, width: 60,),
                           ),
                         ),
                       )
