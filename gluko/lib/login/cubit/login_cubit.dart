@@ -4,5 +4,8 @@ import 'package:meta/meta.dart';
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  LoginCubit() : super(LoginInitial());
+  LoginCubit() : super(LoginState());
+  Future<void> Iniciar() async{
+    emit(state.confirmar() as LoginState);
+  }
 }
