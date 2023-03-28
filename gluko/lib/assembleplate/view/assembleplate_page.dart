@@ -33,30 +33,7 @@ class Posiciones{
 });
 }
 
-var bebida = Posiciones(top: 60, left: 50);
-List<FoodDetail> bebidas = [];
-var sopa = Posiciones(top: 200, left: 200);
-List<FoodDetail> sopas = [];
-List<Posiciones> pos = [
-  Posiciones(top: 60, left: 50),
-  Posiciones(top: 40, left: 100),
-  Posiciones(top: 60, left: 150),
-  Posiciones(top: 80, left: 90)
-];
 
-class Comida{
-  final String Nombre ;
-  final String Fruta ;
-  final int carbo;
-  final String tipo;
-
-  Comida({
-    required this.Nombre,
-    required this.Fruta,
-    required this.carbo,
-    required this.tipo
-  });
-}
 
 
 class assembleplateview extends StatefulWidget {
@@ -138,7 +115,7 @@ Future<void> showMyPopup(BuildContext context) async {
                                     ),
                                   ],
                                 ),
-                                  child: Text("Almuerzo", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500),),
+                                  child: Text( hora > 0 && hora < 13 ?"Desayuno": hora > 13 && hora < 18 ? "Almuerzo": "Cena", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500),),
                                 ),
                                 Container(
                                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
@@ -154,7 +131,7 @@ Future<void> showMyPopup(BuildContext context) async {
                                       ),
                                     ],
                                   ),
-                                  child: Text("${TimeOfDay.now().hour}:${TimeOfDay.now().minute}", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500),),
+                                  child: Text("${hora}:${TimeOfDay.now().minute}", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500),),
                                 )
                               ],
                             ),
@@ -258,9 +235,20 @@ double proteina = 0;
 double carbohidrato = 0;
 double verduar = 0;
 double grasas = 0;
+var hora = 0;
 
 
 class _assembleplateviewState extends State<assembleplateview> {
+
+  List<FoodDetail> bebidas = [];
+  List<FoodDetail> sopas = [];
+  List<Posiciones> pos = [
+    Posiciones(top: 60, left: 60),
+    Posiciones(top: 40, left: 110),
+    Posiciones(top: 60, left: 170),
+    Posiciones(top: 85, left: 110)
+  ];
+
 
   editplato(BuildContext context) {
     return showModalBottomSheet(
@@ -329,13 +317,6 @@ class _assembleplateviewState extends State<assembleplateview> {
 
   @override
   Widget build(BuildContext context) {
-    if(p==0){
-      setState(() {
-        foodsList = aux;
-        p++;
-      });
-    }
-
     return Scaffold(
         resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -343,7 +324,10 @@ class _assembleplateviewState extends State<assembleplateview> {
           padding: EdgeInsets.all(20),
           child: ElevatedButton(
             onPressed: () {
-            showMyPopup(context);
+              setState(() {
+                hora = TimeOfDay.now().hour;
+              });
+              showMyPopup(context);
             },
             child: Text("Calculo Insulina",
               style: TextStyle(color: ColorsGenerals().whith),),
@@ -391,7 +375,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                 return Center(child: CircularProgressIndicator(color: ColorsGenerals().red,));
                 break;
               case Assembleplatestatus.success:
-                aux = states.foods.sublist(1,10);
+                prueba = states.foods;
                 return Container(
                   padding: EdgeInsets.all(10),
                   width: MediaQuery
@@ -513,7 +497,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("${grasas}g", style: TextStyle(
+                                      Text("${double.parse(grasas.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
                                           color: ColorsGenerals().black)),
@@ -525,7 +509,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("${carbohidrato}g", style: TextStyle(
+                                      Text("${double.parse(carbohidrato.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
                                           color: ColorsGenerals().black)),
@@ -537,7 +521,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("${proteina}g", style: TextStyle(
+                                      Text("${double.parse(proteina.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: ColorsGenerals().black)),
                                       Text("Proteina", style: TextStyle(
@@ -573,13 +557,11 @@ class _assembleplateviewState extends State<assembleplateview> {
                               onChanged: (text){
                                 if(text.isEmpty){
                                   setState(() {
-                                    print("entra aqui");
                                     foodsList = prueba;
                                   });
                                 }else{
                                   setState(() {
-                                    print("entra aqui");
-                                    foodsList = foodsList.where((bus) => bus.name.toLowerCase().contains(text)|| bus.tag.toLowerCase().contains(text)).toList();
+                                    foodsList = states.foods.where((bus) => bus.name.toLowerCase().contains(text)|| bus.tag.toLowerCase().contains(text)).toList();
                                   });
                                 }
                               },
@@ -762,8 +744,8 @@ class _assembleplateviewState extends State<assembleplateview> {
           }else{
             widgets.add(
               Positioned(
-                left: 0,
-                top: 0,
+                left: 400,
+                top: 400,
                 child: Material(
                   color: Colors.transparent,
                   child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
@@ -822,9 +804,9 @@ class _assembleplateviewState extends State<assembleplateview> {
                           ),
                           IconButton(onPressed: () {
                             setState(() {
-                              carbohidrato = carbohidrato - plato[index].carbs;
-                              proteina = proteina - plato[index].protein;
-                              grasas = grasas - plato[index].fats;
+                              carbohidrato = carbohidrato - double.parse(plato[index].carbs.toStringAsFixed(1));
+                              proteina = proteina - double.parse(plato[index].protein.toStringAsFixed(1));
+                              grasas = grasas - double.parse(plato[index].fats.toStringAsFixed(1));
                               plato.removeAt(index);
                             });
                             Navigator.pop(context);
