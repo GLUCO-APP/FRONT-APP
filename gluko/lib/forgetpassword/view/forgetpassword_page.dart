@@ -47,6 +47,25 @@ class  _forgetpasswordviewState extends State<forgetpasswordview>{
                 decoration: BoxDecoration(
                   color: Colors.white,
                 ),
+                child: Row(
+                    children: <Widget>[
+                      Column(
+
+                      ),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget> [
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                                child: Text(
+                                    'Paso 1',
+                                    style: TextStyle(color: Colors.black, fontSize: 16)
+                                )
+                            )
+                          ]
+                      )
+                    ]
+                )
               );
               break;
             case Forgetpasswordtatus.error:
