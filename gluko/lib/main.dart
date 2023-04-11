@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:gluko/login/view/login_page.dart';
 import 'package:flutter/services.dart';
 
+import 'login/view/splashScreen.dart';
+
 
 void main()  {
   SystemChrome.setSystemUIOverlayStyle(
@@ -28,6 +30,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(canvasColor: Colors.white, fontFamily: "GlukoFamily", brightness: Brightness.light, colorScheme: ColorScheme.light(primary: Colors.red)),
       home: Loginpage(),
+
     );
   }
 }

@@ -700,7 +700,7 @@ class  _SingupviewState extends State<Singupview>{
                       ],
                     )
                   ),
-                  
+
                 ]
             ),
             const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
