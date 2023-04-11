@@ -1,9 +1,12 @@
 import 'dart:convert';
 
-import 'package:gluko_service/src/Data/allfood_service.dart';
+import 'package:gluko_service/gluko_service.dart';
+import 'package:gluko_service/src/Data/foodBarcode_service.dart';
+import 'package:gluko_service/src/Data/login_service.dart';
+import 'package:gluko_service/src/Model/plateRequest.dart';
 
 Future<void> main() async {
-  List<dynamic> prueba = await AllfoodService().getAllFood();
-  print(prueba[1]['name']);
+    var response =  await FoodBarcodeService().getFoodBarcode("7702085014363");
+    print(response);
 }
 
