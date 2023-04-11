@@ -23,6 +23,19 @@ class loginview extends StatefulWidget {
 }
 
 class _loginviewviewState extends State<loginview>{
+  final correoCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+  String password = '';
+  bool isPasswordVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    correoCtrl.addListener(() => setState(() {}));
+    passwordCtrl.addListener(() => setState(() {}));
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -30,7 +43,7 @@ class _loginviewviewState extends State<loginview>{
         builder: (context, states) {
           switch (states.status) {
             case LoginStatestatus.loading:
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
               break;
             case LoginStatestatus.success:
               return SingleChildScrollView(
@@ -45,11 +58,11 @@ class _loginviewviewState extends State<loginview>{
                       height: MediaQuery.of(context).size.height/1.8,
                       decoration: BoxDecoration(
                         color: ColorsGenerals().lightgrey,
-                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(100)),
+                        borderRadius: const BorderRadius.only(bottomRight: Radius.circular(100)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.4),
-                            offset: Offset(0, -1),
+                            offset: const Offset(0, -1),
                             blurRadius: 12,
                             spreadRadius: 4,
                           ),
@@ -68,58 +81,52 @@ class _loginviewviewState extends State<loginview>{
                       Container(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height/2.7,
-                        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            TextField(
+                            TextFormField(
+                              controller: correoCtrl,
+                              keyboardType: TextInputType.emailAddress,
                               cursorColor: Colors.black,
-                              style: TextStyle(color: Colors.black, fontSize: 17),
+                              style: const TextStyle(color: Colors.black, fontSize: 15),
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: ColorsGenerals().regulargrey,
-                                hintText: 'Correo',
-                                hintStyle: TextStyle(color: Colors.black),
-                                contentPadding: EdgeInsets.symmetric(vertical: 1.0),
-                                border: OutlineInputBorder(
+                                labelText: 'Correo',
+                                hintStyle: const TextStyle(color: Colors.black45),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
+                                prefixIcon: const Icon(Icons.email_outlined, color: Colors.black45),
+                                suffixIcon: correoCtrl.text.isEmpty ? Container(width: 0) :
+                                  IconButton(icon: const Icon(Icons.close, color: Colors.black45), onPressed: () => correoCtrl.clear(),),
+                                border: UnderlineInputBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                   borderSide: BorderSide.none,
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                                prefixIcon: Icon(Icons.email_outlined, color: Colors.black),
                               ),
+                              textInputAction: TextInputAction.done,
                             ),
-                            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/60)),
-                            TextField(
+                            const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                            TextFormField(
+                              controller: passwordCtrl,
+                              keyboardType: TextInputType.text,
                               cursorColor: Colors.black,
-                              style: TextStyle(color: Colors.black, fontSize: 17),
+                              style: const TextStyle(color: Colors.black, fontSize: 15),
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: ColorsGenerals().regulargrey,
-                                hintText: 'Contraseña',
-                                hintStyle: TextStyle(color: Colors.black),
-                                contentPadding: EdgeInsets.symmetric(vertical: 1.0),
-                                border: OutlineInputBorder(
+                                labelText: 'Contraseña',
+                                hintStyle: const TextStyle(color: Colors.black45),
+                                prefixIcon: const Icon(Icons.lock, color: Colors.black45),
+                                suffixIcon: IconButton(
+                                  icon: isPasswordVisible ? const Icon(Icons.visibility_off, color: Colors.black45) : const Icon(Icons.visibility, color: Colors.black45),
+                                  onPressed: () => setState(() => isPasswordVisible = !isPasswordVisible),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
+                                border: UnderlineInputBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                   borderSide: BorderSide.none,
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                                prefixIcon: Icon(Icons.lock, color: Colors.black),
                               ),
+                              obscureText: isPasswordVisible,
                             ),
                             TextButton(onPressed: (){
                               Navigator.push(
@@ -128,10 +135,10 @@ class _loginviewviewState extends State<loginview>{
                                       builder: (context) =>
                                           forgetpasswordpage())
                               );
-                            }, child:Text("¿Olvido su contraseña? ", style: TextStyle(color: Colors.black, fontSize: 12),),style: ButtonStyle(
+                            },style: ButtonStyle(
                               overlayColor: MaterialStateProperty.all<Color>(Color.fromARGB(
                                   31, 239, 131, 131)), // color deseado
-                            )),
+                            ), child:const Text("¿Olvido su contraseña? ", style: TextStyle(color: Colors.black, fontSize: 12),)),
                             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/300)),
                             ElevatedButton(
                                 onPressed: (){
@@ -139,20 +146,20 @@ class _loginviewviewState extends State<loginview>{
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            HomePage()),
+                                            const HomePage()),
                                         (Route<dynamic> route) => false,
                                   );
                                 },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-                                  child: Text("Iniciar Sesion", style: TextStyle(fontSize: 17),),
-                                ),
                                 style: ElevatedButton.styleFrom(
                                   elevation: 8, // elevación de la sombra
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30), // radio de la esquina redondeada
                                   ),
                                   backgroundColor: Colors.red, // color de fondo
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+                                  child: const Text("Iniciar Sesion", style: TextStyle(fontSize: 17),),
                                 )
                             ),
                           ],
@@ -166,17 +173,17 @@ class _loginviewviewState extends State<loginview>{
                                   Singuppage())
                         );
                       },
+                          style: ButtonStyle(
+                            overlayColor: MaterialStateProperty.all<Color>(const Color.fromARGB(
+                                31, 239, 131, 131)), // color deseado
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                            children: const [
                               Text("¿No tiene cuenta?", style: TextStyle(color: Colors.black, fontSize: 14),),
                               Text("Registrarse",style: TextStyle(color: Color.fromARGB(
                                   255, 230, 55, 55), fontSize: 14))
                             ],
-                          ),
-                          style: ButtonStyle(
-                            overlayColor: MaterialStateProperty.all<Color>(Color.fromARGB(
-                                31, 239, 131, 131)), // color deseado
                           )
                       )
                     ],
@@ -186,7 +193,7 @@ class _loginviewviewState extends State<loginview>{
               );
               break;
             case LoginStatestatus.error:
-              return Text("Me petatie");
+              return const Text("Me petatie");
               break;
           }
         },
