@@ -9,3 +9,4 @@ export 'src/Data/foodBarcode_service.dart';
 export 'src/Model/plateRequest.dart';
 export 'src/Data/emergency_service.dart';
 export 'src/Data/report_service.dart';
+

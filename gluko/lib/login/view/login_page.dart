@@ -29,6 +29,19 @@ var correo = TextEditingController();
 var contrasena = TextEditingController();
 var  ver = true;
 class _loginviewviewState extends State<loginview>{
+  final correoCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+  String password = '';
+  bool isPasswordVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    correoCtrl.addListener(() => setState(() {}));
+    passwordCtrl.addListener(() => setState(() {}));
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -36,6 +49,7 @@ class _loginviewviewState extends State<loginview>{
         builder: (context, states) {
           switch (states.status) {
             case LoginStatestatus.loading:
+
               return Center(child: CircularProgressIndicator( color: ColorsGenerals().red,));
               break;
             case LoginStatestatus.success:
@@ -223,7 +237,6 @@ class _loginviewviewState extends State<loginview>{
                             )
                         )
                       ],
-
                     ),
                   ),
                 ),
