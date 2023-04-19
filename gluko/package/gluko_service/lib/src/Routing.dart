@@ -6,4 +6,5 @@ class Routing{
   String foodBarcode = "/codebar";
   String emergency = "/emergency";
   String report = "/report";
+  String infoUser = "/user";
 }
