@@ -18,3 +18,5 @@ export 'src/models/EmergencyDetail.dart';
 export 'src/models/PlateResponse.dart';
 export 'src/models/ReportRequest.dart';
 export 'src/Domain/registerReport_repository.dart';
+export 'src/Domain/infoUser_repository.dart';
+export 'src/models/insulin.dart';

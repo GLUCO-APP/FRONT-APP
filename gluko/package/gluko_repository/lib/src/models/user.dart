@@ -30,6 +30,7 @@ class User {
   int physicalctivity;
   String infoAdicional;
 
+
   User(
       this.nombre,
       this.email,

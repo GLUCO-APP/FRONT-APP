@@ -27,17 +27,16 @@ class loginview extends StatefulWidget {
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
 var correo = TextEditingController();
 var contrasena = TextEditingController();
-var  ver = true;
 class _loginviewviewState extends State<loginview>{
   final correoCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
   String password = '';
   bool isPasswordVisible = true;
+  var  ver = true;
 
   @override
   void initState() {
     super.initState();
-
     correoCtrl.addListener(() => setState(() {}));
     passwordCtrl.addListener(() => setState(() {}));
   }

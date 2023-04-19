@@ -2,6 +2,7 @@ import 'package:gluko_repository/gluko_repository.dart';
 import 'package:gluko_repository/src/Domain/allfood_repository.dart';
 import 'package:gluko_repository/src/Domain/emergency_repository.dart';
 import 'package:gluko_repository/src/Domain/foodBarcode_repository.dart';
+import 'package:gluko_repository/src/Domain/infoUser_repository.dart';
 import 'package:gluko_repository/src/Domain/signUp_repository.dart';
 import 'package:gluko_repository/src/models/ResponseSignUp.dart';
 import 'package:gluko_repository/src/models/foodDetail.dart';
@@ -9,6 +10,7 @@ import 'package:gluko_repository/src/models/insulin.dart';
 import 'package:gluko_repository/src/models/user.dart';
 
 Future<void> main() async {
+  /*
   FoodDetail comida = await fooBarcodeRepository().foodBargode("7702085014363");
   print(comida.name);
   
@@ -41,5 +43,6 @@ Future<void> main() async {
       300,
       3,
       "Ninguna"));
-  print(responseSignUp.message);
+  print(responseSignUp.message);*/
+  User response = await infoUserRepository().getInfoUser();
 }
