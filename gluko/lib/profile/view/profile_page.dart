@@ -27,13 +27,99 @@ var altura = "175";
 var sensibilidad = "40";
 var ratio = "14";
 var tipoinsulina = "175";
+GlobalKey<FormState> formKey = GlobalKey<FormState>();
+final nameCtrl = TextEditingController();
+
 
 class profileview extends StatefulWidget {
   @override
   State<profileview> createState() => _profileviewState();
 }
 
+
+Future<void> showMyPopupEditName(BuildContext context) async {
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext context){
+      return  Material(
+        color: Colors.transparent,
+        child: Container(
+          width: MediaQuery.of(context).size.width/3,
+          height: MediaQuery.of(context).size.height/1.3,
+          color: Colors.transparent,
+          child: Center(
+            child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                      padding: EdgeInsets.all(20),
+                      width: MediaQuery.of(context).size.width/1.2,
+                      height: MediaQuery.of(context).size.height/1.6,
+                      decoration: BoxDecoration(
+                        color: ColorsGenerals().whith,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 7,
+                            offset: Offset(-5, 6),
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          TextFormField(
+                            controller: nameCtrl,
+                            cursorColor: Colors.black,
+                            style: const TextStyle(color: Colors.black, fontSize: 15),
+                            decoration: InputDecoration(
+                              filled: true,
+                              hintText: name,
+                              labelText: 'Nombre',
+                              errorText: nameCtrl.text.isEmpty || nameCtrl.text.length > 7 ? null : 'Nombre invalido',
+                              contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
+                              suffixIcon: nameCtrl.text.isEmpty ? Container(width: 0) :
+                              IconButton(icon: const Icon(Icons.close, color: Colors.black45), onPressed: () => nameCtrl.clear(),),
+                              border: UnderlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide.none
+                              ),
+                            ),
+                            textInputAction: TextInputAction.done,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                            },
+                            child: Text("Guardar Cambios",
+                              style: TextStyle(color: ColorsGenerals().whith),),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 8, // elevación de la sombra
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    30), // radio de la esquina redondeada
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                              backgroundColor: ColorsGenerals().red, // color de fondo
+                            ),
+
+                          ),
+                        ],
+                      )
+                  ),
+                ]
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class  _profileviewState extends State<profileview>{
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -112,7 +198,9 @@ class  _profileviewState extends State<profileview>{
                         Positioned(
                           top: 0,
                           right: 0,
-                          child: IconButton(onPressed: (){}, icon: Icon(Icons.edit, color: ColorsGenerals().black,)),
+                          child: IconButton(onPressed: (){
+                            showMyPopupEditName(context);
+                          }, icon: SvgPicture.asset("assets/Icons/lapiz.svg",color: ColorsGenerals().black,cacheColorFilter: false, width: MediaQuery.of(context).size.height/30,)),
                         ),
                       ],
                     ),
@@ -190,7 +278,8 @@ class  _profileviewState extends State<profileview>{
                         Positioned(
                           top: 0,
                           right: 0,
-                          child: IconButton(onPressed: (){}, icon: Icon(Icons.edit, color: ColorsGenerals().black,)),
+                          child: IconButton(onPressed: (){}, icon: SvgPicture.asset("assets/Icons/lapiz.svg",color: ColorsGenerals().black,cacheColorFilter: false, width: MediaQuery.of(context).size.height/30,),
+                          ),
                         ),
                       ],
                     ),
@@ -230,7 +319,7 @@ class  _profileviewState extends State<profileview>{
                         Positioned(
                           top: 0,
                           right: 0,
-                          child: IconButton(onPressed: (){}, icon: Icon(Icons.edit, color: ColorsGenerals().black,)),
+                          child: IconButton(onPressed: (){}, icon: SvgPicture.asset("assets/Icons/lapiz.svg",color: ColorsGenerals().black,cacheColorFilter: false, width: MediaQuery.of(context).size.height/30,)),
                         ),
                         Positioned(
                           top: 1,
@@ -295,7 +384,7 @@ class  _profileviewState extends State<profileview>{
                         Positioned(
                           top: 0,
                           right: 0,
-                          child: IconButton(onPressed: (){}, icon: Icon(Icons.edit, color: ColorsGenerals().black,)),
+                          child: IconButton(onPressed: (){}, icon: SvgPicture.asset("assets/Icons/lapiz.svg",color: ColorsGenerals().black,cacheColorFilter: false, width: MediaQuery.of(context).size.height/30,)),
                         ),
                         Positioned(
                           top: 2,
