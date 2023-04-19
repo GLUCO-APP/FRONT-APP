@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  gluko_repository:
+    path: "../gluko_repository"
   http: ^0.13.5
 
 dev_dependencies:

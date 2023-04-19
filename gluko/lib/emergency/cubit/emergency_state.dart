@@ -10,5 +10,10 @@ class EmergencyState {
   Emergencystatus confirmar(){
     return Emergencystatus.success;
   }
+  EmergencyState copywhit({
+    Emergencystatus? status,
+  }){
+    return EmergencyState(status: status ?? this.status);
+  }
 }
 

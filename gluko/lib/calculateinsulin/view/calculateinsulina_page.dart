@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gluko/assembleplate/view/assembleplate_page.dart';
 import '../../colors/colorsGenerals.dart';
 import '../../home/view/home_page.dart';
 import '../cubit/calculateinsulin_cubit.dart';
@@ -21,7 +22,7 @@ class calculateinsuline_page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CalculateinsulinCubit(RegisterPlateRepository()),
+      create: (context) => CalculateinsulinCubit(RegisterPlateRepository(),RegisterReportRepository()),
       child: calculateinsulineview(info, foods),
     );
   }
@@ -519,7 +520,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                       onPressed: () async {
                         if(compartir){
                           print("Direccion ${direccion.text}, Latitud ${_center.latitude} Longitud ${_center.longitude}");
-                          var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 1, _center.latitude,_center.longitude,direccion.text,Descripcion.text,"Sin titulo xd"));
+                          var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 1, _center.latitude,_center.longitude,direccion.text,Descripcion.text,"Sin titulo xd"),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs).toInt());
                            if(response){
                              Fluttertoast.showToast(
                                  msg: "Plato Registrado", fontSize: 20);
@@ -535,7 +536,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                                  msg: "Error al registrar plato Intenta Mas Tarde", fontSize: 20);
                            }
                         }else{
-                          var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 0, 0,0,"","",""));
+                          var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 0, 0,0,"","",""),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs).toInt());
                           print("Respuesta de registro ${response}");
                           if(response){
                             Fluttertoast.showToast(
