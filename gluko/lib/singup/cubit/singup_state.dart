@@ -12,5 +12,12 @@ enum Singuptatus{ loading,success,error}
    Singuptatus confirmar(){
      return Singuptatus.success;
    }
+
+   SingupState copywhit(  {
+     Singuptatus? status,
+
+   }){
+     return SingupState(status: status ?? this.status);
+   }
  }
 

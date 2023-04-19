@@ -10,3 +10,6 @@ export 'src/Domain/login_repository.dart';
 export 'src/Domain/registerPlate_repository.dart';
 export 'src/models/PlateDetail.dart';
 export 'src/Domain/foodBarcode_repository.dart';
+export 'src/Domain/signUp_repository.dart';
+export 'src/models/ResponseSignUp.dart';
+export 'src/models/user.dart';
