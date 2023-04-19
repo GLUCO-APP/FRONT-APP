@@ -1,21 +1,37 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gluko/profile/view/profile_page.dart';
+import 'package:gluko_repository/gluko_repository.dart';
+import 'package:intl/intl.dart';
 import '../../colors/colorsGenerals.dart';
 import 'package:gluko/login/view/login_page.dart';
 import '../cubit/singup_cubit.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gluko_repository/src/models/insulin.dart';
 
-enum SexTypeEnum {men, women}
+enum SexTypeEnum {masculino, femenina}
+
+class ButtonData {
+  final String name;
+  final String image;
+
+  ButtonData(this.name, this.image);
+}
 
 class Singuppage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SingupCubit(),
+      create: (context) => SingupCubit(SignUpRepository()),
       child: Singupview(),
     );
   }
 }
+
+// usuario
+User usuario = User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "");
+Insulin insulinaR = Insulin(0, "", "", 0, 0);
 
 class Singupview extends StatefulWidget {
   @override
@@ -23,6 +39,12 @@ class Singupview extends StatefulWidget {
 }
 
 class  _SingupviewState extends State<Singupview>{
+
+  _SingupviewState(){
+    _selectedInsulinR = tipInsulinR[0];
+    _selectedInsulinL = tipInsulinL[0];
+  }
+
   // primer paso
   final correoCtrl = TextEditingController();
   //segundo paso
@@ -34,13 +56,16 @@ class  _SingupviewState extends State<Singupview>{
   final apellidoCtrl = TextEditingController();
   final bornCtrl = TextEditingController();
   final dateDCtrl = TextEditingController();
-  SexTypeEnum? _sexTypeEnum = SexTypeEnum.men;
+  SexTypeEnum? _sexTypeEnum = SexTypeEnum.masculino;
+  DateTime? newDateD;
+  DateTime? newDateN;
   //septimo paso
   int _selectMed = 0;
   //octavo paso
   final hiperCtrl = TextEditingController();
   final normCtrl = TextEditingController();
   final hipoCtrl = TextEditingController();
+  final carboOCtrl = TextEditingController();
   //noveno paso
   final pesoCtrl = TextEditingController();
   //decimo paso
@@ -48,12 +73,37 @@ class  _SingupviewState extends State<Singupview>{
   // 11 paso
   final senbCtrl = TextEditingController();
   final ratioCtrl = TextEditingController();
+  // 12 paso
+  final tipInsulinR = ["NovoRapid Aspart", "Glulisina Apidra", "FIASP Aspart", "Humulin R Cristalina"];
+  String? _selectedInsulinR = "";
+  int _selectPR = 0;
+  final tipInsulinL = ["Delemir Levemir", "Lantus Glargina", "Tresiba Degludec", "Toujeo Glargina"];
+  String? _selectedInsulinL = "";
+  int _selectPL = 0;
+  final ctrHoraInsulinL = TextEditingController();
+  // 13 paso
+  final horaInicioDesayunoCtrl = TextEditingController();
+  final horaFinalDesayunoCtrl = TextEditingController();
+  final horaInicioAlmuerzoCtrl = TextEditingController();
+  final horaFinalAlmuerzoCtrl = TextEditingController();
+  final horaInicioCenaCtrl = TextEditingController();
+  final horaFinalCenaCtrl = TextEditingController();
+  // 14 paso
+  int _selectedButtonA = -1;
+  final List<ButtonData> _buttons = [
+    ButtonData("Sedentarismo", "assets/Icons/Relajante1.png"),
+    ButtonData("1-3 dias por semana", "assets/Icons/Triangulo1.png"),
+    ButtonData("3-5 dias por semana", "assets/Icons/Corriendo1.png"),
+    ButtonData("5-7 dias por semana", "assets/Icons/Deporte1.png")
+  ];
+
 
 
   @override
   void initState() {
     super.initState();
-
+    clean();
+    _currentStep = 0;
     // primer paso
     correoCtrl.addListener(() => setState(() {}));
     // segundo paso
@@ -67,6 +117,7 @@ class  _SingupviewState extends State<Singupview>{
     hiperCtrl.addListener(() => setState(() {}));
     normCtrl.addListener(() => setState(() {}));
     hipoCtrl.addListener(() => setState(() {}));
+    carboOCtrl.addListener(() => setState(() {}));
     // noveno paso
     pesoCtrl.addListener(() => setState(() {}));
     // decimo paso
@@ -74,6 +125,15 @@ class  _SingupviewState extends State<Singupview>{
     // 11 paso
     ratioCtrl.addListener(() => setState(() {}));
     senbCtrl.addListener(() => setState(() {}));
+    // 12 paso
+    ctrHoraInsulinL.addListener(() => setState(() {}));
+    // 13 paso
+    horaInicioDesayunoCtrl.addListener(() => setState(() {}));
+    horaFinalDesayunoCtrl.addListener(() => setState(() {}));
+    horaInicioAlmuerzoCtrl.addListener(() => setState(() {}));
+    horaFinalAlmuerzoCtrl.addListener(() => setState(() {}));
+    horaInicioCenaCtrl.addListener(() => setState(() {}));
+    horaFinalCenaCtrl.addListener(() => setState(() {}));
   }
 
   int _currentStep = 0;
@@ -159,6 +219,188 @@ class  _SingupviewState extends State<Singupview>{
               obscureText: isPasswordVisible,
             ),
             const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+          ],
+        )
+    ),
+    Step(
+        state: _stepState(3),
+        isActive: _currentStep >=3,
+        title: const Text(
+            'Datos personales',
+            style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)
+        ),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
+            TextFormField(
+              controller: nombreCtrl,
+              keyboardType: TextInputType.text,
+              cursorColor: Colors.black,
+              style: const TextStyle(color: Colors.black, fontSize: 15),
+              decoration: InputDecoration(
+                  filled: true,
+                  labelText: 'Nombre',
+                  contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
+                  border: UnderlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide.none
+                  ),
+              ),
+            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            TextFormField(
+              controller: apellidoCtrl,
+              keyboardType: TextInputType.text,
+              cursorColor: Colors.black,
+              style: const TextStyle(color: Colors.black, fontSize: 15),
+              decoration: InputDecoration(
+                filled: true,
+                labelText: 'Apellidos',
+                contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
+                border: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide.none
+                ),
+              ),
+            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+            const Text(
+                "Sexo",
+                style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.start,
+            ),
+            Row(
+              children: [
+                Expanded(
+                    child: RadioListTile(
+                      contentPadding: const EdgeInsets.all(0.0),
+                      title: const Text("Hombre", style: TextStyle(color: Colors.black, fontSize: 15),),
+                      groupValue: _sexTypeEnum,
+                      activeColor: Colors.red,
+                      value: SexTypeEnum.masculino,
+                      onChanged: (val) {
+                        setState(() {
+                          _sexTypeEnum = val;
+                        });
+                      }
+                    ),
+                ),
+                Expanded(
+                    child: RadioListTile(
+                        contentPadding: const EdgeInsets.all(0.0),
+                      title: const Text("Mujer", style: TextStyle(color: Colors.black, fontSize: 15),),
+                      groupValue: _sexTypeEnum,
+                      activeColor: Colors.red,
+                      value: SexTypeEnum.femenina,
+                      onChanged: (val) {
+                        setState(() {
+                          _sexTypeEnum = val;
+                        });
+                      }
+                    ),
+                ),
+              ],
+            ),
+            const Text(
+              "Sexo al nacer, te preguntamos el sexo al nacer por razones medicas.",
+              style: TextStyle(fontSize: 11, color: Colors.black),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: TextFormField(
+                        controller: bornCtrl,
+                        style: const TextStyle(color: Colors.black, fontSize: 15),
+                        decoration: InputDecoration(
+                          filled: true,
+                          labelText: 'Fecha de nacimiento',
+                          labelStyle: const TextStyle(color: Colors.black, fontSize: 15),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
+                          border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                              borderSide: BorderSide.none
+                          ),
+                        ),
+                        enabled: false,
+
+                      ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.date_range_outlined, color: Colors.black45),
+                    onPressed: () async {
+                      newDateN = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now()
+                      );
+                      if(newDateN == null) return;
+                      setState(() => bornCtrl.text = DateFormat.yMd().format(newDateN!));
+                    },
+                  )
+                ],
+              )
+            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Container(
+                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: dateDCtrl,
+                        style: const TextStyle(color: Colors.black, fontSize: 15),
+                        decoration: InputDecoration(
+                          filled: true,
+                          labelText: 'Fecha de diagnostico',
+                          labelStyle: const TextStyle(color: Colors.black, fontSize: 15),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
+                          border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                              borderSide: BorderSide.none
+                          ),
+                        ),
+                        enabled: false,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.date_range_outlined, color: Colors.black45),
+                      onPressed: () async {
+                        newDateD = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime.now()
+                        );
+                        if(newDateD == null) return;
+                        setState(() => dateDCtrl.text = DateFormat.yMd().format(newDateD!));
+                      },
+                    )
+                  ],
+                )
+            ),
+          ],
+        )
+    ),
+    Step(
+        state: _stepState(4),
+        isActive: _currentStep >=4,
+        title: const Text(
+            'Tipo de Diabetes',
+            style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)
+        ),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              "Por el momento, esta aplicación esta enfocada en el tratamiento de diabetes tipo 1",
+              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+            )
           ],
         )
     ),
@@ -293,6 +535,36 @@ class  _SingupviewState extends State<Singupview>{
                 contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
                 suffixIcon: hipoCtrl.text.isEmpty ? Container(width: 0) :
                 IconButton(icon: const Icon(Icons.close, color: Colors.lightBlue), onPressed: () => hipoCtrl.clear(),),
+                border: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide.none
+                ),
+              ),
+              textInputAction: TextInputAction.done,
+            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 15)),
+            const Text(
+              "Inidica tus objetivo de carbohidratos diarios en gramos",
+              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            TextFormField(
+              controller: carboOCtrl,
+              keyboardType: TextInputType.number,
+              cursorColor: Colors.black,
+              style: const TextStyle(color: Colors.black45, fontSize: 15),
+              validator: (value){
+                final n = int.tryParse(value!);
+                if( n == null || n < 1) {
+                  return 'El valor debe ser mayor a 1';
+                }
+              },
+              decoration: InputDecoration(
+                filled: true,
+                labelText: 'Carbohidratos',
+                contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
+                suffixIcon: carboOCtrl.text.isEmpty ? Container(width: 0) :
+                IconButton(icon: const Icon(Icons.close, color: Colors.black45), onPressed: () => carboOCtrl.clear(),),
                 border: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                     borderSide: BorderSide.none
@@ -468,11 +740,138 @@ class  _SingupviewState extends State<Singupview>{
         content: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children:  const [
-            Text(
-              "Hora aplicación basal",
-              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
-            )
+          children: [
+            DropdownButtonFormField(
+              value: _selectedInsulinR,
+              items: tipInsulinR.map((e) =>
+                DropdownMenuItem(value: e,child: Text(e),)
+              ).toList(),
+              onChanged: (value){
+                setState(() {
+                  _selectedInsulinR = value as String;
+                });
+              },
+              icon: const Icon(
+                Icons.arrow_drop_down
+              ),
+              decoration: const InputDecoration(
+                labelText: "Insulina Rapida",
+                  prefixIcon: Icon(
+                      Icons.edit
+                  )
+              ),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
+            const Text(
+              "Precisión",),
+            ToggleButtons(
+                selectedBorderColor: Colors.red,
+                borderRadius: BorderRadius.circular(20),
+                borderWidth: 2,
+                isSelected: [
+                  _selectPR == 0,
+                  _selectPR == 1,
+                ],
+                onPressed: (int newIndex) {
+                  setState(() {
+                    _selectPR = newIndex;
+                  });
+                },
+                children: const [
+                  Text(
+                    "1",
+                    style: TextStyle(color: Colors.black, fontSize: 15),
+                  ),
+                  Text(
+                    "0.5",
+                    style: TextStyle(color: Colors.black, fontSize: 15),
+                  ),
+                ]
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
+            DropdownButtonFormField(
+              value: _selectedInsulinL,
+              items: tipInsulinL.map((e) =>
+                  DropdownMenuItem(value: e,child: Text(e),)
+              ).toList(),
+              onChanged: (value){
+                setState(() {
+                  _selectedInsulinL = value as String;
+                });
+              },
+              icon: const Icon(
+                  Icons.arrow_drop_down
+              ),
+              decoration: const InputDecoration(
+                  labelText: "Insulina Lenta",
+                prefixIcon: Icon(
+                  Icons.edit
+                )
+              ),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
+            const Text(
+              "Precisión",),
+            ToggleButtons(
+                selectedBorderColor: Colors.red,
+                borderRadius: BorderRadius.circular(20),
+                borderWidth: 2,
+                isSelected: [
+                  _selectPL == 0,
+                  _selectPL == 1,
+                ],
+                onPressed: (int newIndex) {
+                  setState(() {
+                    _selectPL = newIndex;
+                  });
+                },
+                children: const [
+                  Text(
+                    "1",
+                    style: TextStyle(color: Colors.black, fontSize: 15),
+                  ),
+                  Text(
+                    "0.5",
+                    style: TextStyle(color: Colors.black, fontSize: 15),
+                  ),
+                ]
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
+            Container(
+                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: ctrHoraInsulinL,
+                        style: const TextStyle(color: Colors.black, fontSize: 15),
+                        decoration: InputDecoration(
+                          filled: true,
+                          labelText: 'Hora aplicación insulina basal',
+                          labelStyle: const TextStyle(color: Colors.black, fontSize: 10),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
+                          border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                              borderSide: BorderSide.none
+                          ),
+                        ),
+                        enabled: false,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.access_time, color: Colors.black45),
+                      onPressed: () async {
+                        TimeOfDay? newTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                        );
+                        if(newTime == null) return;
+                        setState(() => ctrHoraInsulinL.text = '${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}');
+                      },
+                    )
+                  ],
+                )
+            ),
           ],
         )
     ),
@@ -484,12 +883,11 @@ class  _SingupviewState extends State<Singupview>{
             style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)
         ),
         content: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     alignment: Alignment.center,
@@ -506,24 +904,87 @@ class  _SingupviewState extends State<Singupview>{
                         )
                       ]
                     ),
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    height: MediaQuery.of(context).size.height * 0.12,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset("assets/Icons/desayuno.png", height: MediaQuery.of(context).size.height/14),
-                        const Text("DESAYUNO")
-                      ],
+                    child: IntrinsicWidth(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset("assets/Icons/desayuno.png", height: MediaQuery.of(context).size.height/14),
+                            const Text("DESAYUNO"),
+                            const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: horaInicioDesayunoCtrl,
+                                    style: const TextStyle(color: Colors.black, fontSize: 15),
+                                    decoration: InputDecoration(
+                                        filled: true,
+                                        labelText: 'Inicio',
+                                        labelStyle: const TextStyle(color: Colors.black, fontSize: 15),
+                                        border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20.0),
+                                              bottomLeft: Radius.circular(20.0)
+                                          ),
+                                        ),
+                                        prefixIcon: IconButton(
+                                          icon: const Icon(Icons.access_time, color: Colors.black45),
+                                          onPressed: () async {
+                                            TimeOfDay? newTime = await showTimePicker(
+                                              context: context,
+                                              initialTime: TimeOfDay.now(),
+                                            );
+                                            if(newTime == null) return;
+                                            setState(() => horaInicioDesayunoCtrl.text = '${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}');
+                                          },
+                                        )
+                                    ),
+                                    enabled: true,
+                                  ),
+                                ),
+                                Expanded(
+                                    child: TextFormField(
+                                      controller: horaFinalDesayunoCtrl,
+                                      style: const TextStyle(color: Colors.black, fontSize: 15),
+                                      decoration: InputDecoration(
+                                          filled: true,
+                                          labelText: 'Final',
+                                          labelStyle: const TextStyle(color: Colors.black, fontSize: 15),
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topRight: Radius.circular(20.0),
+                                                bottomRight: Radius.circular(20.0)
+                                            ),
+                                          ),
+                                          prefixIcon: IconButton(
+                                            icon: const Icon(Icons.access_time, color: Colors.black45),
+                                            onPressed: () async {
+                                              TimeOfDay? newTime = await showTimePicker(
+                                                context: context,
+                                                initialTime: TimeOfDay.now(),
+                                              );
+                                              if(newTime == null) return;
+                                              setState(() => horaFinalDesayunoCtrl.text = '${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}');
+                                            },
+                                          )
+                                      ),
+                                    )
+                                )
+                              ],
+                            ),
+                          ],
+                        )
                     )
-                  ),
 
+                  ),
                 ]
             ),
             const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                       alignment: Alignment.center,
@@ -540,47 +1001,85 @@ class  _SingupviewState extends State<Singupview>{
                             )
                           ]
                       ),
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: MediaQuery.of(context).size.height * 0.12,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset("assets/Icons/comida.png", height: MediaQuery.of(context).size.height/14),
-                          const Text("ALMUERZO")
-                        ],
+                      child: IntrinsicWidth(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/Icons/comida.png", height: MediaQuery.of(context).size.height/14),
+                              const Text("ALMUERZO"),
+                              const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: horaInicioAlmuerzoCtrl,
+                                      style: const TextStyle(color: Colors.black, fontSize: 15),
+                                      decoration: InputDecoration(
+                                          filled: true,
+                                          labelText: 'Inicio',
+                                          labelStyle: const TextStyle(color: Colors.black, fontSize: 15),
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(20.0),
+                                                bottomLeft: Radius.circular(20.0)
+                                            ),
+                                          ),
+                                          prefixIcon: IconButton(
+                                            icon: const Icon(Icons.access_time, color: Colors.black45),
+                                            onPressed: () async {
+                                              TimeOfDay? newTime = await showTimePicker(
+                                                context: context,
+                                                initialTime: TimeOfDay.now(),
+                                              );
+                                              if(newTime == null) return;
+                                              setState(() => horaInicioAlmuerzoCtrl.text = '${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}');
+                                            },
+                                          )
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: TextFormField(
+                                        controller: horaFinalAlmuerzoCtrl,
+                                        style: const TextStyle(color: Colors.black, fontSize: 15),
+                                        decoration: InputDecoration(
+                                            filled: true,
+                                            labelText: 'Final',
+                                            labelStyle: const TextStyle(color: Colors.black, fontSize: 15),
+                                            border: const OutlineInputBorder(
+                                              borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(20.0),
+                                                  bottomRight: Radius.circular(20.0)
+                                              ),
+                                            ),
+                                            prefixIcon: IconButton(
+                                              icon: const Icon(Icons.access_time, color: Colors.black45),
+                                              onPressed: () async {
+                                                TimeOfDay? newTime = await showTimePicker(
+                                                  context: context,
+                                                  initialTime: TimeOfDay.now(),
+                                                );
+                                                if(newTime == null) return;
+                                                setState(() => horaFinalAlmuerzoCtrl.text = '${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}');
+                                              },
+                                            )
+                                        ),
+                                      )
+                                  )
+                                ],
+                              ),
+                            ],
+                          )
                       )
                   ),
-                  ToggleButtons(
-                      selectedBorderColor: Colors.red,
-                      borderRadius: BorderRadius.circular(20),
-                      borderWidth: 2,
-                      isSelected: [
-                        _selectMed == 0,
-                        _selectMed == 1,
-                      ],
-                      onPressed: (int newIndex) {
-                        setState(() {
-                          _selectMed = newIndex;
-                        });
-                      },
-                      children: const [
-                        Text(
-                          "Si",
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                        ),
-                        Text(
-                          "No",
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                        ),
-                      ]
-                  )
                 ]
             ),
             const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                       alignment: Alignment.center,
@@ -597,46 +1096,129 @@ class  _SingupviewState extends State<Singupview>{
                             )
                           ]
                       ),
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: MediaQuery.of(context).size.height * 0.12,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset("assets/Icons/cena.png", height: MediaQuery.of(context).size.height/14),
-                          const Text("CENA")
-                        ],
+                      child: IntrinsicWidth(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/Icons/cena.png", height: MediaQuery.of(context).size.height/14),
+                              const Text("CENA"),
+                              const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: horaInicioCenaCtrl,
+                                      style: const TextStyle(color: Colors.black, fontSize: 15),
+                                      decoration: InputDecoration(
+                                          filled: true,
+                                          labelText: 'Inicio',
+                                          labelStyle: const TextStyle(color: Colors.black, fontSize: 15),
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(20.0),
+                                                bottomLeft: Radius.circular(20.0)
+                                            ),
+                                          ),
+                                          prefixIcon: IconButton(
+                                            icon: const Icon(Icons.access_time, color: Colors.black45),
+                                            onPressed: () async {
+                                              TimeOfDay? newTime = await showTimePicker(
+                                                context: context,
+                                                initialTime: TimeOfDay.now(),
+                                              );
+                                              if(newTime == null) return;
+                                              setState(() => horaInicioCenaCtrl.text = '${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}');
+                                            },
+                                          )
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: TextFormField(
+                                        controller: horaFinalCenaCtrl,
+                                        style: const TextStyle(color: Colors.black, fontSize: 15),
+                                        decoration: InputDecoration(
+                                            filled: true,
+                                            labelText: 'Final',
+                                            labelStyle: const TextStyle(color: Colors.black, fontSize: 15),
+                                            border: const OutlineInputBorder(
+                                              borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(20.0),
+                                                  bottomRight: Radius.circular(20.0)
+                                              ),
+                                            ),
+                                            prefixIcon: IconButton(
+                                              icon: const Icon(Icons.access_time, color: Colors.black45),
+                                              onPressed: () async {
+                                                TimeOfDay? newTime = await showTimePicker(
+                                                  context: context,
+                                                  initialTime: TimeOfDay.now(),
+                                                );
+                                                if(newTime == null) return;
+                                                setState(() => horaFinalCenaCtrl.text = '${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}');
+                                              },
+                                            )
+                                        ),
+                                      )
+                                  )
+                                ],
+                              ),
+                            ],
+                          )
                       )
                   ),
-                  ToggleButtons(
-                      selectedBorderColor: Colors.red,
-                      borderRadius: BorderRadius.circular(20),
-                      borderWidth: 2,
-                      isSelected: [
-                        _selectMed == 0,
-                        _selectMed == 1,
-                      ],
-                      onPressed: (int newIndex) {
-                        setState(() {
-                          _selectMed = newIndex;
-                        });
-                      },
-                      children: const [
-                        Text(
-                          "Si",
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                        ),
-                        Text(
-                          "No",
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                        ),
-                      ]
-                  )
                 ]
             )
           ],
         )
     ),
+    Step(
+        state: _stepState(13),
+        isActive: _currentStep >=13,
+        title: const Text(
+            'Actividad fisica',
+            style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)
+        ),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: _buttons
+              .asMap()
+              .map((index, button) => MapEntry(
+            index,
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(const Color.fromRGBO(242, 243, 247, 100)),
+                  side: MaterialStateProperty.resolveWith<BorderSide?>(
+                          (Set<MaterialState> states) {
+                        if(_selectedButtonA == index) {
+                          return const BorderSide(
+                            color: Colors.red,
+                            width: 2.0,
+                          );
+                        }
+                        return null;
+                      }),
+              ),
+              onPressed: () => _onButtonPressed(index),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(button.image, height: MediaQuery.of(context).size.height/14),
+                  const SizedBox(height: 10),
+                  Text(
+                      button.name,
+                      style: const TextStyle(fontSize: 15, color: Colors.black)
+                  ),
+                ],
+              ),
+            ),
+          )).values.toList(),
+        ),
+    )
   ];
 
   StepState _stepState (int step) {
@@ -647,6 +1229,16 @@ class  _SingupviewState extends State<Singupview>{
     } else {
       return StepState.indexed;
     }
+  }
+
+  void _onButtonPressed(int index) {
+    setState(() {
+      if (_selectedButtonA == index) {
+        _selectedButtonA = -1;
+      } else {
+        _selectedButtonA = index;
+      }
+    });
   }
 
   bool validateEmail(String value) {
@@ -663,7 +1255,7 @@ class  _SingupviewState extends State<Singupview>{
   void pushUp (String mensaje) {
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          duration: const Duration(seconds: 1),
+          duration: const Duration(seconds: 3),
           content: Container(
             padding: const EdgeInsets.all(16),
             height: 50,
@@ -684,8 +1276,33 @@ class  _SingupviewState extends State<Singupview>{
     );
   }
 
+  void clean () {
+    correoCtrl.clear();
+    passwordCtrl.clear();
+    nombreCtrl.clear();
+    apellidoCtrl.clear();
+    bornCtrl.clear();
+    dateDCtrl.clear();
+    hiperCtrl.clear();
+    normCtrl.clear();
+    hipoCtrl.clear();
+    carboOCtrl.clear();
+    pesoCtrl.clear();
+    alturaCtrl.clear();
+    ratioCtrl.clear();
+    senbCtrl.clear();
+    ctrHoraInsulinL.clear();
+    horaInicioDesayunoCtrl.clear();
+    horaFinalDesayunoCtrl.clear();
+    horaInicioAlmuerzoCtrl.clear();
+    horaFinalAlmuerzoCtrl.clear();
+    horaInicioCenaCtrl.clear();
+    horaFinalCenaCtrl.clear();
+  }
+
   @override
   Widget build(BuildContext context){
+    
     return Scaffold(
       backgroundColor: ColorsGenerals().lightgrey,
         appBar: AppBar(
@@ -715,103 +1332,201 @@ class  _SingupviewState extends State<Singupview>{
                       return const Center(child: CircularProgressIndicator());
                         break;
                       case Singuptatus.success:
-                      return Container(
-                        padding: const EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                        ),
-                          child: Stepper(
-                            currentStep: _currentStep,
-                            onStepContinue: () {
-                              final isLastStep = _currentStep == getSteps().length - 1;
-                              if(isLastStep) {
-                                //Boton con confirmar, guardar datos enviarlos a back y limpiar campos
-                              } else if (_currentStep == 0){
-                                if (correoCtrl.text.isEmpty){
-                                  pushUp("Ingrese un correo");
-                                } else if (!validateEmail(correoCtrl.text)) {
-                                  pushUp("Debe ingresar un correo valido");
-                                } else {
-                                  setState(() => _currentStep += 1);
-                                }
-                              } else if (_currentStep == 2) {
-                                if(passwordCtrl.text.isEmpty || passwordCtrl.text.length < 7){
-                                  pushUp("Ingrese una contraseña valida");
-                                } else {
-                                  setState(() => _currentStep += 1);
-                                }
-                              } else if (_currentStep == 3) {
-                                if(nombreCtrl.text.isEmpty || apellidoCtrl.text.isEmpty || dateDCtrl.text.isEmpty || bornCtrl.text.isEmpty) {
-                                  pushUp("Complete todo los campos por favor");
-                                } else {
-                                  setState(() => _currentStep += 1);
-                                }
-                              } else if (_currentStep == 7) {
-                                if(hiperCtrl.text.isEmpty || normCtrl.text.isEmpty || hipoCtrl.text.isEmpty) {
-                                  pushUp("Complete todos los campos por favor");
-                                } else {
-                                  final nHiper = int.tryParse(hiperCtrl.text);
-                                  final nNorm = int.tryParse(normCtrl.text);
-                                  final nHipo = int.tryParse(hipoCtrl.text);
-
-                                  if(nHiper! < 1 || nHiper > 520 || nNorm! < 1 || nNorm > 520 || nHipo! < 1 || nHipo > 520) {
-                                    pushUp("Los valores deben estar entre 1 y 520");
-                                  } else {
-                                    setState(() => _currentStep += 1);
-                                  }
-                                }
-                              } else if(_currentStep == 8) {
-                                if(pesoCtrl.text.isEmpty) {
-                                  pushUp("Ingrese su peso corporal por favor");
-                                } else {
-                                  setState(() => _currentStep += 1);
-                                }
-                              } else if (_currentStep == 9) {
-                                if(alturaCtrl.text.isEmpty) {
-                                  pushUp("Ingrese su altura corporal por favor");
-                                } else {
-                                  final height = int.tryParse(alturaCtrl.text);
-                                  if(height! < 40 || height > 300) {
-                                    pushUp("Ingrese una altura corporal valida");
-                                  } else {
-                                    setState(() => _currentStep += 1);
-                                  }
-                                }
-                              } else {
-                                setState(() => _currentStep += 1);
-                              }
-                            },
-                            onStepCancel: () {
-                              _currentStep == 0 ? null : () => setState(()  => _currentStep -= 1);
-                            },
-                            controlsBuilder: (BuildContext context, ControlsDetails details) {
-                              final isLastStep = _currentStep == getSteps().length - 1;
-                              return Container(
-                                  margin: const EdgeInsets.symmetric(vertical: 20),
-                                  child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: details.onStepContinue,
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                                            elevation: 8, // elevación de la sombra
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(20), // radio de la esquina redondeada
-                                            ),
-                                            backgroundColor: Colors.red, // color de fondo
+                      return SingleChildScrollView(
+                          child: Container(
+                              padding: const EdgeInsets.all(10),
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              child: Stepper(
+                                currentStep: _currentStep,
+                                onStepContinue: () async {
+                                  final isLastStep = _currentStep == getSteps().length - 1;
+                                  if(isLastStep) {
+                                    usuario.physicalctivity = _selectedButtonA;
+                                    var response = await context.read<SingupCubit>().signUp(usuario);
+                                    if (response.estatus){
+                                      Card(
+                                        color: Colors.blueGrey[100],
+                                        child: Container(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                response.message,
+                                                style: TextStyle(fontSize: 20.0),
+                                              ),
+                                              SizedBox(height: 16.0),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  ElevatedButton(
+                                                    child: Text('Continuar', style: TextStyle(color: Colors.white)),
+                                                    onPressed: (){
+                                                      Navigator.pushAndRemoveUntil(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                          builder: (context) =>
+                                                          Loginpage()),
+                                                      (Route<dynamic> route) => false,
+                                                      );
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                          child: Text(isLastStep ? 'Confirmar' : 'Continuar', style: const TextStyle(fontSize: 17),),
                                         ),
-                                        const SizedBox(width: 12,)
-                                      ]
-                                  )
-                              );
-                            },
-                            steps: getSteps(),
-                          )
+                                      );
+                                    } else {
+                                      pushUp(response.message);
+                                    }
+                                    //Boton con confirmar, guardar datos enviarlos a back y limpiar campos
+                                  } else if (_currentStep == 0){
+                                    if (correoCtrl.text.isEmpty){
+                                      pushUp("Ingrese un correo");
+                                    } else if (!validateEmail(correoCtrl.text)) {
+                                      pushUp("Debe ingresar un correo valido");
+                                    } else {
+                                      usuario.email = correoCtrl.text.toString();
+                                      setState(() => _currentStep += 1);
+                                    }
+                                  } else if (_currentStep == 2) {
+                                    if(passwordCtrl.text.isEmpty || passwordCtrl.text.length < 7){
+                                      pushUp("Ingrese una contraseña valida");
+                                    } else {
+                                      usuario.password = passwordCtrl.text.toString();
+                                      setState(() => _currentStep += 1);
+                                    }
+                                  } else if (_currentStep == 3) {
+                                    if(nombreCtrl.text.isEmpty || apellidoCtrl.text.isEmpty || dateDCtrl.text.isEmpty || bornCtrl.text.isEmpty) {
+                                      pushUp("Complete todo los campos por favor");
+                                    } else if(newDateD!.isBefore(newDateN!)) {
+                                      pushUp("La fecha de  diagnostico no puede ser antes de la de nacimiento");
+                                    } else {
+                                      usuario.nombre = "${nombreCtrl.text} ${apellidoCtrl.text}";
+                                      usuario.fechaNacimiento = bornCtrl.text.toString();
+                                      usuario.fechaDiagnostico = dateDCtrl.text.toString();
+                                      int nac = newDateN!.year - DateTime.now().year;
+                                      usuario.edad = nac;
+                                      usuario.genero = _sexTypeEnum.toString();
+                                      setState(() => _currentStep += 1);
+                                    }
+                                  } else if (_currentStep == 4) {
+                                    usuario.tipoDiabetes = "Tipo 1";
+                                    setState(() => _currentStep += 1);
+                                  } else if (_currentStep == 5) {
+                                    usuario.tipoTerapia = "Insulina";
+                                    setState(() => _currentStep += 1);
+                                  } else if (_currentStep == 6) {
+                                    if(_selectMed == 0){
+                                      usuario.infoAdicional = "Medicamenos";
+                                    } else {
+                                      usuario.infoAdicional = "Ninguna";
+                                    }
+                                    setState(() => _currentStep += 1);
+                                  } else if (_currentStep == 7) {
+                                    if(hiperCtrl.text.isEmpty || normCtrl.text.isEmpty || hipoCtrl.text.isEmpty || carboOCtrl.text.isEmpty) {
+                                      pushUp("Complete todos los campos por favor");
+                                    } else {
+                                      final nHiper = int.tryParse(hiperCtrl.text);
+                                      final nNorm = int.tryParse(normCtrl.text);
+                                      final nHipo = int.tryParse(hipoCtrl.text);
+
+                                      if(nHiper! < 1 || nHiper > 520 || nNorm! < 1 || nNorm > 520 || nHipo! < 1 || nHipo > 520) {
+                                        pushUp("Los valores deben estar entre 1 y 520");
+                                      } else {
+                                        usuario.hyper = nHiper;
+                                        usuario.estable = nNorm;
+                                        usuario.hipo = nHipo;
+                                        usuario.objective_carbs = int.tryParse(carboOCtrl.text)!;
+                                        setState(() => _currentStep += 1);
+                                      }
+                                    }
+                                  } else if(_currentStep == 8) {
+                                    if(pesoCtrl.text.isEmpty) {
+                                      pushUp("Ingrese su peso corporal por favor");
+                                    } else {
+                                      usuario.peso = double.tryParse(pesoCtrl.text)!;
+                                      setState(() => _currentStep += 1);
+                                    }
+                                  } else if (_currentStep == 9) {
+                                    if(alturaCtrl.text.isEmpty) {
+                                      pushUp("Ingrese su altura corporal por favor");
+                                    } else {
+                                      final height = int.tryParse(alturaCtrl.text);
+                                      if(height! < 40 || height > 300) {
+                                        pushUp("Ingrese una altura corporal valida");
+                                      } else {
+                                        usuario.estatura = double.tryParse(alturaCtrl.text)!;
+                                        setState(() => _currentStep += 1);
+                                      }
+                                    }
+                                  } else if (_currentStep == 10){
+                                    if(ratioCtrl.text.isEmpty || senbCtrl.text.isEmpty){
+                                      pushUp("Complete todos los campos por favor");
+                                    } else {
+                                      usuario.rate = int.tryParse(ratioCtrl.text)!;
+                                      usuario.sensitivity = double.tryParse(senbCtrl.text)!;
+                                      setState(() => _currentStep += 1);
+                                    }
+                                  } else if (_currentStep == 11){
+                                    if(ctrHoraInsulinL.text.isEmpty){
+                                      pushUp("Complete todos los campos por favor");
+                                    } else {
+                                      usuario.precis = ctrHoraInsulinL.text;
+                                      usuario.insulinR = Insulin(1, "NovoRapid Aspart", "Bolo", 0.5, 4);
+                                      usuario.insulinL = Insulin(2, "Lantus Glargina", "Basal", 1.0, 24);
+                                      setState(() => _currentStep += 1);
+                                    }
+                                  } else if (_currentStep == 12){
+                                    if(horaInicioDesayunoCtrl.text.isEmpty || horaFinalDesayunoCtrl.text.isEmpty || horaInicioAlmuerzoCtrl.text.isEmpty || horaFinalAlmuerzoCtrl.text.isEmpty || horaInicioCenaCtrl.text.isEmpty || horaFinalCenaCtrl.text.isEmpty){
+                                      pushUp("Complete todos los campos por favor");
+                                    } else {
+                                      usuario.breakfast_start = horaInicioDesayunoCtrl.text.toString();
+                                      usuario.breakfast_end = horaFinalDesayunoCtrl.text.toString();
+                                      usuario.lunch_start = horaInicioAlmuerzoCtrl.text.toString();
+                                      usuario.lunch_end = horaFinalAlmuerzoCtrl.text.toString();
+                                      usuario.dinner_start = horaInicioCenaCtrl.text.toString();
+                                      usuario.dinner_end = horaFinalCenaCtrl.text.toString();
+                                      setState(() => _currentStep += 1);
+                                    }
+                                  } else {
+                                    setState(() => _currentStep += 1);
+                                  }
+                                },
+                                onStepCancel: () {
+                                  _currentStep == 0 ? null : () => setState(()  => _currentStep -= 1);
+                                },
+                                controlsBuilder: (BuildContext context, ControlsDetails details) {
+                                  final isLastStep = _currentStep == getSteps().length - 1;
+                                  return Container(
+                                      margin: const EdgeInsets.symmetric(vertical: 20),
+                                      child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: details.onStepContinue,
+                                              style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                                elevation: 8, // elevación de la sombra
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(20), // radio de la esquina redondeada
+                                                ),
+                                                backgroundColor: Colors.red, // color de fondo
+                                              ),
+                                              child: Text(isLastStep ? 'Confirmar' : 'Continuar', style: const TextStyle(fontSize: 17),),
+                                            ),
+                                            const SizedBox(width: 12,)
+                                          ]
+                                      )
+                                  );
+                                },
+                                steps: getSteps(),
+                              )
+                          ),
                       );
                         break;
                       case Singuptatus.error:
