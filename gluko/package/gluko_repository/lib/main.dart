@@ -1,4 +1,6 @@
+import 'package:gluko_repository/gluko_repository.dart';
 import 'package:gluko_repository/src/Domain/allfood_repository.dart';
+import 'package:gluko_repository/src/Domain/emergency_repository.dart';
 import 'package:gluko_repository/src/Domain/foodBarcode_repository.dart';
 import 'package:gluko_repository/src/Domain/signUp_repository.dart';
 import 'package:gluko_repository/src/models/ResponseSignUp.dart';

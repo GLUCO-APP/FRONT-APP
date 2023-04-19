@@ -5,4 +5,7 @@ class Routing{
   String registerPlate = "plate";
   String foodBarcode = "/codebar";
   String createUser = '/user';
+  String emergency = "/emergency";
+  String report = "/report";
+  String infoUser = "/user";
 }

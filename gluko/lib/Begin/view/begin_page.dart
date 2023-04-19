@@ -250,7 +250,7 @@ class  _beginviewState extends State<beginview>{
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              width: MediaQuery.of(context).size.width /3,
+                              width: MediaQuery.of(context).size.width /4,
                               height: MediaQuery.of(context).size.height /7,
                               decoration: BoxDecoration(
                                 image: DecorationImage(

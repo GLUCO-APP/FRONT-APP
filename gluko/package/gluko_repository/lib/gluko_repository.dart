@@ -13,3 +13,8 @@ export 'src/Domain/foodBarcode_repository.dart';
 export 'src/Domain/signUp_repository.dart';
 export 'src/models/ResponseSignUp.dart';
 export 'src/models/user.dart';
+export 'src/Domain/emergency_repository.dart';
+export 'src/models/EmergencyDetail.dart';
+export 'src/models/PlateResponse.dart';
+export 'src/models/ReportRequest.dart';
+export 'src/Domain/registerReport_repository.dart';

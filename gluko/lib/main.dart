@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gluko/login/view/login_page.dart';
-import 'package:flutter/services.dart';
-
-import 'login/view/splashScreen.dart';
 
 
 void main()  {
