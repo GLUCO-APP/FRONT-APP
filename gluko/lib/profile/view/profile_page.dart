@@ -152,7 +152,6 @@ Future<void> showMyPopupEditName(BuildContext context) async {
                               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                               backgroundColor: ColorsGenerals().red, // color de fondo
                             ),
-
                           ),
                         ],
                       )
