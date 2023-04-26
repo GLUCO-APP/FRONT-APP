@@ -26,7 +26,9 @@ var peso = "70";
 var altura = "175";
 var sensibilidad = "40";
 var ratio = "14";
-var tipoinsulina = "175";
+var insulinaBolo = "";
+var insulinaBasal = "";
+var horaBasal = "";
 User user = User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "");
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
 final nameCtrl = TextEditingController();
@@ -62,13 +64,13 @@ Future<void> showMyPopupEditName(BuildContext context) async {
                       height: MediaQuery.of(context).size.height/2.8,
                       decoration: BoxDecoration(
                         color: ColorsGenerals().whith,
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderRadius: const BorderRadius.all(Radius.circular(20)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 2,
                             blurRadius: 7,
-                            offset: Offset(-5, 6),
+                            offset: const Offset(-5, 6),
                           )
                         ],
                       ),
@@ -103,9 +105,9 @@ Future<void> showMyPopupEditName(BuildContext context) async {
                               controller: meilCtrl,
                               keyboardType: TextInputType.emailAddress,
                               cursorColor: Colors.black,
-                              style: TextStyle(color: Colors.black, fontSize: 15),
+                              style: const TextStyle(color: Colors.black, fontSize: 15),
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.all(10),
+                                contentPadding: const EdgeInsets.all(10),
                                 filled: true,
                                 hintText: correo,
                                 errorText: meilCtrl.text.isEmpty || meilCtrl.text.length > 10 ? null : 'correo invalido',
@@ -124,9 +126,9 @@ Future<void> showMyPopupEditName(BuildContext context) async {
                               controller: edadCtrl,
                               keyboardType: TextInputType.number,
                               cursorColor: Colors.black,
-                              style: TextStyle(color: Colors.black, fontSize: 15),
+                              style: const TextStyle(color: Colors.black, fontSize: 15),
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.all(10),
+                                contentPadding: const EdgeInsets.all(10),
                                 filled: true,
                                 hintText: edad,
                                 errorText: edadCtrl.text.isEmpty || edadCtrl.text.length < 2 ? null : 'Edad invalido',
@@ -141,17 +143,17 @@ Future<void> showMyPopupEditName(BuildContext context) async {
                           ElevatedButton(
                             onPressed: () {
                             },
-                            child: Text("Guardar Cambios",
-                              style: TextStyle(color: ColorsGenerals().whith),),
                             style: ElevatedButton.styleFrom(
                               elevation: 8, // elevación de la sombra
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                     30), // radio de la esquina redondeada
                               ),
-                              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                               backgroundColor: ColorsGenerals().red, // color de fondo
                             ),
+                            child: Text("Guardar Cambios",
+                              style: TextStyle(color: ColorsGenerals().whith),),
 
                           ),
                         ],
@@ -189,7 +191,7 @@ class  _profileviewState extends State<profileview>{
         elevation: 1,
         actions: [Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text(
+          children: const [Text(
             "Perfil   ",
             style: TextStyle(color: Colors.black, fontSize: 22),
           )
@@ -201,7 +203,7 @@ class  _profileviewState extends State<profileview>{
         builder: (context, states) {
           switch (states.status) {
             case profilestatus.loading:
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
               break;
             case profilestatus.success:
               user = context.read<ProfileCubit>().getUser();
@@ -217,18 +219,20 @@ class  _profileviewState extends State<profileview>{
                 altura = "${user.estatura}";
                 sensibilidad = "${user.sensitivity}";
                 ratio = "${user.rate}";
-                tipoinsulina = "175";
+                insulinaBolo = user.insulinR.name;
+                insulinaBasal = user.insulinL.name;
+                horaBasal = user.precis;
               }
               return ScrollConfiguration(
                 behavior: const ScrollBehavior().copyWith(
-                    physics: BouncingScrollPhysics() // Establecer el color de la animación de desplazamiento
+                    physics: const BouncingScrollPhysics() // Establecer el color de la animación de desplazamiento
                 ),
                 child: SingleChildScrollView(
                   child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height/1.1,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.white,
                       ),
                       child: Column(
@@ -238,18 +242,18 @@ class  _profileviewState extends State<profileview>{
                           Stack(
                             children: [
                               Container(
-                                padding: EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
                                 height:  MediaQuery.of(context).size.height/6,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   color: ColorsGenerals().lightgrey,
-                                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                                  borderRadius: const BorderRadius.all(Radius.circular(30)),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.2),
                                       spreadRadius: 1,
                                       blurRadius: 2,
-                                      offset: Offset(0, 3),
+                                      offset: const Offset(0, 3),
                                     ),
                                   ],
                                 ),
@@ -277,18 +281,18 @@ class  _profileviewState extends State<profileview>{
                           Stack(
                             children: [
                               Container(
-                                padding: EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(20),
                                 height:  MediaQuery.of(context).size.height/6,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   color: ColorsGenerals().lightgrey,
-                                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                                  borderRadius: const BorderRadius.all(Radius.circular(30)),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.2),
                                       spreadRadius: 1,
                                       blurRadius: 2,
-                                      offset: Offset(0, 3),
+                                      offset: const Offset(0, 3),
                                     ),
                                   ],
                                 ),
@@ -296,7 +300,7 @@ class  _profileviewState extends State<profileview>{
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     Container(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         borderRadius: BorderRadius.all(Radius.circular(30)),
                                         gradient: LinearGradient(
                                           colors: [
@@ -356,18 +360,18 @@ class  _profileviewState extends State<profileview>{
                           Stack(
                             children: [
                               Container(
-                                padding: EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
                                 height:  MediaQuery.of(context).size.height/11,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   color: ColorsGenerals().lightgrey,
-                                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                                  borderRadius: const BorderRadius.all(Radius.circular(30)),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.2),
                                       spreadRadius: 1,
                                       blurRadius: 2,
-                                      offset: Offset(0, 3),
+                                      offset: const Offset(0, 3),
                                     ),
                                   ],
                                 ),
@@ -402,22 +406,22 @@ class  _profileviewState extends State<profileview>{
                               ),
                             ],
                           ),
-                          Text("  Insulina", style: TextStyle(color: ColorsGenerals().black, fontSize: 17,fontWeight: FontWeight.w400),),
+                          Text("  Datos medicos", style: TextStyle(color: ColorsGenerals().black, fontSize: 17,fontWeight: FontWeight.w400),),
                           Stack(
                             children: [
                               Container(
-                                padding: EdgeInsets.all(10),
-                                height:  MediaQuery.of(context).size.height/5,
+                                padding: const EdgeInsets.all(10),
+                                height:  MediaQuery.of(context).size.height/4,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   color: ColorsGenerals().lightgrey,
-                                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                                  borderRadius: const BorderRadius.all(Radius.circular(30)),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.2),
                                       spreadRadius: 1,
                                       blurRadius: 2,
-                                      offset: Offset(0, 3),
+                                      offset: const Offset(0, 3),
                                     ),
                                   ],
                                 ),
@@ -429,13 +433,13 @@ class  _profileviewState extends State<profileview>{
                                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
-                                        Text("${sensibilidad}", style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
+                                        Text(sensibilidad, style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
                                         Container(
                                           width: 1,
                                           height: MediaQuery.of(context).size.height/12,
                                           color: ColorsGenerals().darkgrey,
                                         ),
-                                        Text("${ratio}", style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
+                                        Text(ratio, style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
                                       ],
                                     ),
                                     Container(
@@ -444,8 +448,37 @@ class  _profileviewState extends State<profileview>{
                                       color: ColorsGenerals().darkgrey,
                                     ),
                                     Container(
-                                      padding: EdgeInsets.only(top: 26),
-                                      child: Text("Prueba", style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
+                                      padding: const EdgeInsets.all(17),
+                                      child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("Bolo : ", style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w500),),
+                                                Text(insulinaBolo, style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("Basal : ", style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w500),),
+                                                Text(insulinaBasal, style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("Hora aplicación basal : ", style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w500),),
+                                                Text(horaBasal, style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
+                                              ],
+                                            ),
+                                          ]
+                                      ),
                                     )
                                   ],
                                 ),
@@ -468,7 +501,7 @@ class  _profileviewState extends State<profileview>{
                               Positioned(
                                 top: MediaQuery.of(context).size.height/10,
                                 left: 0,
-                                child: Text("   Tipo de Insulina: ", style: TextStyle(color: ColorsGenerals().black, fontSize: 16,fontWeight: FontWeight.w500),),
+                                child: Text("   Insulina: ", style: TextStyle(color: ColorsGenerals().black, fontSize: 16,fontWeight: FontWeight.w500),),
                               )
                             ],
                           ),
