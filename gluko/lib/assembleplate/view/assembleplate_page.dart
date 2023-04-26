@@ -27,18 +27,6 @@ class assembleplatepage extends StatelessWidget {
   }
 }
 
-
-class Posiciones{
-  final double top;
-  final double left;
-
-  Posiciones({
-    required this.top,
-    required this.left
-});
-}
-
-
 Future<bool> checkCameraPermissions() async {
   // Verifica si ya se han concedido los permisos de la cámara
   PermissionStatus cameraPermissionStatus = await Permission.camera.status;

@@ -48,6 +48,7 @@ dependencies:
   geocoding: ^2.1.0
   flutter_barcode_scanner:
   flutter_launcher_icons: ^0.13.0
+  fl_chart: ^0.62.0
 
 dev_dependencies:
   flutter_test:

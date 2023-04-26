@@ -20,3 +20,5 @@ export 'src/models/ReportRequest.dart';
 export 'src/Domain/registerReport_repository.dart';
 export 'src/Domain/infoUser_repository.dart';
 export 'src/models/insulin.dart';
+export 'src/models/plateRecomend.dart';
+export 'src/models/positionPlate.dart';

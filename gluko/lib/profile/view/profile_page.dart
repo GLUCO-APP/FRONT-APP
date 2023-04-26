@@ -154,7 +154,6 @@ Future<void> showMyPopupEditName(BuildContext context) async {
                             ),
                             child: Text("Guardar Cambios",
                               style: TextStyle(color: ColorsGenerals().whith),),
-
                           ),
                         ],
                       )

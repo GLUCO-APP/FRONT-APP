@@ -35,6 +35,7 @@ class  _emergencyviewState extends State<emergencyview>{
     if(response){
       glucosa.clear();
       setState(() {
+        estado = 4;
         visible = false;
       });
       Fluttertoast.showToast(
