@@ -5,11 +5,12 @@ import 'package:meta/meta.dart';
 part 'singup_state.dart';
 
 class SingupCubit extends Cubit<SingupState> {
-  SingupCubit(this.repository) : super(SingupState());
+  SingupCubit(this.repository, this.emailRepository) : super(SingupState());
   Future<void> Iniciar() async{
     emit(state.confirmar() as SingupState);
   }
   SignUpRepository repository;
+  EmailValidateRepository emailRepository;
 
   Future<ResponseSignUp> signUp (User usuario) async {
     emit(state.copywhit(status: Singuptatus.loading));
@@ -20,6 +21,19 @@ class SingupCubit extends Cubit<SingupState> {
       return response;
     } else {
       emit(state.copywhit(status: Singuptatus.success));
+      return response;
+    }
+  }
+
+  Future<ResponseValidate> codeValidate (String email) async {
+    emit(state.copywhit(status: Singuptatus.loading));
+    ResponseValidate response = await emailRepository.validateC(email);
+    print(response.code);
+    if(response.estatus) {
+      emit(state.copywhit(status: Singuptatus.success));
+      return response;
+    } else {
+      emit(state.copywhit(status: Singuptatus.error));
       return response;
     }
   }

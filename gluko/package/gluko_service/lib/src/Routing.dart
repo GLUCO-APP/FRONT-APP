@@ -8,4 +8,5 @@ class Routing{
   String emergency = "/emergency";
   String report = "/report";
   String infoUser = "/user";
+  String validateEmail = "/user";
 }

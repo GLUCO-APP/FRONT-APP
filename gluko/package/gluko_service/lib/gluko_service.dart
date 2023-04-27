@@ -11,3 +11,4 @@ export 'src/Data/signUp_service.dart';
 export 'src/Data/emergency_service.dart';
 export 'src/Data/report_service.dart';
 export 'src/Data/infoUser_service.dart';
+export 'src/Data/emailValidate_service.dart';

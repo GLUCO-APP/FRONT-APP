@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gluko/profile/view/profile_page.dart';
 import 'package:gluko_repository/gluko_repository.dart';
@@ -23,7 +24,7 @@ class Singuppage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SingupCubit(SignUpRepository()),
+      create: (context) => SingupCubit(SignUpRepository(), EmailValidateRepository()),
       child: Singupview(),
     );
   }
@@ -47,7 +48,10 @@ class  _SingupviewState extends State<Singupview>{
 
   // primer paso
   final correoCtrl = TextEditingController();
-  //segundo paso
+  String code = '';
+  // segundo paso
+  final codeCtrl = TextEditingController();
+  // tercer paso
   final passwordCtrl = TextEditingController();
   String password = '';
   bool isPasswordVisible = true;
@@ -107,6 +111,8 @@ class  _SingupviewState extends State<Singupview>{
     // primer paso
     correoCtrl.addListener(() => setState(() {}));
     // segundo paso
+    codeCtrl.addListener(() => setState(() {}));
+    // tercer paso
     passwordCtrl.addListener(() => setState(() {}));
     // cuarto paso
     nombreCtrl.addListener(() => setState(() {}));
@@ -179,9 +185,35 @@ class  _SingupviewState extends State<Singupview>{
             'Codigo de verificación',
             style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)
         ),
-        content: const SizedBox(
-          width: 110,
-          height: 100,
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
+            TextFormField(
+              controller: codeCtrl,
+              keyboardType: TextInputType.number,
+              cursorColor: Colors.black,
+              style: const TextStyle(color: Colors.black, fontSize: 15),
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(6),
+                FilteringTextInputFormatter.allow(RegExp(r'\d')),
+              ],
+              decoration: InputDecoration(
+                filled: true,
+                labelText: 'Codigo',
+                helperText: ('Ingrese el codigo que llego a su correo'),
+                helperStyle: const TextStyle(fontSize: 11),
+                contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
+                suffixIcon: codeCtrl.text.isEmpty ? Container(width: 0) :
+                IconButton(icon: const Icon(Icons.close, color: Colors.black45), onPressed: () => codeCtrl.clear(),),
+                border: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide.none
+                ),
+              ),
+              textInputAction: TextInputAction.done,
+            ),
+          ],
         )
     ),
     Step(
@@ -1278,6 +1310,7 @@ class  _SingupviewState extends State<Singupview>{
 
   void clean () {
     correoCtrl.clear();
+    codeCtrl.clear();
     passwordCtrl.clear();
     nombreCtrl.clear();
     apellidoCtrl.clear();
@@ -1391,9 +1424,21 @@ class  _SingupviewState extends State<Singupview>{
                                       pushUp("Debe ingresar un correo valido");
                                     } else {
                                       usuario.email = correoCtrl.text.toString();
+                                      // Falta implementar endpoint de verificacion
+                                      //var response = await context.read<SingupCubit>().codeValidate(usuario.email);
+                                      //code = response.code;
                                       setState(() => _currentStep += 1);
                                     }
-                                  } else if (_currentStep == 2) {
+                                  } else if (_currentStep == 1) {
+                                    if (codeCtrl.text.isEmpty){
+                                      pushUp("Ingrese el codigo");
+                                      /*} else if (codeCtrl.text != code) {
+                                      pushUp("Codigo incorrecto, intente nuevamente");
+                                      codeCtrl.clear();*/
+                                    } else {
+                                      setState(() => _currentStep += 1);
+                                    }
+                                  }else if (_currentStep == 2) {
                                     if(passwordCtrl.text.isEmpty || passwordCtrl.text.length < 7){
                                       pushUp("Ingrese una contraseña valida");
                                     } else {

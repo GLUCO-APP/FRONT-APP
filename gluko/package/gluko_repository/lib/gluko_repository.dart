@@ -22,3 +22,5 @@ export 'src/Domain/infoUser_repository.dart';
 export 'src/models/insulin.dart';
 export 'src/models/plateRecomend.dart';
 export 'src/models/positionPlate.dart';
+export 'src/Domain/emailValidate_repository.dart';
+export 'src/models/ResponseValidate.dart';
