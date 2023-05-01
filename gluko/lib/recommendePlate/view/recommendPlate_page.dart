@@ -1,10 +1,13 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:gluko_repository/gluko_repository.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import '../../calculateinsulin/view/calculateinsulina_page.dart';
 import '../../colors/colorsGenerals.dart';
 import '../cubit/recomemende_plate_cubit.dart';
@@ -15,36 +18,200 @@ class RecomemendePlatepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => RecomemendePlateCubit()..getCurrentLocation(),
-      child: RecomemendePlateview(plate),
+      create: (context) => RecomemendePlateCubit(plate)..getCurrentLocation(PointLatLng(plate.latitude, plate.longitude)),
+      child: RecomemendePlateview(),
     );
   }
 }
 
 class RecomemendePlateview extends StatefulWidget {
-  PlateRecomend plate;
-  RecomemendePlateview(this.plate);
   @override
-  State<RecomemendePlateview> createState() => _RecomemendePlateviewState(plate);
+  State<RecomemendePlateview> createState() => _RecomemendePlateviewState();
 }
 
 var platoLatitud = 0.0;
 var platoLongitud = 0.0;
 var miLatitud = 0.0;
 var miLongitud = 0.0;
+var verMapa = true;
 PlateRecomend plato = PlateRecomend([], 0, 0, 0, 0, "", 0, 0, "", "", 0);
+PlateRecomend plate = PlateRecomend([], 0, 0, 0, 0, "", 0, 0, "", "", 0);
 
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
 class _RecomemendePlateviewState extends State<RecomemendePlateview>{
   var glucosa = TextEditingController();
-  PlateRecomend plate;
-  _RecomemendePlateviewState(this.plate);
-  Set<Marker> _markers = {};
+  late GoogleMapController _mapController;
   @override
   void initState() {
     super.initState();
-    plato = plate;
+    verMapa = true;
   }
+
+  void CalculoInsulina() async{
+    List<plateId> foods = plato.foods.map((food) => plateId(food.id)).toList();
+    var gluco = glucosa.text.toString();
+    print(gluco);
+    glucosa.clear();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                calculateinsuline_page(info: DetailInsulin(plato.Carbohydrates, gluco, plato.Proteins, plato.Fats), foods: foods,))
+    );
+  }
+
+  void centerMapBetweenPoints() {
+    LatLngBounds bounds = LatLngBounds(
+      southwest: LatLng(
+        min(miLatitud, plate.latitude),
+        min(miLongitud, plate.longitude),
+      ),
+      northeast: LatLng(
+        max(miLatitud, plate.latitude),
+        max(miLongitud, plate.longitude),
+      ),
+    );
+    print("${min(miLatitud, plate.latitude)} ,${min(miLongitud, plate.longitude)} ,  ${max(miLatitud, plate.latitude)},  ${max(miLongitud, plate.longitude)}");
+
+    if (_mapController != null){
+      _mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+    }
+  }
+
+  recibirGlucosa(BuildContext context) {
+    return showModalBottomSheet(
+        shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(100.0),
+            topRight: Radius.circular(100.0),
+          ),
+        ),
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(color: ColorsGenerals().whith,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text("Registra tu nivel de Glucosa", textAlign: TextAlign.center,style: TextStyle(
+                          color: ColorsGenerals().black,
+                          fontWeight: FontWeight.w300,
+                          fontSize: MediaQuery
+                              .of(context)
+                              .size
+                              .height / 30),),
+                      Form(
+                        key: formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            TextFormField(
+                              maxLength: 3,
+                              controller: glucosa,
+                              autofocus: true,
+                              keyboardType: TextInputType.number,
+                              cursorColor: ColorsGenerals().black,
+                              style: TextStyle(color: ColorsGenerals().black),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: ColorsGenerals().lightgrey,
+                                hintText: 'Inserte Nivel de glucosa',
+                                hintStyle: TextStyle(color: ColorsGenerals().black),
+                                contentPadding:
+                                EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: BorderSide.none,
+                                ),
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: SvgPicture.asset("assets/Icons/glucometro.svg",color: ColorsGenerals().black,cacheColorFilter: false, width: MediaQuery.of(context).size.height/40,),
+                                )
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingrese su nivel de glucosa';
+                                }
+                                return null;
+                              },
+                            ),
+                            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  Navigator.pop(context);
+                                  CalculoInsulina();
+                                }
+                              },
+                              child: Text("Calculo Unidades",
+                                style: TextStyle(color: ColorsGenerals().whith, fontSize: 15),),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 8, // elevación de la sombra
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      30), // radio de la esquina redondeada
+                                ),
+                                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                backgroundColor: ColorsGenerals().red, // color de fondo
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
+        });
+  }
+
+  Set<Marker> _createMarket(){
+    Set<Marker> _markers = {};
+    _markers.add(
+      Marker(
+        markerId: MarkerId('Plato'),
+        position: LatLng(plato.latitude, plato.longitude),
+        infoWindow: InfoWindow(title: 'Plato'),
+      ),
+    );
+    _markers.add(
+      Marker(
+        markerId: MarkerId('Tu'),
+        position: LatLng(miLatitud, miLongitud),
+        infoWindow: InfoWindow(title: 'Tu'),
+      ),
+    );
+    return _markers;
+  }
+
+  void _onMapCreated(GoogleMapController controller){
+    _mapController = controller;
+    Timer(Duration(milliseconds: 100), () {
+      centerMapBetweenPoints();
+    });
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -54,17 +221,9 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
         padding: EdgeInsets.all(20),
         child: ElevatedButton(
           onPressed: () {
-            List<plateId> foods = plato.foods.map((food) => plateId(food.id)).toList();
-            if (formKey.currentState!.validate()) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          calculateinsuline_page(info: DetailInsulin(plato.Carbohydrates, glucosa.text, plato.Proteins, plato.Fats), foods: foods,))
-              );
-            }
+            recibirGlucosa(context);
           },
-          child: Text("Calculo Insulina",
+          child: Text("Comer Plato",
             style: TextStyle(color: ColorsGenerals().whith),),
           style: ElevatedButton.styleFrom(
             elevation: 8, // elevación de la sombra
@@ -88,6 +247,9 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                 .size
                 .height / 30,),
           onPressed: () {
+            setState(() {
+              verMapa = false;
+            });
             Navigator.pop(context);
           },
         ),
@@ -110,38 +272,10 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
               return Center(child: CircularProgressIndicator( color: ColorsGenerals().red,));
               break;
             case RecomemendePlatestatus.success:
-              GoogleMapController mapController;
-              void _onMapCreated(GoogleMapController controller) {
-                mapController = controller;
-                _markers.forEach((marker) {
-                  controller.showMarkerInfoWindow(marker.markerId);
-                });
-              }
+              plato = context.read<RecomemendePlateCubit>().plate;
+              plate = plato;
               miLatitud = context.read<RecomemendePlateCubit>().getMyPosition().latitude;
               miLongitud = context.read<RecomemendePlateCubit>().getMyPosition().longitude;
-              _markers.add(
-                Marker(
-                  markerId: MarkerId('Plato'),
-                  position: LatLng(plato.latitude, plato.longitude),
-                  infoWindow: InfoWindow(title: 'Plato'),
-                ),
-              );
-              _markers.add(
-                Marker(
-                  markerId: MarkerId('Tu'),
-                  position: LatLng(miLatitud, miLongitud),
-                  infoWindow: InfoWindow(title: 'Tu'),
-                ),
-              );
-              Polyline _polyline = Polyline(
-                polylineId: PolylineId('linea'),
-                color: Colors.red,
-                width: 3,
-                points: [
-                  LatLng(plato.latitude, plato.longitude),
-                  LatLng(miLatitud, miLongitud),
-                ],
-              );
               return ScrollConfiguration(
                 behavior: const ScrollBehavior().copyWith(
                     physics: BouncingScrollPhysics() // Establecer el color de la animación de desplazamiento
@@ -150,7 +284,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                   child: Container(
                     padding: EdgeInsets.all(20),
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height/1.2,
+                    height: MediaQuery.of(context).size.height/1.25,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -163,7 +297,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                           height: MediaQuery
                               .of(context)
                               .size
-                              .height / 3.2,
+                              .height / 2.1,
                           decoration: BoxDecoration(
                               color: ColorsGenerals().lightgrey,
                               borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -176,60 +310,22 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                                 ),
                               ]
                           ),
-                          child: GoogleMap(
+                          child: verMapa? GoogleMap(
                             initialCameraPosition: CameraPosition(
                               target: LatLng((miLatitud + plate.latitude) / 2, (miLongitud + plate.longitude) / 2),
                               zoom: 14,
                             ),
                             onMapCreated: _onMapCreated,
-                            markers: _markers,
-                            polylines: Set<Polyline>.of([_polyline]),
-                          ),
-                        ),
-                        Form(
-                          key: formKey,
-                          child: Container(
-                            padding: EdgeInsets.only(top:MediaQuery.of(context).size.height/40 ),
-                            height: MediaQuery.of(context).size.height/8,
-                            width: MediaQuery.of(context).size.width/1.2,
-                            child: TextFormField(
-                              maxLength: 3,
-                              controller: glucosa,
-                              keyboardType: TextInputType.number,
-                              cursorColor: ColorsGenerals().black,
-                              style: TextStyle(color: ColorsGenerals().black),
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorsGenerals().lightgrey,
-                                  hintText: 'Ingrese glucemia',
-                                  hintStyle: TextStyle(color: ColorsGenerals().black),
-                                  contentPadding:
-                                  EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  prefixIcon: Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: SvgPicture.asset("assets/Icons/glucometro.svg",color: ColorsGenerals().black,cacheColorFilter: false, width: MediaQuery.of(context).size.height/40,),
-                                  )
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Ingrese su nivel de glucosa';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
+                            markers: _createMarket(),
+                            polylines: {
+                              Polyline(
+                                polylineId: PolylineId(""),
+                                points: context.read<RecomemendePlateCubit>().polinateCordination,
+                                color: ColorsGenerals().red,
+                                width: 3,
+                              )
+                            },
+                          ):Container(),
                         ),
                         GestureDetector(
                           onTap: (){
@@ -329,24 +425,6 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                             ),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Descripcion:", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500, fontSize: 16)),
-                                Wrap(
-                                  direction: Axis.vertical,
-                                  spacing: 10,
-                                  children: [
-                                    Text(plate.Description, style: TextStyle( color: ColorsGenerals().black)),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
@@ -394,13 +472,31 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Descripcion:", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500, fontSize: 17)),
+                              Container(
+                                width: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width/1.3,
+                                child: Text(plate.Description, style: TextStyle( color: ColorsGenerals().black)),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
                       Text("Camida en plato", style: TextStyle(
                           color: ColorsGenerals().black,
                           fontWeight: FontWeight.w300,
                           fontSize: MediaQuery
                               .of(context)
                               .size
-                              .height / 30),),
+                              .height / 40),),
                       ScrollConfiguration(
                         behavior: const ScrollBehavior().copyWith(
                             physics: BouncingScrollPhysics() // Establecer el color de la animación de desplazamiento
@@ -410,7 +506,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                             height: MediaQuery
                                 .of(context)
                                 .size
-                                .height / 2.3,
+                                .height / 2.7,
                             width: MediaQuery
                                 .of(context)
                                 .size
@@ -590,4 +686,5 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
     }
     return widgets;
   }
+
 }

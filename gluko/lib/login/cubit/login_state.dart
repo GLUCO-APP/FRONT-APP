@@ -4,7 +4,7 @@ class LoginState {
   LoginState({
     this.email = "",
     this.pasword = "",
-    this.status = LoginStatestatus.success
+    this.status = LoginStatestatus.loading
   });
 
   final LoginStatestatus status;

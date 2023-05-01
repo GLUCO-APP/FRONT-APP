@@ -5,6 +5,7 @@ import 'package:gluko/colors/colorsGenerals.dart';
 import 'package:gluko_repository/gluko_repository.dart';
 import '../../forgetpassword/view/forgetpassword_page.dart';
 import '../../home/view/home_page.dart';
+import '../../notifications/pushNotification.dart';
 import '../../singup/view/singup_page.dart';
 import '../cubit/login_cubit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,7 +14,7 @@ class Loginpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(LoginRepository()),
+      create: (context) => LoginCubit(LoginRepository(), PercisteRepository())..isAutenticate(context),
       child: loginview(),
     );
   }
@@ -186,6 +187,7 @@ class _loginviewviewState extends State<loginview>{
                                         print(correo.text);
                                         var repnse =  await context.read<LoginCubit>().Login(correo.text, contrasena.text);
                                         if(repnse.estatus){
+                                          LocalNotificationService().initializeService();
                                           Navigator.pushAndRemoveUntil(
                                             context,
                                             MaterialPageRoute(

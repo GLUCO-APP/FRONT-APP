@@ -22,7 +22,7 @@ class calculateinsuline_page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CalculateinsulinCubit(RegisterPlateRepository(),RegisterReportRepository()),
+      create: (context) => CalculateinsulinCubit(RegisterPlateRepository(),RegisterReportRepository())..getInfoUser(),
       child: calculateinsulineview(info, foods),
     );
   }
@@ -45,19 +45,17 @@ var Descripcion = TextEditingController();
 bool compartir = false;
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-double CalculoUnidades(double glAct, double graCarbo){
-  double glucemiaObjetivo = 120;
+double CalculoUnidades(double glAct, double graCarbo, User use){
+  double glucemiaObjetivo = use.estable.toDouble();
   double glucemiaActual = glAct;
-  double sensibilidad = 40;
+  double sensibilidad = use.sensitivity;
   double dosisCorreccion = (glucemiaObjetivo - glucemiaActual)/sensibilidad;
   double gramosCarbohidratos = graCarbo;
-  double ratioInsulina = 14;
+  double ratioInsulina = use.rate.toDouble();
   double dosisInsulina = gramosCarbohidratos/ratioInsulina;
   double unidInsulina =  dosisInsulina.abs()+dosisCorreccion.abs();
   return unidInsulina;
 }
-
-
 
 Future<bool> checkLocationPermission() async {
   final status = await Permission.locationWhenInUse.status;
@@ -262,7 +260,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text("Unidades \nde Insulina", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w300, fontSize: 40)),
-                            Text("${CalculoUnidades(double.parse(info.gluco), info.carbs).toInt()}U", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w300,fontSize: 40)),
+                            Text("${CalculoUnidades(double.parse(info.gluco), info.carbs, context.read<CalculateinsulinCubit>().infoUser()).toInt()}U", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w300,fontSize: 40)),
                           ],
                         ),
                         Container(
@@ -372,7 +370,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text("Si desea compartir su plato para \notros usuarios agregue una \ndescripcion y la ubicacion donde \nse puede encontrar el plato", style: TextStyle( color: ColorsGenerals().black)),
+                            Text("Si desea compartir su plato para \notros usuarios. Agregue una \ndescripcion y la ubicacion donde \nse puede encontrar el plato", style: TextStyle( color: ColorsGenerals().black)),
                             Container(
                               width: MediaQuery.of(context).size.width /6,
                               height: MediaQuery.of(context).size.height /9,
@@ -392,9 +390,15 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                               CupertinoSwitch(
                                 value: compartir,
                                 onChanged: (newValue){
-                                  setState(() {
-                                    compartir = !compartir;
-                                  });
+                                  print(foods.length);
+                                  if(foods.length >= 5 && (vista == "Almuerzo"||vista == "Cena" || vista == "Desayuno")){
+                                    setState(() {
+                                      compartir = !compartir;
+                                    });
+                                  }else{
+                                    Fluttertoast.showToast(
+                                        msg: "Debe ser un plato fuerte para compartir", fontSize: 20);
+                                  }
                                 },
                                 trackColor: ColorsGenerals().darkgrey,
                                 activeColor: ColorsGenerals().red,
@@ -520,7 +524,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                       onPressed: () async {
                         if(compartir){
                           print("Direccion ${direccion.text}, Latitud ${_center.latitude} Longitud ${_center.longitude}");
-                          var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 1, _center.latitude,_center.longitude,direccion.text,Descripcion.text,"Sin titulo xd"),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs).toInt());
+                          var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 1, _center.latitude,_center.longitude,direccion.text,Descripcion.text,"Sin titulo xd"),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs,context.read<CalculateinsulinCubit>().infoUser()).toInt());
                            if(response){
                              Fluttertoast.showToast(
                                  msg: "Plato Registrado", fontSize: 20);
@@ -536,7 +540,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                                  msg: "Error al registrar plato Intenta Mas Tarde", fontSize: 20);
                            }
                         }else{
-                          var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 0, 0,0,"","",""),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs).toInt());
+                          var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 0, 0,0,"","",""),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs,context.read<CalculateinsulinCubit>().infoUser()).toInt());
                           print("Respuesta de registro ${response}");
                           if(response){
                             Fluttertoast.showToast(

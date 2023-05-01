@@ -27,8 +27,11 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(canvasColor: Colors.white, fontFamily: "GlukoFamily", brightness: Brightness.light, colorScheme: ColorScheme.light(primary: Colors.red)),
       home: Loginpage(),
-
     );
   }
 }
+
+
+
+
 

@@ -11,3 +11,7 @@ export 'src/Data/signUp_service.dart';
 export 'src/Data/emergency_service.dart';
 export 'src/Data/report_service.dart';
 export 'src/Data/infoUser_service.dart';
+export 'src/Data/actualState_service.dart';
+export 'src/Data/reportPDF_service.dart';
+export 'src/Data/Recomendation_service.dart';
+export 'src/Data/historialReports_service.dart';

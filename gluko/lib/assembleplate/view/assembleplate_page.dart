@@ -16,13 +16,11 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 
 class assembleplatepage extends StatelessWidget {
-  final String glucosa;
-  assembleplatepage({required this.glucosa});
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AssembleplateCubit(allfoodRepository(),fooBarcodeRepository())..getFoods(),
-      child: assembleplateview( glucosa: glucosa ,),
+      child: assembleplateview(),
     );
   }
 }
@@ -57,8 +55,6 @@ Future<bool> checkCameraPermissions() async {
 
 
 class assembleplateview extends StatefulWidget {
-  final String glucosa;
-  assembleplateview({required this.glucosa});
   @override
   State<assembleplateview> createState() => _assembleplateviewState();
 }
@@ -66,7 +62,7 @@ class assembleplateview extends StatefulWidget {
 
 
 var buscar = TextEditingController();
-String glucosa = "";
+var glucosa = TextEditingController();
 List<FoodDetail> foodsList = [];
 List<FoodDetail> prueba = [];
 
@@ -107,6 +103,20 @@ class _assembleplateviewState extends State<assembleplateview> {
       }
       plato.add(food);
     });
+  }
+
+  void armarplato() async{
+
+    var info = glucosa.text.toString();
+    print(info);
+    glucosa.clear();
+    List<plateId> foods = plato.map((food) => plateId(food.id)).toList();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                calculateinsuline_page(info: DetailInsulin(carbohidrato, info, proteina, grasas), foods: foods,))
+    );
   }
 
   AgregarAlimentoScaneado(BuildContext context, FoodDetail food) {
@@ -314,6 +324,114 @@ class _assembleplateviewState extends State<assembleplateview> {
               });
         });
   }
+
+  recibirGlucosa(BuildContext context) {
+    return showModalBottomSheet(
+        shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(100.0),
+            topRight: Radius.circular(100.0),
+          ),
+        ),
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(color: ColorsGenerals().whith,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text("Registra tu nivel de Glucosa", textAlign: TextAlign.center,style: TextStyle(
+                          color: ColorsGenerals().black,
+                          fontWeight: FontWeight.w300,
+                          fontSize: MediaQuery
+                              .of(context)
+                              .size
+                              .height / 30),),
+                      Form(
+                        key: formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            TextFormField(
+                              maxLength: 3,
+                              controller: glucosa,
+                              autofocus: true,
+                              keyboardType: TextInputType.number,
+                              cursorColor: ColorsGenerals().black,
+                              style: TextStyle(color: ColorsGenerals().black),
+                              decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: ColorsGenerals().lightgrey,
+                                  hintText: 'Inserte Nivel de glucosa',
+                                  hintStyle: TextStyle(color: ColorsGenerals().black),
+                                  contentPadding:
+                                  EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  prefixIcon: Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: SvgPicture.asset("assets/Icons/glucometro.svg",color: ColorsGenerals().black,cacheColorFilter: false, width: MediaQuery.of(context).size.height/40,),
+                                  )
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingrese su nivel de glucosa';
+                                }
+                                return null;
+                              },
+                            ),
+                            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  Navigator.pop(context);
+                                  armarplato();
+                                }
+                              },
+                              child: Text("Calculo Insulina",
+                                style: TextStyle(color: ColorsGenerals().whith, fontSize: 15),),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 8, // elevación de la sombra
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      30), // radio de la esquina redondeada
+                                ),
+                                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                backgroundColor: ColorsGenerals().red, // color de fondo
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
+        });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -324,7 +442,6 @@ class _assembleplateviewState extends State<assembleplateview> {
     carbohidrato = 0;
     verduar = 0;
     grasas = 0;
-    glucosa = widget.glucosa;
   }
   int p = 0;
   int selectedIndexPlato = -1;
@@ -340,15 +457,9 @@ class _assembleplateviewState extends State<assembleplateview> {
           padding: EdgeInsets.all(20),
           child: ElevatedButton(
             onPressed: () {
-              List<plateId> foods = plato.map((food) => plateId(food.id)).toList();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          calculateinsuline_page(info: DetailInsulin(carbohidrato, glucosa, proteina, grasas), foods: foods,))
-              );
+              recibirGlucosa(context);
             },
-            child: Text("Calculo Insulina",
+            child: Text("Confirmar",
               style: TextStyle(color: ColorsGenerals().whith),),
             style: ElevatedButton.styleFrom(
               elevation: 8, // elevación de la sombra

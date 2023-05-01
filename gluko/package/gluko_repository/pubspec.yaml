@@ -13,6 +13,10 @@ dependencies:
   gluko_service:
     path: "../gluko_service"
   shared_preferences: ^2.0.18
+  path_provider: ^2.0.5
+  pdf: ^3.6.0
+
+
 
 
 dev_dependencies:

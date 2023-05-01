@@ -346,6 +346,7 @@ class  _emergencyviewState extends State<emergencyview>{
                                     glucosa.clear();
                                     setState(() {
                                       visible = false;
+                                      estado = 3;
                                     });
                                     Fluttertoast.showToast(
                                         msg: "Snak Registrado", fontSize: 20);

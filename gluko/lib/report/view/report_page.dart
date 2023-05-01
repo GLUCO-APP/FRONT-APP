@@ -1,13 +1,17 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gluko_repository/gluko_repository.dart';
+import 'package:open_file/open_file.dart';
 import '../../colors/colorsGenerals.dart';
 import '../cubit/report_cubit.dart';
+
 
 class reportpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ReportCubit(),
+      create: (context) => ReportCubit(ReportPDFRepository()),
       child: reportview(),
     );
   }
@@ -303,8 +307,9 @@ class  _reportviewState extends State<reportview>{
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-
+                      onPressed: () async {
+                        var path = await context.read<ReportCubit>().getPDF(7);
+                        OpenFile.open(path);
                       },
                       child: Text("Descargar en PDF",
                         style: TextStyle(color: ColorsGenerals().whith),),

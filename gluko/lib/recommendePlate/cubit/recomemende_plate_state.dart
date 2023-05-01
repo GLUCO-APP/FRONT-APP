@@ -3,13 +3,14 @@ enum RecomemendePlatestatus{ loading,success,error}
 class RecomemendePlateState {
   RecomemendePlateState({
     this.status = RecomemendePlatestatus.loading,
-    required this.miposition
+    required this.miposition,
   });
   final RecomemendePlatestatus status;
   final Position miposition;
   RecomemendePlateState copywhit({
     RecomemendePlatestatus? status,
-    Position? miposition
+    Position? miposition,
+    User? infoUser
   }){
     return RecomemendePlateState(status: status ?? this.status, miposition: miposition?? this.miposition);
   }
