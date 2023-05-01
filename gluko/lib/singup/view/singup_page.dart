@@ -11,7 +11,20 @@ import 'package:gluko/login/view/login_page.dart';
 import '../cubit/singup_cubit.dart';
 import 'package:gluko_repository/src/models/insulin.dart';
 
-enum SexTypeEnum {masculino, femenina}
+enum SexTypeEnum {masculino, femenino}
+
+extension SexTypeExtension on SexTypeEnum {
+  String get value {
+    switch (this) {
+      case SexTypeEnum.masculino:
+        return "Masculino";
+      case SexTypeEnum.femenino:
+        return "Femenino";
+      default:
+        throw Exception("Valor no válido en SexTypeEnum");
+    }
+  }
+}
 
 class ButtonData {
   final String name;
@@ -41,6 +54,69 @@ class Singupview extends StatefulWidget {
 
 class  _SingupviewState extends State<Singupview>{
 
+  Future<void> showMyPopupComplete(BuildContext context, var response) async {
+    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context){
+        return  Material(
+          color: Colors.transparent,
+          child: Container(
+            width: MediaQuery.of(context).size.width/3,
+            height: MediaQuery.of(context).size.height/1.3,
+            color: Colors.transparent,
+            child: Center(
+              child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                        padding: EdgeInsets.all(20),
+                        width: MediaQuery.of(context).size.width/1.2,
+                        decoration: BoxDecoration(
+                          color: ColorsGenerals().whith,
+                          borderRadius: const BorderRadius.all(Radius.circular(20)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: const Offset(-5, 6),
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              response.message,
+                              style: TextStyle(fontSize: 20.0),
+                            ),
+                            const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                            ElevatedButton(
+                              child: const Text('Continuar', style: TextStyle(color: Colors.white)),
+                              onPressed: (){
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          Loginpage()),
+                                      (Route<dynamic> route) => false,
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                    ),
+                  ]
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   _SingupviewState(){
     _selectedInsulinR = tipInsulinR[0];
     _selectedInsulinL = tipInsulinL[0];
@@ -60,7 +136,7 @@ class  _SingupviewState extends State<Singupview>{
   final apellidoCtrl = TextEditingController();
   final bornCtrl = TextEditingController();
   final dateDCtrl = TextEditingController();
-  SexTypeEnum? _sexTypeEnum = SexTypeEnum.masculino;
+  var _sexTypeEnum = SexTypeEnum.masculino;
   DateTime? newDateD;
   DateTime? newDateN;
   //septimo paso
@@ -314,7 +390,7 @@ class  _SingupviewState extends State<Singupview>{
                       value: SexTypeEnum.masculino,
                       onChanged: (val) {
                         setState(() {
-                          _sexTypeEnum = val;
+                          _sexTypeEnum = val!;
                         });
                       }
                     ),
@@ -325,10 +401,10 @@ class  _SingupviewState extends State<Singupview>{
                       title: const Text("Mujer", style: TextStyle(color: Colors.black, fontSize: 15),),
                       groupValue: _sexTypeEnum,
                       activeColor: Colors.red,
-                      value: SexTypeEnum.femenina,
+                      value: SexTypeEnum.femenino,
                       onChanged: (val) {
                         setState(() {
-                          _sexTypeEnum = val;
+                          _sexTypeEnum = val!;
                         });
                       }
                     ),
@@ -508,7 +584,7 @@ class  _SingupviewState extends State<Singupview>{
           crossAxisAlignment: CrossAxisAlignment.center,
           children:  [
             const Text(
-              "Inidica tus objetivos de glucometria",
+              "Indica tus objetivos de glucometria",
               style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
             ),
             const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -576,7 +652,7 @@ class  _SingupviewState extends State<Singupview>{
             ),
             const Padding(padding: EdgeInsets.symmetric(vertical: 15)),
             const Text(
-              "Inidica tus objetivo de carbohidratos diarios en gramos",
+              "Indica tus objetivo de carbohidratos diarios en gramos",
               style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
             ),
             const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -1381,38 +1457,7 @@ class  _SingupviewState extends State<Singupview>{
                                     usuario.physicalctivity = _selectedButtonA;
                                     var response = await context.read<SingupCubit>().signUp(usuario);
                                     if (response.estatus){
-                                      Card(
-                                        color: Colors.blueGrey[100],
-                                        child: Container(
-                                          padding: EdgeInsets.all(16.0),
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                response.message,
-                                                style: TextStyle(fontSize: 20.0),
-                                              ),
-                                              SizedBox(height: 16.0),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                children: [
-                                                  ElevatedButton(
-                                                    child: Text('Continuar', style: TextStyle(color: Colors.white)),
-                                                    onPressed: (){
-                                                      Navigator.pushAndRemoveUntil(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                          builder: (context) =>
-                                                          Loginpage()),
-                                                      (Route<dynamic> route) => false,
-                                                      );
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
+                                      showMyPopupComplete(context, response);
                                     } else {
                                       pushUp(response.message);
                                     }
@@ -1456,7 +1501,7 @@ class  _SingupviewState extends State<Singupview>{
                                       usuario.fechaDiagnostico = dateDCtrl.text.toString();
                                       int nac = newDateN!.year - DateTime.now().year;
                                       usuario.edad = nac;
-                                      usuario.genero = _sexTypeEnum.toString();
+                                      usuario.genero = _sexTypeEnum.value;
                                       setState(() => _currentStep += 1);
                                     }
                                   } else if (_currentStep == 4) {
