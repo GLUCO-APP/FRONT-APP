@@ -29,3 +29,6 @@ export 'src/Domain/recomendation_repository.dart';
 export 'src/Domain/persiste_repository.dart';
 export 'src/Domain/allReport_repository.dart';
 export 'src/models/ReportDetail.dart';
+export 'src/Domain/emailValidate_repository.dart';
+export 'src/models/ResponseValidate.dart';
+

@@ -15,3 +15,4 @@ export 'src/Data/actualState_service.dart';
 export 'src/Data/reportPDF_service.dart';
 export 'src/Data/Recomendation_service.dart';
 export 'src/Data/historialReports_service.dart';
+export 'src/Data/emailValidate_service.dart';
