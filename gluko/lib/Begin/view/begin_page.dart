@@ -9,6 +9,7 @@ import 'package:gluko_repository/gluko_repository.dart';
 import 'package:intl/intl.dart';
 import '../../assembleplate/view/assembleplate_page.dart';
 import '../../calculateinsulin/view/calculateinsulina_page.dart';
+import '../../historyReport/view/historyReport_page.dart';
 import '../cubit/begin_cubit.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -76,7 +77,7 @@ class _beginviewState extends State<beginview> {
               DateTime fecha = DateTime.parse(fechaString);
 
               String horatipo = DateFormat('h:mm a')
-                  .format(fecha.subtract(Duration(hours: 5)));
+                  .format(fecha);
               String hora = "$horatipo";
               plates = states.recomend;
               print(plates.length);
@@ -96,259 +97,267 @@ class _beginviewState extends State<beginview> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical:
-                              MediaQuery.of(context).size.height / 150,
-                              horizontal:
-                              MediaQuery.of(context).size.width / 50),
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 3.6,
-                          decoration: BoxDecoration(
-                            color: ColorsGenerals().lightgrey,
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 1,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Text("Ultima Toma $hora",textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.height / 4.5,
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      left: MediaQuery.of(context).size.width/34,
-                                      top: MediaQuery.of(context).size.height / 10,
-                                      child: Container(
-                                        width:
-                                        MediaQuery.of(context).size.width /
-                                            4,
-                                        height:
-                                        MediaQuery.of(context).size.height /
-                                            8,
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                                width:
-                                                MediaQuery.of(context).size.height /
-                                                    20,
-                                                height:
-                                                MediaQuery.of(context).size.height /
-                                                    20,
-                                                child: Stack(
-                                                  children: [
-                                                    PieChart(
-                                                      PieChartData(
-                                                        sections: [
-                                                          PieChartSectionData(
-                                                              value: consumido < objetivo
-                                                                  ? consumido
-                                                                  : objetivo,
-                                                              color: consumido < objetivo
-                                                                  ? Colors.lightGreen
-                                                                  : ColorsGenerals()
-                                                                  .whith,
-                                                              radius: 10,
-                                                              showTitle: false),
-                                                          PieChartSectionData(
-                                                              value: consumido < objetivo
-                                                                  ? objetivo - consumido
-                                                                  : consumido - objetivo,
-                                                              color: consumido < objetivo
-                                                                  ? ColorsGenerals().whith
-                                                                  : ColorsGenerals().red,
-                                                              radius: 10,
-                                                              showTitle: false),
-                                                        ],
-                                                        centerSpaceRadius: 30,
-                                                        sectionsSpace: 2,
-                                                        borderData:
-                                                        FlBorderData(show: false),
-                                                        startDegreeOffset: 270,
-                                                        pieTouchData:
-                                                        PieTouchData(enabled: false),
-                                                      ),
-                                                    ),
-                                                    Center(
-                                                      child: Text(
-                                                        "${consumido.toInt()} g",
-                                                        style: TextStyle(
-                                                            color: ColorsGenerals().black,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: 13),
-                                                      ),
-                                                    )
-                                                  ],
-                                                )),
-                                            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height /60,)),
-                                            Text("Carbohidratos", style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),)
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: MediaQuery.of(context).size.width/2.8,
-                                      top: MediaQuery.of(context).size.height / 20,
-                                      child: Container(
-                                        width:
-                                        MediaQuery.of(context).size.width /
-                                            5,
-                                        height:
-                                        MediaQuery.of(context).size.height /
-                                            8,
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            Container(
-                                                width:
-                                                MediaQuery.of(context).size.height /
-                                                    20,
-                                                height:
-                                                MediaQuery.of(context).size.height /
-                                                    20,
-                                                child: Stack(
-                                                  children: [
-                                                    PieChart(
-                                                      PieChartData(
-                                                        sections: [
-                                                          PieChartSectionData(
-                                                              value: glucoActual < glucoMax
-                                                                  ? glucoActual
-                                                                  : glucoMax,
-                                                              color: glucoActual < glucoMax
-                                                                  ? Colors.lightGreen
-                                                                  : ColorsGenerals()
-                                                                  .whith,
-                                                              radius: 12,
-                                                              showTitle: false),
-                                                          PieChartSectionData(
-                                                              value: glucoActual < glucoMax
-                                                                  ? glucoMax - glucoActual
-                                                                  : glucoActual - glucoMax,
-                                                              color: glucoActual < glucoMax
-                                                                  ? ColorsGenerals().whith
-                                                                  : ColorsGenerals().red,
-                                                              radius: 12,
-                                                              showTitle: false),
-                                                        ],
-                                                        centerSpaceRadius: 45,
-                                                        sectionsSpace: 2,
-                                                        borderData:
-                                                        FlBorderData(show: false),
-                                                        startDegreeOffset: 270,
-                                                        pieTouchData:
-                                                        PieTouchData(enabled: false),
-                                                      ),
-                                                    ),
-                                                    Center(
-                                                      child:  Container(
-                                                        child: Column(
-                                                          children: [
-                                                            Text(
-                                                              "${glucoActual.toInt()}",
-                                                              textAlign: TextAlign.center,
-                                                              style: TextStyle(
-                                                                  color: ColorsGenerals().black,
-                                                                  fontWeight: FontWeight.w500,
-                                                                  fontSize: 17),
-                                                            ),
-                                                            Text(
-                                                              "mg/dl",
-                                                              textAlign: TextAlign.center,
-                                                              style: TextStyle(
-                                                                  color: ColorsGenerals().black,
-                                                                  fontWeight: FontWeight.w500,
-                                                                  fontSize: 13),
-                                                            ),
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HistoryReportpage()));
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical:
+                                MediaQuery.of(context).size.height / 150,
+                                horizontal:
+                                MediaQuery.of(context).size.width / 50),
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height / 3.6,
+                            decoration: BoxDecoration(
+                              color: ColorsGenerals().lightgrey,
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 1,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text("Ultima Toma $hora",textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: MediaQuery.of(context).size.height / 4.5,
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        left: MediaQuery.of(context).size.width/34,
+                                        top: MediaQuery.of(context).size.height / 10,
+                                        child: Container(
+                                          width:
+                                          MediaQuery.of(context).size.width /
+                                              4,
+                                          height:
+                                          MediaQuery.of(context).size.height /
+                                              8,
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                  width:
+                                                  MediaQuery.of(context).size.height /
+                                                      20,
+                                                  height:
+                                                  MediaQuery.of(context).size.height /
+                                                      20,
+                                                  child: Stack(
+                                                    children: [
+                                                      PieChart(
+                                                        PieChartData(
+                                                          sections: [
+                                                            PieChartSectionData(
+                                                                value: consumido < objetivo
+                                                                    ? consumido
+                                                                    : objetivo,
+                                                                color: consumido < objetivo
+                                                                    ? Colors.lightGreen
+                                                                    : ColorsGenerals()
+                                                                    .whith,
+                                                                radius: 10,
+                                                                showTitle: false),
+                                                            PieChartSectionData(
+                                                                value: consumido < objetivo
+                                                                    ? objetivo - consumido
+                                                                    : consumido - objetivo,
+                                                                color: consumido < objetivo
+                                                                    ? ColorsGenerals().whith
+                                                                    : ColorsGenerals().red,
+                                                                radius: 10,
+                                                                showTitle: false),
                                                           ],
+                                                          centerSpaceRadius: 30,
+                                                          sectionsSpace: 2,
+                                                          borderData:
+                                                          FlBorderData(show: false),
+                                                          startDegreeOffset: 270,
+                                                          pieTouchData:
+                                                          PieTouchData(enabled: false),
                                                         ),
                                                       ),
-                                                    )
-                                                  ],
-                                                )),
-                                            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height /40,)),
-                                            Text("Glucemia", style: TextStyle(fontSize: 14),)
-                                          ],
+                                                      Center(
+                                                        child: Text(
+                                                          "${consumido.toInt()} g",
+                                                          style: TextStyle(
+                                                              color: ColorsGenerals().black,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: 13),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )),
+                                              Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height /60,)),
+                                              Text("Carbohidratos", style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),)
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Positioned(
-                                      left: MediaQuery.of(context).size.width/1.5,
-                                      top: MediaQuery.of(context).size.height / 10,
-                                      child: Container(
-                                        width:
-                                        MediaQuery.of(context).size.width /
-                                            5,
-                                        height:
-                                        MediaQuery.of(context).size.height /
-                                            8,
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                                width:
-                                                MediaQuery.of(context).size.height /
-                                                    20,
-                                                height:
-                                                MediaQuery.of(context).size.height /
-                                                    20,
-                                                child: Stack(
-                                                  children: [
-                                                    PieChart(
-                                                      PieChartData(
-                                                        sections: [
-                                                          PieChartSectionData(
-                                                              value: insuRest,
-                                                              color: Colors.lightGreen,
-                                                              radius: 10,
-                                                              showTitle: false),
-                                                          PieChartSectionData(
-                                                              value: insuObje - insuRest,
-                                                              color:
-                                                              ColorsGenerals().whith,
-                                                              radius: 10,
-                                                              showTitle: false),
-                                                        ],
-                                                        centerSpaceRadius: 30,
-                                                        sectionsSpace: 2,
-                                                        borderData:
-                                                        FlBorderData(show: false),
-                                                        startDegreeOffset: 270,
-                                                        pieTouchData:
-                                                        PieTouchData(enabled: false),
+                                      Positioned(
+                                        left: MediaQuery.of(context).size.width/2.8,
+                                        top: MediaQuery.of(context).size.height / 20,
+                                        child: Container(
+                                          width:
+                                          MediaQuery.of(context).size.width /
+                                              5,
+                                          height:
+                                          MediaQuery.of(context).size.height /
+                                              8,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              Container(
+                                                  width:
+                                                  MediaQuery.of(context).size.height /
+                                                      20,
+                                                  height:
+                                                  MediaQuery.of(context).size.height /
+                                                      20,
+                                                  child: Stack(
+                                                    children: [
+                                                      PieChart(
+                                                        PieChartData(
+                                                          sections: [
+                                                            PieChartSectionData(
+                                                                value: glucoActual < glucoMax
+                                                                    ? glucoActual
+                                                                    : glucoMax,
+                                                                color: glucoActual < glucoMax
+                                                                    ? Colors.lightGreen
+                                                                    : ColorsGenerals()
+                                                                    .whith,
+                                                                radius: 12,
+                                                                showTitle: false),
+                                                            PieChartSectionData(
+                                                                value: glucoActual < glucoMax
+                                                                    ? glucoMax - glucoActual
+                                                                    : glucoActual - glucoMax,
+                                                                color: glucoActual < glucoMax
+                                                                    ? ColorsGenerals().whith
+                                                                    : ColorsGenerals().red,
+                                                                radius: 12,
+                                                                showTitle: false),
+                                                          ],
+                                                          centerSpaceRadius: 45,
+                                                          sectionsSpace: 2,
+                                                          borderData:
+                                                          FlBorderData(show: false),
+                                                          startDegreeOffset: 270,
+                                                          pieTouchData:
+                                                          PieTouchData(enabled: false),
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Center(
-                                                      child: Text(
-                                                        "${insuRest}U",
-                                                        style: TextStyle(
-                                                            color: ColorsGenerals().black,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: 15),
-                                                      ),
-                                                    )
-                                                  ],
-                                                )),
-                                            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height /70,)),
-                                            Text("Insulina",textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),)
-                                          ],
+                                                      Center(
+                                                        child:  Container(
+                                                          child: Column(
+                                                            children: [
+                                                              Text(
+                                                                "${glucoActual.toInt()}",
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(
+                                                                    color: ColorsGenerals().black,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: 17),
+                                                              ),
+                                                              Text(
+                                                                "mg/dl",
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(
+                                                                    color: ColorsGenerals().black,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: 13),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )),
+                                              Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height /40,)),
+                                              Text("Glucemia", style: TextStyle(fontSize: 14),)
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      Positioned(
+                                        left: MediaQuery.of(context).size.width/1.5,
+                                        top: MediaQuery.of(context).size.height / 10,
+                                        child: Container(
+                                          width:
+                                          MediaQuery.of(context).size.width /
+                                              5,
+                                          height:
+                                          MediaQuery.of(context).size.height /
+                                              8,
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                  width:
+                                                  MediaQuery.of(context).size.height /
+                                                      20,
+                                                  height:
+                                                  MediaQuery.of(context).size.height /
+                                                      20,
+                                                  child: Stack(
+                                                    children: [
+                                                      PieChart(
+                                                        PieChartData(
+                                                          sections: [
+                                                            PieChartSectionData(
+                                                                value: insuRest,
+                                                                color: Colors.lightGreen,
+                                                                radius: 10,
+                                                                showTitle: false),
+                                                            PieChartSectionData(
+                                                                value: insuObje - insuRest,
+                                                                color:
+                                                                ColorsGenerals().whith,
+                                                                radius: 10,
+                                                                showTitle: false),
+                                                          ],
+                                                          centerSpaceRadius: 30,
+                                                          sectionsSpace: 2,
+                                                          borderData:
+                                                          FlBorderData(show: false),
+                                                          startDegreeOffset: 270,
+                                                          pieTouchData:
+                                                          PieTouchData(enabled: false),
+                                                        ),
+                                                      ),
+                                                      Center(
+                                                        child: Text(
+                                                          "${insuRest}U",
+                                                          style: TextStyle(
+                                                              color: ColorsGenerals().black,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: 15),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )),
+                                              Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height /70,)),
+                                              Text("Insulina",textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),)
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         Column(

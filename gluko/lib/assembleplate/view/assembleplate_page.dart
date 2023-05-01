@@ -105,7 +105,7 @@ class _assembleplateviewState extends State<assembleplateview> {
     });
   }
 
-  void armarplato() async{
+  void CalculoInsulina() async{
 
     var info = glucosa.text.toString();
     print(info);
@@ -266,6 +266,7 @@ class _assembleplateviewState extends State<assembleplateview> {
               });
         });
   }
+
   editplato(BuildContext context) {
     return showModalBottomSheet(
         shape: const ContinuousRectangleBorder(
@@ -314,7 +315,53 @@ class _assembleplateviewState extends State<assembleplateview> {
                                 .of(context)
                                 .size
                                 .width,
-                            child: PlatoEditar(context),
+                            child: plato.length == 0?
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: ColorsGenerals().lightgrey,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      spreadRadius: 1,
+                                      blurRadius: 0.5,
+                                      offset: Offset(0, 1),
+                                    ),
+                                  ]
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "¡Tu plato esta vacio!",
+                                    style: TextStyle(
+                                        color: ColorsGenerals().black,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 23
+                                    ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width / 2,
+                                    height: MediaQuery.of(context).size.height / 4,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            "assets/Logo/gluko_bot_angry.png"),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Agrega alimentos a tu plato",
+                                    style: TextStyle(
+                                        color: ColorsGenerals().black,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15
+                                    ),
+                                  ),
+                                ],
+                              ) ,
+                            ):PlatoEditar(context),
                           ),
                         ),
                       ),
@@ -407,7 +454,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                               onPressed: () {
                                 if (formKey.currentState!.validate()) {
                                   Navigator.pop(context);
-                                  armarplato();
+                                  CalculoInsulina();
                                 }
                               },
                               child: Text("Calculo Insulina",
@@ -430,6 +477,127 @@ class _assembleplateviewState extends State<assembleplateview> {
                 );
               });
         });
+  }
+
+  Future<void> showMyPopupPlateConfirm(BuildContext context) async {
+    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context){
+        return  GestureDetector(
+          onTap: (){
+            Navigator.pop(context);
+          },
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height/1.3,
+              color: Colors.transparent,
+              child: Center(
+                child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                          padding: EdgeInsets.all(20),
+                          width: MediaQuery.of(context).size.width/1.1,
+                          height: MediaQuery.of(context).size.height/1.3,
+                          decoration: BoxDecoration(
+                            color: ColorsGenerals().whith,
+                            borderRadius: const BorderRadius.all(Radius.circular(20)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 7,
+                                offset: const Offset(-5, 6),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text("Alimentos", style: TextStyle(
+                                  color: ColorsGenerals().black,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .height / 35)),
+                              ScrollConfiguration(
+                                behavior: const ScrollBehavior().copyWith(
+                                    physics: BouncingScrollPhysics() // Establecer el color de la animación de desplazamiento
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10,
+                                        vertical: 20),
+                                    width: MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width,
+                                    height: MediaQuery
+                                        .of(context)
+                                        .size
+                                        .height / 1.7,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Platoinfo(context),
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 8, // elevación de la sombra
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            30), // radio de la esquina redondeada
+                                      ),
+                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                      backgroundColor: ColorsGenerals().red, // color de fondo
+                                    ),
+                                    child: Text("Cancelar",
+                                      style: TextStyle(color: ColorsGenerals().whith),),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      recibirGlucosa(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 8, // elevación de la sombra
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            30), // radio de la esquina redondeada
+                                      ),
+                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                      backgroundColor: ColorsGenerals().red, // color de fondo
+                                    ),
+                                    child: Text("Confirmar plato",
+                                      style: TextStyle(color: ColorsGenerals().whith),),
+                                  ),
+                                ],
+                              )
+                            ],
+                          )
+                      ),
+                    ]
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -457,7 +625,7 @@ class _assembleplateviewState extends State<assembleplateview> {
           padding: EdgeInsets.all(20),
           child: ElevatedButton(
             onPressed: () {
-              recibirGlucosa(context);
+              showMyPopupPlateConfirm(context);
             },
             child: Text("Confirmar",
               style: TextStyle(color: ColorsGenerals().whith),),
@@ -1107,6 +1275,8 @@ class _assembleplateviewState extends State<assembleplateview> {
     }
     return widgets;
   }
+
+
   Widget PlatoEditar(BuildContext context) =>
       ListView.builder(
           itemCount: plato.length,
@@ -1217,6 +1387,105 @@ class _assembleplateviewState extends State<assembleplateview> {
                     ],
                   ),
               )
+            );
+          }
+      );
+
+  Widget Platoinfo(BuildContext context) =>
+      ListView.builder(
+          itemCount: plato.length,
+          itemBuilder: (context, index) {
+            final favor = plato[index];
+            return Container(
+                padding: EdgeInsets.only(top: MediaQuery
+                    .of(context)
+                    .size
+                    .height / 150, left: 3, right: 3),
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 5,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: ColorsGenerals().lightgrey,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 0.5,
+                          offset: Offset(0, 1),
+                        ),
+                      ]
+                  ),
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(plato[index].name.length > 17 ? plato[index].name.substring(0,16):plato[index].name, style: TextStyle(
+                              fontSize: 13, color: ColorsGenerals().black)),
+                          Container(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 80,
+                                padding: EdgeInsets.all(10),
+                                child: Image.asset("assets/Food/${plato[index].image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment
+                            .spaceAround,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("${double.parse(plato[index].fats.toStringAsFixed(1)).abs()}g", style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: ColorsGenerals().black)),
+                              Text("Grasas", style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorsGenerals().black),),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("${double.parse(plato[index].carbs.toStringAsFixed(1)).abs()}g", style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: ColorsGenerals().black)),
+                              Text("Carbohidratos", style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorsGenerals().black),),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("${double.parse(plato[index].protein.toStringAsFixed(1)).abs()}g", style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: ColorsGenerals().black)),
+                              Text("Proteina", style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorsGenerals().black)),
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                )
             );
           }
       );

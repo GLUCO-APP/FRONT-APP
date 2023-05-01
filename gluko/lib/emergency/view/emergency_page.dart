@@ -349,7 +349,7 @@ class  _emergencyviewState extends State<emergencyview>{
                                       estado = 3;
                                     });
                                     Fluttertoast.showToast(
-                                        msg: "Snak Registrado", fontSize: 20);
+                                        msg: "Reporte registrado", fontSize: 20);
                                   }else{
                                     Fluttertoast.showToast(
                                         msg: "Error al registrar plato Intenta Mas Tarde", fontSize: 20);

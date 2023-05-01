@@ -6,14 +6,14 @@ import '../models/ReportDetail.dart';
 
 class allReportRepository{
 
-  Future<List<RequestDetail>> getAllReport() async {
+  Future<List<ReportDetail>> getAllReport() async {
     try{
       final prefs = await SharedPreferences.getInstance();
       var token =  prefs.getString('tokenJWT');
-      List<RequestDetail> all = [];
+      List<ReportDetail> all = [];
       List<dynamic> aux = await AllReportService().getAllReport(token!);
       for(int i = 0; i < aux.length; i++){
-        all.add(RequestDetail(aux[i]['fecha'].toString(), aux[i]['glucosa'].toString(), aux[i]['unidades_insulina'].toString(), aux[i]['type'].toString(), aux[i]['Carbohydrates'].toString()));
+        all.add(ReportDetail(aux[i]['fecha'].toString(), aux[i]['glucosa'].toString(), aux[i]['unidades_insulina'].toString(), aux[i]['type'].toString(), aux[i]['Carbohydrates'].toString()));
       }
       return all;
     } on Exception{

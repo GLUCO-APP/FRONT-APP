@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gluko/assembleplate/view/assembleplate_page.dart';
+import 'package:intl/intl.dart';
 import '../../colors/colorsGenerals.dart';
 import '../../home/view/home_page.dart';
 import '../cubit/calculateinsulin_cubit.dart';
@@ -43,6 +44,7 @@ var hora  = TimeOfDay.now().hour > 0 && TimeOfDay.now().hour < 13 ?"am":"pm";
 var direccion = TextEditingController();
 var Descripcion = TextEditingController();
 bool compartir = false;
+bool verMapa = true;
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
 double CalculoUnidades(double glAct, double graCarbo, User use){
@@ -90,6 +92,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
     super.initState();
     direccion.clear();
     Descripcion.clear();
+    compartir = false;
   }
 
   DetailInsulin info;
@@ -122,81 +125,89 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
     return showDialog<void>(
       context: context,
       builder: (BuildContext context){
-        return  Material(
-          color: Colors.transparent,
-          child: Container(
-            width: MediaQuery.of(context).size.width/3,
-            height: MediaQuery.of(context).size.height/1.3,
+        return  GestureDetector(
+          onTap: (){
+            setState(() {
+              verMapa = false;
+            });
+            Navigator.pop(context);
+          },
+          child: Material(
             color: Colors.transparent,
-            child: Center(
-              child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(20),
-                      width: MediaQuery.of(context).size.width/1.2,
-                      height: MediaQuery.of(context).size.height/1.6,
-                      decoration: BoxDecoration(
-                        color: ColorsGenerals().whith,
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 7,
-                            offset: Offset(-5, 6),
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width/1.2,
-                            height: MediaQuery.of(context).size.height/2,
-                            child: Stack(
-                              children: [
-                                GoogleMap(
-                                  onMapCreated: _onMapCreated,
-                                  onCameraMove: _onCameraMove,
-                                  initialCameraPosition: CameraPosition(
-                                    target: _center,
-                                    zoom: 17.0,
-                                  ),
-                                  myLocationEnabled: true,
-                                ),
-                                Center(
-                                  child:  Icon(Icons.location_on, color: ColorsGenerals().red, size: 40,),
-                                ),
-                              ],
-                            ),
+            child: Container(
+              width: MediaQuery.of(context).size.width/3,
+              height: MediaQuery.of(context).size.height/1.3,
+              color: Colors.transparent,
+              child: Center(
+                child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                          padding: EdgeInsets.all(20),
+                          width: MediaQuery.of(context).size.width/1.2,
+                          height: MediaQuery.of(context).size.height/1.6,
+                          decoration: BoxDecoration(
+                            color: ColorsGenerals().whith,
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 7,
+                                offset: Offset(-5, 6),
+                              )
+                            ],
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                text = address;
-                                direccion.text = text;
-                              });
-                              Navigator.pop(context);
-                            },
-                            child: Text("Guardar Ubicacion",
-                              style: TextStyle(color: ColorsGenerals().whith),),
-                            style: ElevatedButton.styleFrom(
-                              elevation: 8, // elevación de la sombra
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    30), // radio de la esquina redondeada
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width/1.2,
+                                height: MediaQuery.of(context).size.height/2,
+                                child: Stack(
+                                  children: [
+                                    verMapa?GoogleMap(
+                                      onMapCreated: _onMapCreated,
+                                      onCameraMove: _onCameraMove,
+                                      initialCameraPosition: CameraPosition(
+                                        target: _center,
+                                        zoom: 17.0,
+                                      ),
+                                      myLocationEnabled: true,
+                                    ):Container(),
+                                    Center(
+                                      child:  Icon(Icons.location_on, color: ColorsGenerals().red, size: 40,),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                              backgroundColor: ColorsGenerals().red, // color de fondo
-                            ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    text = address;
+                                    direccion.text = text;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Guardar Ubicacion",
+                                  style: TextStyle(color: ColorsGenerals().whith),),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 8, // elevación de la sombra
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        30), // radio de la esquina redondeada
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                                  backgroundColor: ColorsGenerals().red, // color de fondo
+                                ),
 
-                          ),
-                        ],
-                      )
-                    ),
-                  ]
+                              ),
+                            ],
+                          )
+                      ),
+                    ]
+                ),
               ),
             ),
           ),
@@ -204,7 +215,85 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
       },
     );
   }
+  Future<void> showMyPopupCompartirInfo(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context){
+        return  GestureDetector(
+          onTap: (){
+            Navigator.pop(context);
+          },
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: MediaQuery.of(context).size.width/3,
+              height: MediaQuery.of(context).size.height/1.3,
+              color: Colors.transparent,
+              child: Center(
+                child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                          padding: EdgeInsets.all(20),
+                          width: MediaQuery.of(context).size.width/1.2,
+                          height: MediaQuery.of(context).size.height/3,
+                          decoration: BoxDecoration(
+                            color: ColorsGenerals().whith,
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 7,
+                                offset: Offset(-5, 6),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Container(
+                                child: Text("¡Importante!", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),),
+                              ),
+                              Container(
+                                child: Text("Para compartir un plato debe ser una comida fuerte como:\n-Cena\n-Almuerzo\n-Desayuno\nSiempre agregarle una ubicacion con su descripcion ejemplo: Andres carne de res Hayuelos centro comencial"),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Ok",
+                                      style: TextStyle(color: ColorsGenerals().whith),),
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 8, // elevación de la sombra
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            30), // radio de la esquina redondeada
+                                      ),
+                                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                                      backgroundColor: ColorsGenerals().red, // color de fondo
+                                    ),
 
+                                  ),
+                                ],
+                              )
+                            ],
+                          )
+                      ),
+                    ]
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context){
@@ -361,7 +450,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                                       ),
                                     ],
                                   ),
-                                  child: Text("${TimeOfDay.now().hour.toString().padLeft(2, '0')}:${TimeOfDay.now().minute.toString().padLeft(2, '0')} ${hora}", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w300, fontSize: 17),),
+                                  child: Text("${DateFormat('h:mm a').format(DateTime.now())}", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w300, fontSize: 17),),
                                 )
                               ],
                             )
@@ -396,8 +485,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                                       compartir = !compartir;
                                     });
                                   }else{
-                                    Fluttertoast.showToast(
-                                        msg: "Debe ser un plato fuerte para compartir", fontSize: 20);
+                                    showMyPopupCompartirInfo(context);
                                   }
                                 },
                                 trackColor: ColorsGenerals().darkgrey,
@@ -474,6 +562,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                                       var position =  await getCurrentLocation();
                                       setState(() {
                                         _center = LatLng(position.latitude, position.longitude);
+                                        verMapa = true;
                                       });
                                       showMyPopup(context);
                                     }
@@ -523,22 +612,32 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                         ElevatedButton(
                       onPressed: () async {
                         if(compartir){
-                          print("Direccion ${direccion.text}, Latitud ${_center.latitude} Longitud ${_center.longitude}");
-                          var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 1, _center.latitude,_center.longitude,direccion.text,Descripcion.text,"Sin titulo xd"),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs,context.read<CalculateinsulinCubit>().infoUser()).toInt());
-                           if(response){
-                             Fluttertoast.showToast(
-                                 msg: "Plato Registrado", fontSize: 20);
-                             Navigator.pushAndRemoveUntil(
-                               context,
-                               MaterialPageRoute(
-                                   builder: (context) =>
-                                       HomePage()),
-                                   (Route<dynamic> route) => false,
-                             );
-                           }else{
-                             Fluttertoast.showToast(
-                                 msg: "Error al registrar plato Intenta Mas Tarde", fontSize: 20);
-                           }
+                          if(direccion.text.isNotEmpty){
+                            if(Descripcion.text.isNotEmpty){
+                              print("Direccion ${direccion.text}, Latitud ${_center.latitude} Longitud ${_center.longitude}");
+                              var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 1, _center.latitude,_center.longitude,direccion.text,Descripcion.text,"Sin titulo xd"),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs,context.read<CalculateinsulinCubit>().infoUser()).toInt());
+                              if(response){
+                                Fluttertoast.showToast(
+                                    msg: "Plato Registrado", fontSize: 20);
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomePage()),
+                                      (Route<dynamic> route) => false,
+                                );
+                              }else{
+                                Fluttertoast.showToast(
+                                    msg: "Error al registrar plato Intenta Mas Tarde", fontSize: 20);
+                              }
+                            }else{
+                              Fluttertoast.showToast(
+                                  msg: "Agregue una descripcion", fontSize: 20);
+                            }
+                          }else{
+                            Fluttertoast.showToast(
+                                msg: "Agregue una Direccion", fontSize: 20);
+                          }
                         }else{
                           var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 0, 0,0,"","",""),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs,context.read<CalculateinsulinCubit>().infoUser()).toInt());
                           print("Respuesta de registro ${response}");
