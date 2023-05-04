@@ -648,10 +648,10 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
           widgets.add(
             Positioned(
               left: 10,
-              top: 120,
+              top: 80,
               child: Material(
                 color: Colors.transparent,
-                child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
+                child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
               ),
             ),
           );
@@ -661,10 +661,10 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
             widgets.add(
               Positioned(
                 left: 200,
-                top: 120,
+                top: 80,
                 child: Material(
                   color: Colors.transparent,
-                  child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
+                  child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
                 ),
               ),
             );
@@ -675,7 +675,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                 top: 400,
                 child: Material(
                   color: Colors.transparent,
-                  child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
+                  child: Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
                 ),
               ),
             );

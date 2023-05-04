@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
@@ -27,11 +28,57 @@ class HistoryReportview extends StatefulWidget {
   State<HistoryReportview> createState() => _HistoryReportviewState();
 }
 
-final List<double> data = [25, 50, 75, 100, 125, 150, 175];
 
+var day = DateTime.now();
+var maxima = 170.0;
+var tam = 30.0;
+var tam1 = 30.0;
+var tam2 = 30.0;
+
+List<dynamic> days = [DateFormat('MM-dd').format(day),
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 1))),
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 2))),
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 3))),
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 4))),
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 5))),
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 6)))];
 List<ReportDetail> reports = [];
 
+
 class  _HistoryReportviewState extends State<HistoryReportview>{
+  List<double> barras = [25, 50, 75, 100, 125, 10, 175];
+  List<double> glucemia = [0, 0, 0];
+  List<double> objetivoGlu = [25, 120];
+  void calculoCarboPromedio(){
+    for(int i = 0; i < days.length; i++){
+      var suma = 0.0;
+      for(int j = 0; j<reports.length; j++){
+        if(reports[j].fecha.toString().contains(days[i])){
+          suma = suma+ double.parse(reports[j].Carbohydrates);
+
+          if(double.parse(reports[j].glucosa) < objetivoGlu[0]){
+            glucemia[0]++;
+            print(reports[j].glucosa);
+          }
+          if(double.parse(reports[j].glucosa) > objetivoGlu[0] &&  double.parse(reports[j].unidades_insulina) < objetivoGlu[1]){
+            glucemia[1]++;
+          }
+          if(double.parse(reports[j].glucosa) > objetivoGlu[1]){
+            glucemia[2]++;
+          }
+        }
+      }
+      barras[i]= suma;
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    List<double> barras = [25, 50, 75, 100, 125, 10, 175];
+    List<double> glucemia = [0, 0, 0];
+    List<double> objetivoGlu = [25, 120];
+  }
 
   @override
   Widget build(BuildContext context){
@@ -69,189 +116,254 @@ class  _HistoryReportviewState extends State<HistoryReportview>{
               break;
             case HistoryReportstatus.success:
               reports = context.read<HistoryReportCubit>().reports();
-              return Container(
-                padding: EdgeInsets.all(12),
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(2),
-                        height: MediaQuery.of(context).size.height/2.3,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                        color: ColorsGenerals().lightgrey,
-                        borderRadius: const BorderRadius.all(Radius.circular(20)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 1,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
+              var use = context.read<HistoryReportCubit>().infoUser();
+              objetivoGlu[0] = use.hipo.toDouble();
+              objetivoGlu[1] = use.hyper.toDouble();
+              print(objetivoGlu);
+              print(barras[0].toDouble());
+              calculoCarboPromedio();
+              maxima = barras.fold(barras.first, (a, b) => a > b ? a : b) + 30;
+              print(glucemia);
+              return ScrollConfiguration(
+                behavior: const ScrollBehavior().copyWith(
+                    physics: BouncingScrollPhysics() // Establecer el color de la animación de desplazamiento
+                ),
+                child: SingleChildScrollView(
+                  child: Container(
+                      padding: EdgeInsets.all(12),
+                      height: MediaQuery.of(context).size.height * 1.36,
+                      width: MediaQuery.of(context).size.width,
                       child: Column(
+                        mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(width: 16),
-                              RotatedBox(
-                                quarterTurns: -1,
-                                child: Text(
-                                  'Carbohidratos en gramos',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                          Container(
+                            padding: EdgeInsets.all(2),
+                            height: MediaQuery.of(context).size.height/2.3,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              color: ColorsGenerals().lightgrey,
+                              borderRadius: const BorderRadius.all(Radius.circular(20)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 1,
+                                  offset: Offset(0, 2),
                                 ),
-                              ),
-                              SizedBox(width: 8),
-                              Column(
-                                children: [
-                                  Container(
-                                    height: MediaQuery.of(context).size.height/3,
-                                    width: MediaQuery.of(context).size.width/1.3,
-                                    child: BarChart(
-                                      BarChartData(
-                                        groupsSpace: 50,
-                                          barGroups: [
-                                            BarChartGroupData(
-                                              groupVertically:false,
-                                              x: 0, // Índice de la barra
-                                              barRods: [
-                                                BarChartRodData(
-                                                    toY: double.parse(reports[0].Carbohydrates.toString()),
-                                                    backDrawRodData:BackgroundBarChartRodData(toY:170,show: true,color: ColorsGenerals().whith),// Altura de la barra
-                                                    color: ColorsGenerals().red,
-                                                    width:15// Color de la barra
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              x: 0, // Índice de la barra
-                                              barRods: [
-                                                BarChartRodData(
-                                                    toY: double.parse(reports[1].Carbohydrates.toString()),// Altura de la barra
-                                                    backDrawRodData:BackgroundBarChartRodData(toY:170,show: true,color: ColorsGenerals().whith),
-                                                    color: ColorsGenerals().red,
-                                                    width:15// Color de la barra
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              groupVertically:false,
-                                              x: 0, // Índice de la barra
-                                              barRods: [
-                                                BarChartRodData(
-                                                    toY: double.parse(reports[2].Carbohydrates.toString()), // Altura de la barra
-                                                    color: ColorsGenerals().red,
-                                                    backDrawRodData:BackgroundBarChartRodData(toY:170,show: true,color: ColorsGenerals().whith),
-                                                    width:15// Color de la barra
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              groupVertically:false,
-                                              x: 1, // Índice de la barra
-                                              barRods: [
-                                                BarChartRodData(
-                                                    toY: double.parse(reports[3].Carbohydrates.toString()), // Altura de la barra
-                                                    color: ColorsGenerals().red,
-                                                    backDrawRodData:BackgroundBarChartRodData(toY:170,show: true,color: ColorsGenerals().whith),
-                                                    width:15// Color de la barra
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              groupVertically:false,
-                                              x: 2, // Índice de la barra
-                                              barRods: [
-                                                BarChartRodData(
-                                                    toY: double.parse(reports[4].Carbohydrates.toString()), // Altura de la barra
-                                                    color: ColorsGenerals().red,
-                                                    backDrawRodData:BackgroundBarChartRodData(toY:170,show: true,color: ColorsGenerals().whith),
-                                                    width:15
-                                                  // Color de la barra
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              groupVertically:false,
-                                              x: 2, // Índice de la barra
-                                              barRods: [
-                                                BarChartRodData(
-                                                    toY: double.parse(reports[5].Carbohydrates.toString()),// Altura de la barra
-                                                    color: ColorsGenerals().red,
-                                                    backDrawRodData:BackgroundBarChartRodData(toY:170,show: true,color: ColorsGenerals().whith),
-                                                    width:15
-                                                  // Color de la barra
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              groupVertically:false,
-                                              x: 2, // Índice de la barra
-                                              barRods: [
-                                                BarChartRodData(
-                                                    toY: double.parse(reports[6].Carbohydrates.toString()),// Altura de la barra
-                                                    color: ColorsGenerals().red,
-                                                    backDrawRodData:BackgroundBarChartRodData(toY:170,show: true,color: ColorsGenerals().whith),
-                                                    width:15
-                                                  // Color de la barra
-                                                ),
-                                              ],
-                                            ),
-                                          ],// Cambiar el color de fondo del gráfico
-                                          gridData: FlGridData(show: false),
-                                          borderData: FlBorderData(show: false),
-                                          titlesData: FlTitlesData(show: false)
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(width: 16),
+                                    RotatedBox(
+                                      quarterTurns: -1,
+                                      child: Text(
+                                        'Carbohidratos en gramos',
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                                       ),
                                     ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Text('    04/01  ', style: TextStyle(fontSize: 8),),
-                                      Text('    04/01  ', style: TextStyle(fontSize: 8)),
-                                      Text('    04/01  ', style: TextStyle(fontSize: 8)),
-                                      Text('    04/01  ', style: TextStyle(fontSize: 8)),
-                                      Text('    04/01  ', style: TextStyle(fontSize: 8)),
-                                      Text('    04/01  ', style: TextStyle(fontSize: 8)),
-                                      Text('    04/01  ', style: TextStyle(fontSize: 8)),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            ],
+                                    SizedBox(width: 8),
+                                    Column(
+                                      children: [
+                                        Container(
+                                          height: MediaQuery.of(context).size.height/3,
+                                          width: MediaQuery.of(context).size.width/1.3,
+                                          child: BarChart(
+                                            BarChartData(
+                                                groupsSpace: 50,
+                                                barGroups: [
+                                                  BarChartGroupData(
+                                                    groupVertically:false,
+                                                    x: 0, // Índice de la barra
+                                                    barRods: [
+                                                      BarChartRodData(
+                                                          toY: barras[0].toDouble(),
+                                                          backDrawRodData:BackgroundBarChartRodData(toY:maxima,show: true,color: ColorsGenerals().whith),// Altura de la barra
+                                                          color: ColorsGenerals().red,
+                                                          width:15// Color de la barra
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  BarChartGroupData(
+                                                    x: 0, // Índice de la barra
+                                                    barRods: [
+                                                      BarChartRodData(
+                                                          toY: barras[1],// Altura de la barra
+                                                          backDrawRodData:BackgroundBarChartRodData(toY:maxima,show: true,color: ColorsGenerals().whith),
+                                                          color: ColorsGenerals().red,
+                                                          width:15// Color de la barra
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  BarChartGroupData(
+                                                    groupVertically:false,
+                                                    x: 0, // Índice de la barra
+                                                    barRods: [
+                                                      BarChartRodData(
+                                                          toY: barras[2], // Altura de la barra
+                                                          color: ColorsGenerals().red,
+                                                          backDrawRodData:BackgroundBarChartRodData(toY:maxima,show: true,color: ColorsGenerals().whith),
+                                                          width:15// Color de la barra
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  BarChartGroupData(
+                                                    groupVertically:false,
+                                                    x: 1, // Índice de la barra
+                                                    barRods: [
+                                                      BarChartRodData(
+                                                          toY: barras[3], // Altura de la barra
+                                                          color: ColorsGenerals().red,
+                                                          backDrawRodData:BackgroundBarChartRodData(toY:maxima,show: true,color: ColorsGenerals().whith),
+                                                          width:15// Color de la barra
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  BarChartGroupData(
+                                                    groupVertically:false,
+                                                    x: 2, // Índice de la barra
+                                                    barRods: [
+                                                      BarChartRodData(
+                                                          toY: barras[4], // Altura de la barra
+                                                          color: ColorsGenerals().red,
+                                                          backDrawRodData:BackgroundBarChartRodData(toY:maxima,show: true,color: ColorsGenerals().whith),
+                                                          width:15
+                                                        // Color de la barra
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  BarChartGroupData(
+                                                    groupVertically:false,
+                                                    x: 2, // Índice de la barra
+                                                    barRods: [
+                                                      BarChartRodData(
+                                                          toY: barras[5],// Altura de la barra
+                                                          color: ColorsGenerals().red,
+                                                          backDrawRodData:BackgroundBarChartRodData(toY:maxima,show: true,color: ColorsGenerals().whith),
+                                                          width:15
+                                                        // Color de la barra
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  BarChartGroupData(
+                                                    groupVertically:false,
+                                                    x: 2, // Índice de la barra
+                                                    barRods: [
+                                                      BarChartRodData(
+                                                          toY: barras[6],// Altura de la barra
+                                                          color: ColorsGenerals().red,
+                                                          backDrawRodData:BackgroundBarChartRodData(toY:maxima,show: true,color: ColorsGenerals().whith),
+                                                          width:15
+                                                        // Color de la barra
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],// Cambiar el color de fondo del gráfico
+                                                gridData: FlGridData(show: false),
+                                                borderData: FlBorderData(show: false),
+                                                titlesData: FlTitlesData(show: false)
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: days.map((day) => Text('    $day  ', style: TextStyle(fontSize: 8),),).toList() ,
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                Text(
+                                  'Ultimos 7 días',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
                           ),
                           Text(
-                            'Ultimos 7 días',
+                            'Porcentaje de nivel de glucemia de los ultimos 7 dias',
+                              textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                           ),
+                          Container(
+                              width:
+                              MediaQuery.of(context).size.width,
+                              height:MediaQuery.of(context).size.height / 3,
+                              decoration: BoxDecoration(
+                                color: ColorsGenerals().lightgrey,
+                                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 1,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: PieChart(
+                                PieChartData(
+                                  sections: [
+                                    PieChartSectionData(
+                                        value:glucemia[0],
+                                        titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
+                                        color:Colors.lightBlueAccent,
+                                        radius:  40,
+                                        title: "Hipo: ${((glucemia[0]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
+                                        showTitle: true,
+                                        titlePositionPercentageOffset: 1.3,
+                                        ),
+                                    PieChartSectionData(
+                                      titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
+                                        value: glucemia[1],
+                                      titlePositionPercentageOffset: 1.3,
+                                        color: Colors.lightGreen,
+                                        radius:  40,
+                                        title: "Normal: ${((glucemia[1]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
+                                        showTitle: true,
+                                    ),
+                                    PieChartSectionData(
+                                      titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
+                                        value: glucemia[2],
+                                        color: ColorsGenerals().red,
+                                      titlePositionPercentageOffset: 1.3,
+                                        radius: 40,
+                                        title: "Hiper: ${((glucemia[2]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
+                                        showTitle: true,
+                                        ),
+                                  ],
+                                  centerSpaceRadius: 50,
+                                  sectionsSpace: 3,
+                                  startDegreeOffset: 270,
+                                ),
+                              )),
+                          Text(
+                            'Registros',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                          ),
+                          ScrollConfiguration(
+                            behavior: const ScrollBehavior().copyWith(
+                                physics: BouncingScrollPhysics() // Establecer el color de la animación de desplazamiento
+                            ),
+                            child: SingleChildScrollView(
+                              child: Container(
+                                height: MediaQuery.of(context).size.height/2.7,
+                                width: MediaQuery.of(context).size.width,
+                                child: reportsAll(context),
+                              ),
+                            ),
+                          ),
                         ],
-                      ),
-                    ),
-                    Text(
-                      'Registros',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                    ),
-                    ScrollConfiguration(
-                      behavior: const ScrollBehavior().copyWith(
-                          physics: BouncingScrollPhysics() // Establecer el color de la animación de desplazamiento
-                      ),
-                      child: SingleChildScrollView(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height/3,
-                          width: MediaQuery.of(context).size.width,
-                          child: reportsAll(context),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
+                      )
+                  ) ,
+                ),
               );
               break;
             case HistoryReportstatus.error:
