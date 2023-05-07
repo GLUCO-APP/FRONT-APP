@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:gluko/login/cubit/login_cubit.dart';
+import 'package:gluko/login/view/login_page.dart';
 import 'package:gluko_repository/gluko_repository.dart';
 import '../../colors/colorsGenerals.dart';
 import '../cubit/profile_cubit.dart';
@@ -965,6 +967,103 @@ class  _profileviewState extends State<profileview>{
     );
   }
 
+  Future<void> showMyPopupLogout(BuildContext context) async {
+    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context){
+        return  Material(
+          color: Colors.transparent,
+          child: Container(
+            width: MediaQuery.of(context).size.width/3,
+            height: MediaQuery.of(context).size.height/1.3,
+            color: Colors.transparent,
+            child: Center(
+              child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                        padding: EdgeInsets.all(20),
+                        width: MediaQuery.of(context).size.width/1.2,
+                        decoration: BoxDecoration(
+                          color: ColorsGenerals().whith,
+                          borderRadius: const BorderRadius.all(Radius.circular(20)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: const Offset(-5, 6),
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Text(
+                                "Seguro desea cerrar su sesión?",
+                                style: TextStyle(color: Colors.black, fontSize: 17),
+                            ),
+                            const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // radio de la esquina redondeada
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                    backgroundColor: ColorsGenerals().red, // color de fondo
+                                  ),
+                                  child: Text("Cancelar", style: TextStyle(color: ColorsGenerals().whith),),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    var cerro = context.read<ProfileCubit>().logout();
+                                    if(cerro == true){
+                                      pushUp("Cierre de sesión exitoso");
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Loginpage())
+                                      );
+                                    } else {
+                                      pushUp("No se logro cerrar sesión");
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // radio de la esquina redondeada
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                    backgroundColor: ColorsGenerals().red, // color de fondo
+                                  ),
+                                  child: Text("Aceptar", style: TextStyle(color: ColorsGenerals().whith),),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                    ),
+                  ]
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _onButtonPressed(int index) {
     setState(() {
       if (_selectedButtonA == index) {
@@ -973,6 +1072,30 @@ class  _profileviewState extends State<profileview>{
         _selectedButtonA = index;
       }
     });
+  }
+
+  void pushUp (String mensaje) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 3),
+          content: Container(
+            padding: const EdgeInsets.all(16),
+            height: 50,
+            decoration: const BoxDecoration(
+                color: Colors.black45,
+                borderRadius: BorderRadius.all(Radius.circular(20))
+            ),
+            child:  Text(
+              mensaje,
+              style: TextStyle(fontSize: 15),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        )
+    );
   }
 
   final nameCtrl = TextEditingController();
@@ -1058,6 +1181,8 @@ class  _profileviewState extends State<profileview>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: ColorsGenerals().whith,
+        elevation: 1,
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/Icons/atras.svg", color: ColorsGenerals().black,
@@ -1070,16 +1195,13 @@ class  _profileviewState extends State<profileview>{
             Navigator.pop(context);
           },
         ),
-        backgroundColor: ColorsGenerals().whith,
-        elevation: 1,
-        actions: [Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [Text(
-            "Perfil   ",
-            style: TextStyle(color: Colors.black, fontSize: 22),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showMyPopupLogout(context);
+          },
+            icon: Icon(Icons.logout, color: ColorsGenerals().black)
           )
-          ],
-        )
         ],
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(

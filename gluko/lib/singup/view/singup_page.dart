@@ -271,7 +271,7 @@ class  _SingupviewState extends State<Singupview>{
               cursorColor: Colors.black,
               style: const TextStyle(color: Colors.black, fontSize: 15),
               inputFormatters: [
-                LengthLimitingTextInputFormatter(6),
+                LengthLimitingTextInputFormatter(5),
                 FilteringTextInputFormatter.allow(RegExp(r'\d')),
               ],
               decoration: InputDecoration(
@@ -1469,19 +1469,22 @@ class  _SingupviewState extends State<Singupview>{
                                       pushUp("Debe ingresar un correo valido");
                                     } else {
                                       usuario.email = correoCtrl.text.toString();
-                                      // Falta implementar endpoint de verificacion
-                                      //var response = await context.read<SingupCubit>().codeValidate(usuario.email);
-                                      //code = response.code;
-                                      setState(() => _currentStep += 1);
+                                      var response = await context.read<SingupCubit>().codeValidate(usuario.email);
+                                      if(response.estatus){
+                                        code = response.code;
+                                        setState(() => _currentStep += 1);
+                                      } else {
+                                        pushUp("Error al registrar el correo, confirme que el correo no ha sido resgistrado en la aplicación");
+                                      }
                                     }
                                   } else if (_currentStep == 1) {
-                                    if (codeCtrl.text.isEmpty){
-                                      pushUp("Ingrese el codigo");
-                                      /*} else if (codeCtrl.text != code) {
-                                      pushUp("Codigo incorrecto, intente nuevamente");
-                                      codeCtrl.clear();*/
-                                    } else {
-                                      setState(() => _currentStep += 1);
+                                      if (codeCtrl.text.isEmpty){
+                                        pushUp("Ingrese el codigo");
+                                      } else if (codeCtrl.text != code) {
+                                        pushUp("Codigo incorrecto, intente nuevamente");
+                                        codeCtrl.clear();
+                                      } else {
+                                        setState(() => _currentStep += 1);
                                     }
                                   }else if (_currentStep == 2) {
                                     if(passwordCtrl.text.isEmpty || passwordCtrl.text.length < 7){
@@ -1587,8 +1590,10 @@ class  _SingupviewState extends State<Singupview>{
                                     setState(() => _currentStep += 1);
                                   }
                                 },
-                                onStepCancel: () {
-                                  _currentStep == 0 ? null : () => setState(()  => _currentStep -= 1);
+                                onStepCancel: () async {
+                                  if(_currentStep != 0){
+                                    setState(()  => _currentStep--);
+                                  }
                                 },
                                 controlsBuilder: (BuildContext context, ControlsDetails details) {
                                   final isLastStep = _currentStep == getSteps().length - 1;
@@ -1597,6 +1602,19 @@ class  _SingupviewState extends State<Singupview>{
                                       child: Row(
                                           mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
+                                            ElevatedButton(
+                                              onPressed: details.onStepCancel,
+                                              style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                                elevation: 8, // elevación de la sombra
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(20), // radio de la esquina redondeada
+                                                ),
+                                                backgroundColor: Colors.red, // color de fondo
+                                              ),
+                                              child: const Text("Atras", style: TextStyle(fontSize: 17),),
+                                            ),
+                                            const SizedBox(width: 12,),
                                             ElevatedButton(
                                               onPressed: details.onStepContinue,
                                               style: ElevatedButton.styleFrom(
