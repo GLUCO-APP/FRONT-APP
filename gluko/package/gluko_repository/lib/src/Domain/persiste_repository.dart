@@ -15,4 +15,14 @@ class PercisteRepository{
       return false;
     }
   }
+
+  Future<bool> logout() async {
+    try{
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString("tokenJWT", "");
+      return true;
+    } catch (e){
+      return false;
+    }
+  }
 }

@@ -21,7 +21,7 @@ class profilepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProfileCubit(infoUserRepository())..getInfoUser(),
+      create: (context) => ProfileCubit(infoUserRepository(), PercisteRepository())..getInfoUser(),
       child: profileview(),
     );
   }
@@ -1002,7 +1002,7 @@ class  _profileviewState extends State<profileview>{
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             const Text(
-                                "Seguro desea cerrar su sesión?",
+                                "¿Seguro desea cerrar su sesión?",
                                 style: TextStyle(color: Colors.black, fontSize: 17),
                             ),
                             const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -1024,16 +1024,19 @@ class  _profileviewState extends State<profileview>{
                                   ),
                                   child: Text("Cancelar", style: TextStyle(color: ColorsGenerals().whith),),
                                 ),
+                                const Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    var cerro = context.read<ProfileCubit>().logout();
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    var cerro = await PercisteRepository().logout();
                                     if(cerro == true){
                                       pushUp("Cierre de sesión exitoso");
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Loginpage())
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Loginpage()),
+                                            (Route<dynamic> route) => false,
                                       );
                                     } else {
                                       pushUp("No se logro cerrar sesión");
