@@ -101,7 +101,7 @@ class  _HistoryReportviewState extends State<HistoryReportview>{
         actions: [Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [Text(
-            "Historial Reportes   ",
+            "Historial de reportes   ",
             style: TextStyle(color: Colors.black, fontSize: 22),
           )
           ],
@@ -281,14 +281,14 @@ class  _HistoryReportviewState extends State<HistoryReportview>{
                                   ],
                                 ),
                                 Text(
-                                  'Ultimos 7 días',
+                                  'Últimos 7 días',
                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
                           ),
                           Text(
-                            'Porcentaje de nivel de glucemia de los ultimos 7 dias',
+                            'Porcentaje de nivel de glucemia de los últimos 7 días',
                               textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                           ),

@@ -38,7 +38,7 @@ class calculateinsulineview extends StatefulWidget {
   State<calculateinsulineview> createState() => _calculateinsulineviewState(info, foods);
 }
 
-var tags = ["Desayuno","Cena","Almuerzo","Onces","Medias Nueves",];
+var tags = ["Desayuno","Cena","Almuerzo","Onces","Medias nueves",];
 var vista  = TimeOfDay.now().hour > 0 && TimeOfDay.now().hour < 13 ?"Desayuno": TimeOfDay.now().hour > 13 && TimeOfDay.now().hour < 18 ? "Almuerzo": "Cena";
 var hora  = TimeOfDay.now().hour > 0 && TimeOfDay.now().hour < 13 ?"am":"pm";
 var direccion = TextEditingController();
@@ -48,6 +48,9 @@ bool verMapa = true;
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
 double CalculoUnidades(double glAct, double graCarbo, User use){
+  print(use.estable.toDouble());
+  print(use.sensitivity);
+  print(use.rate.toDouble());
   double glucemiaObjetivo = use.estable.toDouble();
   double glucemiaActual = glAct;
   double sensibilidad = use.sensitivity;
@@ -237,7 +240,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                       Container(
                           padding: EdgeInsets.all(20),
                           width: MediaQuery.of(context).size.width/1.2,
-                          height: MediaQuery.of(context).size.height/3,
+                          height: MediaQuery.of(context).size.height/2.8,
                           decoration: BoxDecoration(
                             color: ColorsGenerals().whith,
                             borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -257,7 +260,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                                 child: Text("¡Importante!", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),),
                               ),
                               Container(
-                                child: Text("Para compartir un plato debe ser una comida fuerte como:\n-Cena\n-Almuerzo\n-Desayuno\nSiempre agregarle una ubicacion con su descripcion ejemplo: Andres carne de res Hayuelos centro comencial"),
+                                child: Text("Para compartir un plato este debe ser una comida fuerte como:\n-Cena\n-Almuerzo\n-Desayuno\nSiempre agreguéle una ubicación con su descripción, por ejemplo:\nAndrés Carne de Res, Hayuelos centro comencial."),
                               ),
                               Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -316,7 +319,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
         actions: [Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [Text(
-            "Calculo Insulina   ",
+            "Cálculo insulina   ",
             style: TextStyle(color: Colors.black, fontSize: 22),
           )
           ],
@@ -348,7 +351,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text("Unidades \nde Insulina", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w300, fontSize: 40)),
+                            Text("Unidades \nde insulina", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w300, fontSize: 40)),
                             Text("${CalculoUnidades(double.parse(info.gluco), info.carbs, context.read<CalculateinsulinCubit>().infoUser()).toInt()}U", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w300,fontSize: 40)),
                           ],
                         ),
@@ -459,7 +462,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text("Si desea compartir su plato para \notros usuarios. Agregue una \ndescripcion y la ubicacion donde \nse puede encontrar el plato", style: TextStyle( color: ColorsGenerals().black)),
+                            Text("Sí desea compartir su plato para \notros usuarios, agregue una \ndescripción y la ubicación donde \nse puede encontrar el plato.", style: TextStyle( color: ColorsGenerals().black)),
                             Container(
                               width: MediaQuery.of(context).size.width /6,
                               height: MediaQuery.of(context).size.height /9,
@@ -519,7 +522,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: ColorsGenerals().lightgrey,
-                                  hintText: 'Direccion',
+                                  hintText: 'Dirección',
                                   hintStyle: TextStyle(
                                       color: ColorsGenerals().black),
                                   contentPadding: EdgeInsets.symmetric(
@@ -589,7 +592,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: ColorsGenerals().lightgrey,
-                                hintText: 'Descripcion',
+                                hintText: 'Descripción',
                                 hintStyle: TextStyle(
                                     color: ColorsGenerals().black),
                                 contentPadding: EdgeInsets.symmetric(
@@ -632,18 +635,18 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                               }
                             }else{
                               Fluttertoast.showToast(
-                                  msg: "Agregue una descripcion", fontSize: 20);
+                                  msg: "Agregue una descripción", fontSize: 20);
                             }
                           }else{
                             Fluttertoast.showToast(
-                                msg: "Agregue una Direccion", fontSize: 20);
+                                msg: "Agregue una dirección", fontSize: 20);
                           }
                         }else{
                           var response =  await context.read<CalculateinsulinCubit>().RegisterPlate(PlateRegister(foods,double.parse(info.gluco),info.carbs, info.protein, info.fats, vista, 0, 0,0,"","",""),int.parse(info.gluco), CalculoUnidades(double.parse(info.gluco), info.carbs,context.read<CalculateinsulinCubit>().infoUser()).toInt());
                           print("Respuesta de registro ${response}");
                           if(response){
                             Fluttertoast.showToast(
-                                msg: "Plato Registrado", fontSize: 20);
+                                msg: "Plato registrado", fontSize: 20);
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -653,11 +656,11 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                             );
                           }else{
                             Fluttertoast.showToast(
-                                msg: "Error al registrar plato Intenta Mas Tarde", fontSize: 20);
+                                msg: "Error al registrar plato intenta mas tarde", fontSize: 20);
                           }
                         }
                       },
-                      child: Text("Guardar Registro",
+                      child: Text("Guardar registro",
                         style: TextStyle(color: ColorsGenerals().whith),),
                       style: ElevatedButton.styleFrom(
                         elevation: 8, // elevación de la sombra

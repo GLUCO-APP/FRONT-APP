@@ -18,6 +18,7 @@ class InfoUserService {
 
       if(response.statusCode == 200){
         body = jsonDecode(response.body);
+        print("imprime el body");
         print(body);
         return body;
       }else{

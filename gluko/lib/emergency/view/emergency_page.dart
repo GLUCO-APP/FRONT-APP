@@ -31,7 +31,7 @@ class  _emergencyviewState extends State<emergencyview>{
   bool visible = false;
 
   Future<void> _registrarSnak(FoodDetail food) async {
-    var response =  await context.read<EmergencyCubit>().RegisterPlate(PlateRegister([plateId(food.id)],double.parse(glucosa.text.toString()),food.carbs, food.protein, food.fats, "Snak", 0,0,0,"","","Sin titulo xd"),int.parse(glucosa.text),0);
+    var response =  await context.read<EmergencyCubit>().RegisterPlate(PlateRegister([plateId(food.id)],double.parse(glucosa.text.toString()),food.carbs, food.protein, food.fats, "Snack", 0,0,0,"","","Sin titulo xd"),int.parse(glucosa.text),0);
     if(response){
       glucosa.clear();
       setState(() {
@@ -74,7 +74,7 @@ class  _emergencyviewState extends State<emergencyview>{
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text("¿Consumiras este snak?", textAlign: TextAlign.center,style: TextStyle(
+                      Text("¿Consumirás este snack?", textAlign: TextAlign.center,style: TextStyle(
                           color: ColorsGenerals().black,
                           fontWeight: FontWeight.w300,
                           fontSize: MediaQuery
@@ -115,7 +115,7 @@ class  _emergencyviewState extends State<emergencyview>{
                           _registrarSnak(food);
                           Navigator.pop(context);
                         },
-                        child: Text("Registrar Snak",
+                        child: Text("Registrar snack",
                           style: TextStyle(color: ColorsGenerals().whith, fontSize: 18),),
                         style: ElevatedButton.styleFrom(
                           elevation: 8, // elevación de la sombra
@@ -217,7 +217,7 @@ class  _emergencyviewState extends State<emergencyview>{
                                 height: MediaQuery.of(context).size.height/1.8,
                                 child: Column(
                                   children: [
-                                    Text("!Tu medida es peligrosamente baja!,\ncomete algo para incrementarla:", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/45, fontWeight: FontWeight.w400),),
+                                    Text("!Tu medida es peligrosamente baja!\nToma algo para incrementarla:", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/45, fontWeight: FontWeight.w400),),
                                     Padding(padding: EdgeInsets.symmetric(
                                         vertical: MediaQuery
                                             .of(context)
@@ -268,7 +268,7 @@ class  _emergencyviewState extends State<emergencyview>{
                                       ),
                                     ),
                                     Padding(padding: EdgeInsets.symmetric(vertical: 20)),
-                                    Text("!Estas estable!", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/20, fontWeight: FontWeight.w500),)
+                                    Text("!Estás estable!", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/20, fontWeight: FontWeight.w500),)
                                   ] ,
                                 ),
                               ) :
@@ -289,7 +289,7 @@ class  _emergencyviewState extends State<emergencyview>{
                                         )
                                     ),
                                     Padding(padding: EdgeInsets.symmetric(vertical: 20)),
-                                    Text("!Tu medida es peligrosamente alta!,\nadministra ${unidades} unidades de insulina \npara bajarla", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/40, fontWeight: FontWeight.w500),)
+                                    Text("!Tu medida es peligrosamente alta!,\nadministra ${unidades} unidades de insulina \npara bajarla.", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/40, fontWeight: FontWeight.w500),)
                                   ] ,
                                 ),
                               ) :
@@ -310,7 +310,7 @@ class  _emergencyviewState extends State<emergencyview>{
                                   ),
                                 ),
                                 Padding(padding: EdgeInsets.symmetric(vertical: 20)),
-                                Text("¿Como te sientes?", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/23, fontWeight: FontWeight.w100),)
+                                Text("¿Cómo te sientes?", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/23, fontWeight: FontWeight.w100),)
                               ] ,
                             ),
                           ),
@@ -341,7 +341,7 @@ class  _emergencyviewState extends State<emergencyview>{
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  var response =  await context.read<EmergencyCubit>().RegisterPlate(PlateRegister([],0,0,0,0,"RegistroInsulina",0, 0,0,"","","Sin titulo xd"),int.parse(glucosa.text),unidades);
+                                  var response =  await context.read<EmergencyCubit>().RegisterPlate(PlateRegister([],0,0,0,0,"Registro Insulina",0, 0,0,"","","Sin titulo xd"),int.parse(glucosa.text),unidades);
                                   if(response){
                                     glucosa.clear();
                                     setState(() {
@@ -546,7 +546,7 @@ class  _emergencyviewState extends State<emergencyview>{
                                 Text("${double.parse(snaks[index].protein.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: ColorsGenerals().black)),
-                                Text("Proteina", style: TextStyle(
+                                Text("Proteína", style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     color: ColorsGenerals().black)),
                               ],

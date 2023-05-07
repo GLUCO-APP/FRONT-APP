@@ -106,7 +106,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text("Registra tu nivel de Glucosa", textAlign: TextAlign.center,style: TextStyle(
+                      Text("Registra tu nivel de glucosa", textAlign: TextAlign.center,style: TextStyle(
                           color: ColorsGenerals().black,
                           fontWeight: FontWeight.w300,
                           fontSize: MediaQuery
@@ -128,7 +128,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: ColorsGenerals().lightgrey,
-                                hintText: 'Inserte Nivel de glucosa',
+                                hintText: 'Inserte nivel de glucosa',
                                 hintStyle: TextStyle(color: ColorsGenerals().black),
                                 contentPadding:
                                 EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
@@ -164,7 +164,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                                   CalculoInsulina();
                                 }
                               },
-                              child: Text("Calculo Unidades",
+                              child: Text("Cálculo unidades",
                                 style: TextStyle(color: ColorsGenerals().whith, fontSize: 15),),
                               style: ElevatedButton.styleFrom(
                                 elevation: 8, // elevación de la sombra
@@ -223,7 +223,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
           onPressed: () {
             recibirGlucosa(context);
           },
-          child: Text("Comer Plato",
+          child: Text("Comer plato",
             style: TextStyle(color: ColorsGenerals().whith),),
           style: ElevatedButton.styleFrom(
             elevation: 8, // elevación de la sombra
@@ -258,7 +258,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
         actions: [Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [Text(
-            "Plato Recomendado  ",
+            "Plato recomendado  ",
             style: TextStyle(color: Colors.black, fontSize: 25),
           )
           ],
@@ -414,7 +414,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                                         Text("${double.parse(plate.Proteins.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: ColorsGenerals().black)),
-                                        Text("Proteina", style: TextStyle(
+                                        Text("Proteína", style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             color: ColorsGenerals().black)),
                                       ],
@@ -478,7 +478,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Descripcion:", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500, fontSize: 17)),
+                              Text("Descripción:", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w500, fontSize: 17)),
                               Container(
                                 width: MediaQuery
                                     .of(context)
@@ -490,7 +490,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                           ),
                         ],
                       ),
-                      Text("Camida en plato", style: TextStyle(
+                      Text("Comida en plato", style: TextStyle(
                           color: ColorsGenerals().black,
                           fontWeight: FontWeight.w300,
                           fontSize: MediaQuery
@@ -611,7 +611,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                               Text("${double.parse(plat.protein.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: ColorsGenerals().black)),
-                              Text("Proteina", style: TextStyle(
+                              Text("Proteína", style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: ColorsGenerals().black)),
                             ],
