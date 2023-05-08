@@ -178,7 +178,7 @@ class _loginviewviewState extends State<loginview>{
                                           builder: (context) =>
                                               forgetpasswordpage())
                                   );
-                                }, child:Text("¿Olvido su contraseña? ", style: TextStyle(color: Colors.black, fontSize: 12),),style: ButtonStyle(
+                                }, child:Text("¿Olvidó su contraseña? ", style: TextStyle(color: Colors.black, fontSize: 12),),style: ButtonStyle(
                                   overlayColor: MaterialStateProperty.all<Color>(ColorsGenerals().red), // color deseado
                                 )),
                                 ElevatedButton(
@@ -203,7 +203,7 @@ class _loginviewviewState extends State<loginview>{
                                     },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-                                      child: Text("Iniciar Sesion", style: TextStyle(fontSize: 17),),
+                                      child: Text("Iniciar Sesión", style: TextStyle(fontSize: 17),),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       elevation: 8, // elevación de la sombra

@@ -128,7 +128,7 @@ class _beginviewState extends State<beginview> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Text("Ultima Toma $hora",textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
+                                Text("Ultima toma: $hora",textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
                                 Container(
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.height / 4.5,
@@ -364,7 +364,7 @@ class _beginviewState extends State<beginview> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "¿Que deseas comer?",
+                              "¿Qué deseas comer?",
                               style: TextStyle(
                                   color: ColorsGenerals().black, fontSize: 20),
                             ),
@@ -581,7 +581,7 @@ class _beginviewState extends State<beginview> {
                           size: 14,
                         ),
                         Text(
-                          "Donde Encontrarlo",
+                          "¿Dónde encontrarlo?",
                           style: TextStyle(fontSize: 14),
                         )
                       ],

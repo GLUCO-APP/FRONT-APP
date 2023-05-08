@@ -106,9 +106,9 @@ class  _reportviewState extends State<reportview>{
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                               children: [
-                                                _buildButton(0, 'Ultimos 7'),
-                                                _buildButton(1, 'Ultimos 15'),
-                                                _buildButton(2, 'Ultimos 30'),
+                                                _buildButton(0, 'Últimos 7'),
+                                                _buildButton(1, 'Últimos 15'),
+                                                _buildButton(2, 'Últimos 30'),
                                               ],
                                             )
                                           ],
@@ -152,9 +152,9 @@ class  _reportviewState extends State<reportview>{
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                 children: [
-                                                  _buildButton(3, 'Ultimos 7'),
-                                                  _buildButton(4, 'Ultimos 15'),
-                                                  _buildButton(5, 'Ultimos 30'),
+                                                  _buildButton(3, 'Últimos 7'),
+                                                  _buildButton(4, 'Últimos 15'),
+                                                  _buildButton(5, 'Últimos 30'),
                                                 ],
                                               )
                                             ],
@@ -175,7 +175,7 @@ class  _reportviewState extends State<reportview>{
                                             ),
                                           ],
                                         ),
-                                        child: Center(child: Text("Estadisticas y graficos", style: TextStyle(color: ColorsGenerals().black, fontSize: 20),),),
+                                        child: Center(child: Text("Estadísticas y gráficos", style: TextStyle(color: ColorsGenerals().black, fontSize: 20),),),
                                       ),
                                     ],
                                   )

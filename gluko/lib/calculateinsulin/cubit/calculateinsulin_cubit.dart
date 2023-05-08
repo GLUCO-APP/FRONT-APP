@@ -21,6 +21,9 @@ class CalculateinsulinCubit extends Cubit<CalculateinsulinState> {
 
   Future<void> getInfoUser() async{
     var user = await infoUserRepository().getInfoUser();
+    print(user.sensitivity);
+    print(user.rate);
+    print(user.estable);
     emit(state.copyWith(status:Calculateinsulinstatus.success, infoUser: user));
   }
 
