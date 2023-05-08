@@ -1422,7 +1422,7 @@ class  _profileviewState extends State<profileview>{
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(10),
-                                height:  MediaQuery.of(context).size.height/4.2,
+                                height:  MediaQuery.of(context).size.height/3.9,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   color: ColorsGenerals().lightgrey,
@@ -1460,6 +1460,7 @@ class  _profileviewState extends State<profileview>{
                                     ),
                                     Container(
                                       padding: const EdgeInsets.all(17),
+                                      height: MediaQuery.of(context).size.height/7,
                                       child: Column(
                                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1522,7 +1523,7 @@ class  _profileviewState extends State<profileview>{
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(10),
-                                height:  MediaQuery.of(context).size.height/2.4,
+                                height:  MediaQuery.of(context).size.height/2.3,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   color: ColorsGenerals().lightgrey,
@@ -1586,6 +1587,7 @@ class  _profileviewState extends State<profileview>{
                                     ),
                                     Container(
                                       padding: const EdgeInsets.all(10),
+                                      height: MediaQuery.of(context).size.height/10,
                                       child: Column(
                                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                                           crossAxisAlignment: CrossAxisAlignment.start,
