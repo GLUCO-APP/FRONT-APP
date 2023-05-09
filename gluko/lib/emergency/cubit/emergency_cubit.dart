@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 part 'emergency_state.dart';
 
 class EmergencyCubit extends Cubit<EmergencyState> {
-  EmergencyCubit(this._repository,this.rgreport,this.rgplate) : super(EmergencyState());
+  EmergencyCubit(this._repository,this.rgreport,this.rgplate) : super(EmergencyState(infoUser:User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", "")));
   Future<void> Iniciar() async{
     emit(state.confirmar() as EmergencyState);
   }
@@ -23,6 +23,13 @@ class EmergencyCubit extends Cubit<EmergencyState> {
     return response;
   }
 
+  Future<void> getInfoUser() async{
+    var user = await infoUserRepository().getInfoUser();
+    print(user.sensitivity);
+    print(user.rate);
+    print(user.estable);
+    emit(state.copywhit(status: Emergencystatus.success, infoUser: user));
+  }
   Future<bool> RegisterPlate(PlateRegister plate, int glucosa, int insulina) async{
     emit(state.copywhit(status: Emergencystatus.loading));
     try{

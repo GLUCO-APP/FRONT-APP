@@ -88,7 +88,7 @@ class _beginviewState extends State<beginview> {
                     ),
                 child: SingleChildScrollView(
                   child: Container(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(5),
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height / 1.2,
                     decoration: BoxDecoration(
@@ -110,7 +110,7 @@ class _beginviewState extends State<beginview> {
                                 MediaQuery.of(context).size.height / 150,
                                 horizontal:
                                 MediaQuery.of(context).size.width / 50),
-                            width: MediaQuery.of(context).size.width,
+                            width: MediaQuery.of(context).size.width/1.1,
                             height: MediaQuery.of(context).size.height / 3.6,
                             decoration: BoxDecoration(
                               color: ColorsGenerals().lightgrey,
@@ -135,7 +135,7 @@ class _beginviewState extends State<beginview> {
                                   child: Stack(
                                     children: [
                                       Positioned(
-                                        left: MediaQuery.of(context).size.width/34,
+                                        left: MediaQuery.of(context).size.width/36,
                                         top: MediaQuery.of(context).size.height / 10,
                                         child: Container(
                                           width:
@@ -205,7 +205,7 @@ class _beginviewState extends State<beginview> {
                                         ),
                                       ),
                                       Positioned(
-                                        left: MediaQuery.of(context).size.width/2.8,
+                                        left: MediaQuery.of(context).size.width/3,
                                         top: MediaQuery.of(context).size.height / 20,
                                         child: Container(
                                           width:
@@ -292,7 +292,7 @@ class _beginviewState extends State<beginview> {
                                         ),
                                       ),
                                       Positioned(
-                                        left: MediaQuery.of(context).size.width/1.5,
+                                        left: MediaQuery.of(context).size.width/1.6,
                                         top: MediaQuery.of(context).size.height / 10,
                                         child: Container(
                                           width:
@@ -342,7 +342,7 @@ class _beginviewState extends State<beginview> {
                                                           style: TextStyle(
                                                               color: ColorsGenerals().black,
                                                               fontWeight: FontWeight.w500,
-                                                              fontSize: 15),
+                                                              fontSize: 12),
                                                         ),
                                                       )
                                                     ],
@@ -482,7 +482,7 @@ class _beginviewState extends State<beginview> {
       itemBuilder: (context, index) {
         final plComp = plates[index];
         return Padding(
-          padding: EdgeInsets.all(5),
+          padding: EdgeInsets.all(0),
           child: GestureDetector(
             onTap: () async {
               var validation = await checkLocationPermission();
@@ -497,7 +497,7 @@ class _beginviewState extends State<beginview> {
             },
             child: Container(
                 padding: EdgeInsets.all(5),
-                width: MediaQuery.of(context).size.width / 1.2,
+                width: MediaQuery.of(context).size.width / 1.1,
                 height: MediaQuery.of(context).size.height / 5,
                 decoration: BoxDecoration(
                   color: ColorsGenerals().lightgrey,
