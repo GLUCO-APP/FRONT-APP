@@ -29,6 +29,7 @@ class User {
   int objective_carbs;
   int physicalctivity;
   String infoAdicional;
+  String tipo_usuario;
 
 
   User(
@@ -60,39 +61,54 @@ class User {
       this.objective_carbs,
       this.physicalctivity,
       this.infoAdicional,
+      this.tipo_usuario
       );
 
   Map<String, dynamic> toJson() => {
-    'nombre': nombre,
-    'email': email,
-    'password': password,
-    'fechaNacimiento': fechaNacimiento,
-    'fechaDiagnostico': fechaDiagnostico,
-    'edad': edad,
-    'genero': genero,
-    'peso': peso,
-    'estatura': estatura,
-    'tipoDiabetes': tipoDiabetes,
-    'tipoTerapia': tipoTerapia,
-    'hyper': hyper,
-    'estable': estable,
-    'hipo': hipo,
-    'sensitivity': sensitivity,
-    'rate': rate,
-    'precis': precis,
-    'breakfast_start': breakfast_start,
-    'breakfast_end': breakfast_end,
-    'lunch_start': lunch_start,
-    'lunch_end': lunch_end,
-    'dinner_start': dinner_start,
-    'dinner_end': dinner_end,
-    'insulin': [
-      {"id": insulinR.id},
-      {"id": insulinL.id}
-    ],
-    'objective_carbs': objective_carbs,
-    'physicalctivity': physicalctivity,
-    'infoAdicional': infoAdicional,
+    "usuario": {
+      "nombre": nombre,
+      "email": email,
+      "fecha_nacimiento": fechaNacimiento,
+      "fecha_diagnostico": fechaDiagnostico,
+      "edad": edad,
+      "genero": genero,
+      "peso": peso,
+      "estatura": estatura,
+      "tipo_diabetes": tipoDiabetes,
+      "tipo_terapia": tipoTerapia,
+      "hyper": hyper,
+      "estable": estable,
+      "hipo": hipo,
+      "sensitivity": sensitivity,
+      "rate": rate,
+      "precis": precis,
+      "breakfast_start": breakfast_start,
+      "breakfast_end": breakfast_end,
+      "lunch_start": lunch_start,
+      "lunch_end": lunch_end,
+      "dinner_start": dinner_start,
+      "dinner_end": dinner_end,
+      "objective_carbs": objective_carbs,
+      "physical_activity": physicalctivity,
+      "info_adicional": infoAdicional,
+      "tipo_usuario": tipo_usuario
+    },
+    "ins": [
+      {
+        "id": insulinR.id,
+        "name": insulinR.name,
+        "type": insulinR.type,
+        "iprecision": insulinR.iprecision,
+        "duration": insulinR.duration
+      },
+      {
+        "id": insulinL.id,
+        "name": insulinL.name,
+        "type": insulinL.type,
+        "iprecision": insulinL.iprecision,
+        "duration": insulinL.duration
+      }
+    ]
   };
 
 }

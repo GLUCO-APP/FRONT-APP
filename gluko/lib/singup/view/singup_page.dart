@@ -37,15 +37,17 @@ class Singuppage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SingupCubit(SignUpRepository(), EmailValidateRepository()),
+      create: (context) => SingupCubit(SignUpRepository(), EmailValidateRepository(), allinsulinRepository())..listInsulin(),
       child: Singupview(),
     );
   }
 }
 
 // usuario
-User usuario = User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "");
+User usuario = User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", "");
 Insulin insulinaR = Insulin(0, "", "", 0, 0);
+List<Insulin> listInsulinR = [];
+List<Insulin> listInsulinB = [];
 
 class Singupview extends StatefulWidget {
   @override
@@ -118,8 +120,8 @@ class  _SingupviewState extends State<Singupview>{
   }
 
   _SingupviewState(){
-    _selectedInsulinR = tipInsulinR[0];
-    _selectedInsulinL = tipInsulinL[0];
+    _selectedInsulinR = insulinaR;
+    _selectedInsulinL = insulinaR;
   }
 
   // primer paso
@@ -154,11 +156,9 @@ class  _SingupviewState extends State<Singupview>{
   final senbCtrl = TextEditingController();
   final ratioCtrl = TextEditingController();
   // 12 paso
-  final tipInsulinR = ["NovoRapid Aspart", "Glulisina Apidra", "FIASP Aspart", "Humulin R Cristalina"];
-  String? _selectedInsulinR = "";
+  Insulin _selectedInsulinR = Insulin((-1), "", "", 0.0, 0);
   int _selectPR = 0;
-  final tipInsulinL = ["Delemir Levemir", "Lantus Glargina", "Tresiba Degludec", "Toujeo Glargina"];
-  String? _selectedInsulinL = "";
+  Insulin _selectedInsulinL = Insulin((-2), "", "", 0.0, 0);
   int _selectPL = 0;
   final ctrHoraInsulinL = TextEditingController();
   // 13 paso
@@ -176,6 +176,8 @@ class  _SingupviewState extends State<Singupview>{
     ButtonData("3-5 dias por semana", "assets/Icons/Corriendo1.png"),
     ButtonData("5-7 dias por semana", "assets/Icons/Deporte1.png")
   ];
+  // 15 paso
+  int _selectUser = 0;
 
 
 
@@ -851,12 +853,15 @@ class  _SingupviewState extends State<Singupview>{
           children: [
             DropdownButtonFormField(
               value: _selectedInsulinR,
-              items: tipInsulinR.map((e) =>
-                DropdownMenuItem(value: e,child: Text(e),)
+              items: listInsulinR.map((e) =>
+                DropdownMenuItem(
+                  key: ValueKey(e.id),
+                  value: e,
+                  child: Text(e.name),)
               ).toList(),
               onChanged: (value){
                 setState(() {
-                  _selectedInsulinR = value as String;
+                  _selectedInsulinR = value!;
                 });
               },
               icon: const Icon(
@@ -899,12 +904,15 @@ class  _SingupviewState extends State<Singupview>{
             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
             DropdownButtonFormField(
               value: _selectedInsulinL,
-              items: tipInsulinL.map((e) =>
-                  DropdownMenuItem(value: e,child: Text(e),)
+              items: listInsulinB.map((e) =>
+                  DropdownMenuItem(
+                    key: ValueKey(e.id),
+                    value: e,
+                    child: Text(e.name),)
               ).toList(),
               onChanged: (value){
                 setState(() {
-                  _selectedInsulinL = value as String;
+                  _selectedInsulinL = value!;
                 });
               },
               icon: const Icon(
@@ -1326,7 +1334,49 @@ class  _SingupviewState extends State<Singupview>{
             ),
           )).values.toList(),
         ),
-    )
+    ),
+    Step(
+        state: _stepState(14),
+        isActive: _currentStep >=14,
+        title: const Text(
+            'Tipo de usuario',
+            style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)
+        ),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children:  [
+            const Text(
+              "¿Esta cuenta es de un paciente diabetico o un tutor?",
+              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            ToggleButtons(
+                selectedBorderColor: Colors.red,
+                borderRadius: BorderRadius.circular(20),
+                borderWidth: 2,
+                isSelected: [
+                  _selectUser == 0,
+                  _selectUser == 1,
+                ],
+                onPressed: (int newIndex) {
+                  setState(() {
+                    _selectUser = newIndex;
+                  });
+                },
+                children: const [
+                  Text(
+                    "Paciente",
+                    style: TextStyle(color: Colors.black, fontSize: 15),
+                  ),
+                  Text(
+                    "Tutor",
+                    style: TextStyle(color: Colors.black, fontSize: 15),
+                  ),
+                ]
+            )
+          ],
+        )
+    ),
   ];
 
   StepState _stepState (int step) {
@@ -1407,6 +1457,8 @@ class  _SingupviewState extends State<Singupview>{
     horaFinalAlmuerzoCtrl.clear();
     horaInicioCenaCtrl.clear();
     horaFinalCenaCtrl.clear();
+    listInsulinR.clear();
+    listInsulinB.clear();
   }
 
   @override
@@ -1441,6 +1493,8 @@ class  _SingupviewState extends State<Singupview>{
                       return const Center(child: CircularProgressIndicator());
                         break;
                       case Singuptatus.success:
+                        listInsulinR = states.getInsulinas().where((insulin) => insulin.type == "bolo").toSet().toList();
+                        listInsulinB = states.getInsulinas().where((insulin) => insulin.type == "basal").toSet().toList();
                       return SingleChildScrollView(
                           child: Container(
                               padding: const EdgeInsets.all(10),
@@ -1566,12 +1620,13 @@ class  _SingupviewState extends State<Singupview>{
                                       setState(() => _currentStep += 1);
                                     }
                                   } else if (_currentStep == 11){
+
                                     if(ctrHoraInsulinL.text.isEmpty){
                                       pushUp("Complete todos los campos por favor");
                                     } else {
                                       usuario.precis = ctrHoraInsulinL.text;
-                                      usuario.insulinR = Insulin(1, "NovoRapid Aspart", "Bolo", 0.5, 4);
-                                      usuario.insulinL = Insulin(2, "Lantus Glargina", "Basal", 1.0, 24);
+                                      usuario.insulinR = _selectedInsulinR;
+                                      usuario.insulinL = _selectedInsulinL;
                                       setState(() => _currentStep += 1);
                                     }
                                   } else if (_currentStep == 12){
@@ -1586,6 +1641,16 @@ class  _SingupviewState extends State<Singupview>{
                                       usuario.dinner_end = horaFinalCenaCtrl.text.toString();
                                       setState(() => _currentStep += 1);
                                     }
+                                  } else if (_currentStep == 13) {
+                                    usuario.physicalctivity = _buttons[_selectedButtonA].name as int;
+                                    setState(() => _currentStep += 1);
+                                  } else if (_currentStep == 14) {
+                                      if(_selectUser == 0){
+                                        usuario.tipo_usuario = "Paciente";
+                                      } else {
+                                        usuario.tipo_usuario = "Tutor";
+                                      }
+                                      setState(() => _currentStep += 1);
                                   } else {
                                     setState(() => _currentStep += 1);
                                   }

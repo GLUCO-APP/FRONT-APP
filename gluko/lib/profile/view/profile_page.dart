@@ -7,7 +7,7 @@ import 'package:gluko_repository/gluko_repository.dart';
 import '../../colors/colorsGenerals.dart';
 import '../cubit/profile_cubit.dart';
 
-enum SexTypeEnum {masculino, femenina}
+enum SexTypeEnum {masculino, femenino}
 
 class ButtonData {
   final int code;
@@ -49,7 +49,7 @@ var horaFinalComida = "";
 var horaFinalCena = "";
 var objetivoCarbo = "";
 var actividadFisica = "";
-User user = User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "");
+User user = User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", "");
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
 
@@ -1596,16 +1596,16 @@ class  _profileviewState extends State<profileview>{
                                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text("Objetivo Carbohidratos: ", style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w500),),
-                                                Text(objetivoCarbo, style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
+                                                Text("Objetivo Carbohidratos: ", style: TextStyle(color: ColorsGenerals().black, fontSize: 15,fontWeight: FontWeight.w500),),
+                                                Text(objetivoCarbo, style: TextStyle(color: ColorsGenerals().black, fontSize: 15,fontWeight: FontWeight.w300),),
                                               ],
                                             ),
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text("Actividad fisica: ", style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w500),),
-                                                Text(actividadFisica, style: TextStyle(color: ColorsGenerals().black, fontSize: 18,fontWeight: FontWeight.w300),),
+                                                Text("Actividad fisica: ", style: TextStyle(color: ColorsGenerals().black, fontSize: 15,fontWeight: FontWeight.w500),),
+                                                Text(actividadFisica, style: TextStyle(color: ColorsGenerals().black, fontSize: 15,fontWeight: FontWeight.w300),),
                                               ],
                                             ),
                                           ]

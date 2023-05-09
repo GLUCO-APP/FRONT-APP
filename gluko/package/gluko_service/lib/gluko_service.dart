@@ -16,3 +16,4 @@ export 'src/Data/reportPDF_service.dart';
 export 'src/Data/Recomendation_service.dart';
 export 'src/Data/historialReports_service.dart';
 export 'src/Data/emailValidate_service.dart';
+export 'src/Data/allinsulin_service.dart';

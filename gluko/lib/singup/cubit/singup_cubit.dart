@@ -5,10 +5,11 @@ import 'package:meta/meta.dart';
 part 'singup_state.dart';
 
 class SingupCubit extends Cubit<SingupState> {
-  SingupCubit(this.repository, this.emailRepository) : super(SingupState());
+  SingupCubit(this.repository, this.emailRepository, this.insulinRepository) : super(SingupState());
   Future<void> Iniciar() async{
     emit(state.confirmar() as SingupState);
   }
+  allinsulinRepository insulinRepository;
   SignUpRepository repository;
   EmailValidateRepository emailRepository;
 
@@ -36,5 +37,15 @@ class SingupCubit extends Cubit<SingupState> {
       emit(state.copywhit(status: Singuptatus.error));
       return response;
     }
+  }
+
+  Future<void> listInsulin () async{
+    try{
+      List<Insulin> insulinas = await insulinRepository.getInsulin();
+      emit(state.copywhit(status: Singuptatus.success, insulinas: insulinas));
+    }catch (ex){
+      emit(state.copywhit(status: Singuptatus.error));
+    }
+
   }
 }

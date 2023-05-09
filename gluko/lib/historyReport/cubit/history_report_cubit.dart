@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 part 'history_report_state.dart';
 
 class HistoryReportCubit extends Cubit<HistoryReportState> {
-  HistoryReportCubit(this.report) : super(HistoryReportState(repos:[],infoUser:User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "")));
+  HistoryReportCubit(this.report) : super(HistoryReportState(repos:[],infoUser:User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", "")));
 
   allReportRepository report;
 
