@@ -24,8 +24,6 @@ class reportview extends StatefulWidget {
 }
 
 class  _reportviewState extends State<reportview>{
-  bool amplio = true;
-  bool amplio3 = true;
   List<bool> _buttonStates = [false, false, false,false,false,false];
   List<int> dias = [7,15,30,7,15,30];
   Widget _buildButton(int index, String text) {
@@ -189,7 +187,7 @@ class  _reportviewState extends State<reportview>{
                     ElevatedButton(
                       onPressed: () async {
                         bool  realizo = false;
-                        for(int i = 0; i < _buttonStates.length; i++) {
+                        for(int i = _buttonStates.length -1; 0 < i; i--) {
                           if (_buttonStates[i]) {
                             realizo = true;
                             var path = await context.read<ReportCubit>().getPDF(

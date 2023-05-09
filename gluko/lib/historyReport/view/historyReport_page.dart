@@ -287,15 +287,11 @@ class  _HistoryReportviewState extends State<HistoryReportview>{
                               ],
                             ),
                           ),
-                          Text(
-                            'Porcentaje de nivel de glucemia de los últimos 7 días',
-                              textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                          ),
                           Container(
+                              padding: EdgeInsets.all(5),
                               width:
                               MediaQuery.of(context).size.width,
-                              height:MediaQuery.of(context).size.height / 3,
+                              height:MediaQuery.of(context).size.height / 2.6,
                               decoration: BoxDecoration(
                                 color: ColorsGenerals().lightgrey,
                                 borderRadius: const BorderRadius.all(Radius.circular(20)),
@@ -308,41 +304,124 @@ class  _HistoryReportviewState extends State<HistoryReportview>{
                                   ),
                                 ],
                               ),
-                              child: PieChart(
-                                PieChartData(
-                                  sections: [
-                                    PieChartSectionData(
-                                        value:glucemia[0],
-                                        titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
-                                        color:Colors.lightBlueAccent,
-                                        radius:  40,
-                                        title: "Hipo: ${((glucemia[0]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
-                                        showTitle: true,
-                                        titlePositionPercentageOffset: 1.3,
-                                        ),
-                                    PieChartSectionData(
-                                      titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
-                                        value: glucemia[1],
-                                      titlePositionPercentageOffset: 1.3,
-                                        color: Colors.lightGreen,
-                                        radius:  40,
-                                        title: "Normal: ${((glucemia[1]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
-                                        showTitle: true,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Porcentaje de nivel de glucemia de los últimos 7 días',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                  ),
+                                  Container(
+                                    width:
+                                    MediaQuery.of(context).size.width,
+                                    height:MediaQuery.of(context).size.height / 3.6,
+                                    child: PieChart(
+                                      PieChartData(
+                                        sections: [
+                                          PieChartSectionData(
+                                            value:glucemia[0],
+                                            titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
+                                            color:Colors.lightBlueAccent,
+                                            radius:  35,
+                                            title: "${((glucemia[0]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
+                                            showTitle: true,
+                                            titlePositionPercentageOffset: 1.7,
+                                          ),
+                                          PieChartSectionData(
+                                            titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
+                                            value: glucemia[1],
+                                            titlePositionPercentageOffset: 1.4,
+                                            color: Colors.lightGreen,
+                                            radius:  35,
+                                            title: "${((glucemia[1]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
+                                            showTitle: true,
+                                          ),
+                                          PieChartSectionData(
+                                            titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
+                                            value: glucemia[2],
+                                            color: ColorsGenerals().red,
+                                            titlePositionPercentageOffset: 1.5,
+                                            radius: 35,
+                                            title: "${((glucemia[2]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
+                                            showTitle: true,
+                                          ),
+                                        ],
+                                        centerSpaceRadius: 37,
+                                        sectionsSpace: 3,
+                                        startDegreeOffset: 270,
+                                      ),
                                     ),
-                                    PieChartSectionData(
-                                      titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
-                                        value: glucemia[2],
-                                        color: ColorsGenerals().red,
-                                      titlePositionPercentageOffset: 1.3,
-                                        radius: 40,
-                                        title: "Hiper: ${((glucemia[2]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
-                                        showTitle: true,
-                                        ),
-                                  ],
-                                  centerSpaceRadius: 50,
-                                  sectionsSpace: 3,
-                                  startDegreeOffset: 270,
-                                ),
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color:Colors.lightBlueAccent,
+                                              borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey.withOpacity(0.5),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 0.1,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            height: MediaQuery.of(context).size.height/40,
+                                            width: MediaQuery.of(context).size.height/40,
+                                          ),
+                                          Text(" Hipo")
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.lightGreen,
+                                              borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey.withOpacity(0.5),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 0.1,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            height: MediaQuery.of(context).size.height/40,
+                                            width: MediaQuery.of(context).size.height/40,
+                                          ),
+                                          Text(" Estable")
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color:ColorsGenerals().red,
+                                              borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey.withOpacity(0.5),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 0.1,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            height: MediaQuery.of(context).size.height/40,
+                                            width: MediaQuery.of(context).size.height/40,
+                                          ),
+                                          Text(" Hiper")
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                ],
                               )),
                           Text(
                             'Registros',

@@ -10,7 +10,7 @@ class emergencypage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => EmergencyCubit(EmergencyRepository(),RegisterReportRepository(), RegisterPlateRepository()),
+      create: (context) => EmergencyCubit(EmergencyRepository(),RegisterReportRepository(), RegisterPlateRepository())..getInfoUser(),
       child: emergencyview(),
     );
   }
@@ -24,12 +24,44 @@ class emergencyview extends StatefulWidget {
 
 class  _emergencyviewState extends State<emergencyview>{
   List<FoodDetail> snaks = [];
+  List<bool> _sintomasStates = [false, false, false,false,false];
+  bool sintomas = false;
+  bool emergencia = false;
   int estado = 4;
   int unidades = 3;
   var glucosa = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool visible = false;
 
+  Widget _buildButtonSintomas(int index, String text) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _sintomasStates[index] = !_sintomasStates[index];
+        });
+      },
+      child: Container(
+        height: MediaQuery.of(context).size.height/ 15,
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          color: _sintomasStates[index]
+              ? ColorsGenerals().darkblue
+              : ColorsGenerals().whith,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(text, style: TextStyle(fontSize: MediaQuery.of(context).size.height /45, color: _sintomasStates[index] ? ColorsGenerals().whith :ColorsGenerals().black),),
+            _sintomasStates[index] ? Icon(Icons.check, size:  MediaQuery.of(context).size.height /40,color: ColorsGenerals().whith,) : SizedBox(),
+          ],
+        ),
+      ),
+    );
+  }
   Future<void> _registrarSnak(FoodDetail food) async {
     var response =  await context.read<EmergencyCubit>().RegisterPlate(PlateRegister([plateId(food.id)],double.parse(glucosa.text.toString()),food.carbs, food.protein, food.fats, "Snack", 0,0,0,"","","Sin titulo xd"),int.parse(glucosa.text),0);
     if(response){
@@ -211,7 +243,57 @@ class  _emergencyviewState extends State<emergencyview>{
                             ),
                           ),
                           visible?
-                              estado == 0?
+                            sintomas?
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height/1.8,
+                                child: Column(
+                                  children: [
+                                    Text("!Tu medida es peligrosamente alta!\n¿tienes algunos de estos sintomas?", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/45, fontWeight: FontWeight.w400),),
+                                    Padding(padding: EdgeInsets.symmetric(
+                                        vertical: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .height / 100)),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 10,
+                                          vertical: 20),
+                                      width: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width,
+                                      height: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .height / 2.2,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(20),
+                                          color: ColorsGenerals().lightgrey,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.2),
+                                              spreadRadius: 1,
+                                              blurRadius: 2,
+                                              offset: Offset(0, 3),
+                                            ),
+                                          ]
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          _buildButtonSintomas(0, "Dolor abdominal"),
+                                          _buildButtonSintomas(1, "Nauseas"),
+                                          _buildButtonSintomas(2, "Vomito"),
+                                          _buildButtonSintomas(3, "Aliento con olor a frutas (cetonas)"),
+                                          _buildButtonSintomas(4, "Dificultad para respirar"),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                              :estado == 0?
                               Container(
                                 width: MediaQuery.of(context).size.width,
                                 height: MediaQuery.of(context).size.height/1.8,
@@ -250,7 +332,8 @@ class  _emergencyviewState extends State<emergencyview>{
                                     )
                                   ],
                                 ),
-                              ) :estado == 1?
+                              ) :
+                            estado == 1?
                               Container(
                                 width: MediaQuery.of(context).size.width,
                                 height: MediaQuery.of(context).size.height/1.8,
@@ -272,7 +355,31 @@ class  _emergencyviewState extends State<emergencyview>{
                                   ] ,
                                 ),
                               ) :
-                              Container(
+                            estado == 2?
+                            (emergencia?Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height/1.8,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("Por los sintomas que describes deberias ir al MEDICO lo mas pronto posible", textAlign: TextAlign.center,style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/40, fontWeight: FontWeight.w500),),
+                                  Container(
+                                      width: MediaQuery.of(context).size.width /1.7,
+                                      height: MediaQuery.of(context).size.height /3,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image:AssetImage("assets/Logo/gluko_bot_angry.png"),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                  ),
+                                  Padding(padding: EdgeInsets.symmetric(vertical: 20)),
+                                  Text("Administra ${unidades} unidades de insulina para estabilizar la glucemia.",textAlign: TextAlign.center ,style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/40, fontWeight: FontWeight.w500),)
+                                ] ,
+                              ),
+                            ):
+                            Container(
                                 width: MediaQuery.of(context).size.width,
                                 height: MediaQuery.of(context).size.height/1.8,
                                 child: Column(
@@ -289,10 +396,11 @@ class  _emergencyviewState extends State<emergencyview>{
                                         )
                                     ),
                                     Padding(padding: EdgeInsets.symmetric(vertical: 20)),
-                                    Text("!Tu medida es peligrosamente alta!,\nadministra ${unidades} unidades de insulina \npara bajarla.", style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/40, fontWeight: FontWeight.w500),)
+                                    Text("!Tu medida es peligrosamente alta!,\nadministra ${unidades} unidades de insulina \npara bajarla.",textAlign: TextAlign.center, style: TextStyle(color: ColorsGenerals().black, fontSize: MediaQuery.of(context).size.height/40, fontWeight: FontWeight.w500),)
                                   ] ,
                                 ),
-                              ) :
+                              )):
+                            Container():
                           Container(
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height/1.8,
@@ -314,6 +422,68 @@ class  _emergencyviewState extends State<emergencyview>{
                               ] ,
                             ),
                           ),
+                          sintomas?
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ElevatedButton(
+                                onPressed: ()  {
+                                  setState(() {
+                                    visible  = false;
+                                    sintomas = false;
+                                    glucosa.clear();
+                                    estado = 3;
+                                  });
+                                },
+                                child: Text("Cancelar",
+                                  style: TextStyle(color: ColorsGenerals().whith, fontSize: 18),),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 8, // elevación de la sombra
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        30), // radio de la esquina redondeada
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                                  backgroundColor: Colors.red, // color de fondo
+                                ),
+
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  int suma = 0;
+                                  _sintomasStates.forEach((sin) {
+                                    if(sin){
+                                      suma++;
+                                    }
+                                  });
+                                  if(suma >= 3){
+                                    setState(() {
+                                      sintomas = false;
+                                      emergencia = true;
+                                    });
+                                    validar(context);
+                                  }else{
+                                    setState(() {
+                                      sintomas = false;
+                                    });
+                                    validar(context);
+                                  }
+                                },
+                                child: Text("Revisar",
+                                  style: TextStyle(color: ColorsGenerals().whith, fontSize: 18),),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 8, // elevación de la sombra
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        30), // radio de la esquina redondeada
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                                  backgroundColor: Colors.red, // color de fondo
+                                ),
+
+                              ),
+                            ],
+                          ):
                           estado == 2?
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -324,6 +494,7 @@ class  _emergencyviewState extends State<emergencyview>{
                                     visible = false;
                                     glucosa.clear();
                                     estado = 3;
+                                    emergencia = false;
                                   });
                                 },
                                 child: Text("Cancelar",
@@ -395,36 +566,21 @@ class  _emergencyviewState extends State<emergencyview>{
                               :ElevatedButton(
                             onPressed: () async {
                               if(formKey.currentState!.validate()){
-                                var gluco = glucosa.text;
-                                EmergencyDetail response = await context.read<EmergencyCubit>().Emeregencia(gluco);
-                                print(response.messege);
-                                switch(response.stadeEmergency){
-                                  case 0 :
-                                    setState(() {
-                                      visible = true;
-                                      estado = response.stadeEmergency;
-                                      unidades = response.insulina;
-                                      snaks = response.food;
-                                    });
-                                    break;
-                                  case 1 :
-                                    setState(() {
-                                      visible = true;
-                                      estado = response.stadeEmergency;
-                                      unidades = response.insulina;
-                                    });
-                                    break;
-                                  case 2 :
-                                    setState(() {
-                                      visible = true;
-                                      estado = response.stadeEmergency;
-                                      unidades = response.insulina;
-                                    });
-                                    break;
-                                  case 3 :
-                                    Fluttertoast.showToast(
-                                        msg: "Algo Fallo", fontSize: 20);
-                                    break;
+                                print(sintomas);
+                                print(states.infoUser.hyper);
+                                print(int.parse(glucosa.text.toString()));
+                                if(int.parse(glucosa.text.toString()) > states.infoUser.hyper && sintomas == false){
+                                  print("Cuadra");
+                                  setState(() {
+                                    visible = true;
+                                    sintomas = true;
+                                  });
+                                }else{
+                                  setState(() {
+                                    sintomas = false;
+                                  });
+                                  print("Entra aqui");
+                                  validar(context);
                                 }
                               }
                             },
@@ -560,5 +716,40 @@ class  _emergencyviewState extends State<emergencyview>{
             );
           }
       );
+  Future<void> validar(BuildContext context) async {
+    var gluco = glucosa.text.toString();
+    EmergencyDetail response = await context.read<EmergencyCubit>().Emeregencia(gluco);
+    print(response.messege);
+    switch(response.stadeEmergency){
+      case 0 :
+        setState(() {
+          visible = true;
+          estado = response.stadeEmergency;
+          unidades = response.insulina;
+          snaks = response.food;
+        });
+        break;
+      case 1 :
+        setState(() {
+          visible = true;
+          estado = response.stadeEmergency;
+          unidades = response.insulina;
+        });
+        break;
+      case 2 :
+        print(emergencia);
+        setState(() {
+          visible = true;
+          estado = response.stadeEmergency;
+          unidades = response.insulina;
+        });
+        break;
+      case 3 :
+        Fluttertoast.showToast(
+            msg: "Algo Fallo", fontSize: 20);
+        break;
+    }
+  }
+
 }
 
