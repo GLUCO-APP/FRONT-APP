@@ -7,7 +7,6 @@ class allinsulinRepository{
     try{
       List<Insulin> all = [];
       List<dynamic> aux = await AllinsulinService().getAllInsulin();
-      print(aux);
       for(int i = 0; i < aux.length; i++){
         all.add(
             Insulin(

@@ -45,9 +45,10 @@ class Singuppage extends StatelessWidget {
 
 // usuario
 User usuario = User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", "");
-Insulin insulinaR = Insulin(0, "", "", 0, 0);
 List<Insulin> listInsulinR = [];
+List<Insulin> pruebaR = [];
 List<Insulin> listInsulinB = [];
+List<Insulin> pruebaL = [];
 
 class Singupview extends StatefulWidget {
   @override
@@ -120,8 +121,6 @@ class  _SingupviewState extends State<Singupview>{
   }
 
   _SingupviewState(){
-    _selectedInsulinR = insulinaR;
-    _selectedInsulinL = insulinaR;
   }
 
   // primer paso
@@ -156,9 +155,9 @@ class  _SingupviewState extends State<Singupview>{
   final senbCtrl = TextEditingController();
   final ratioCtrl = TextEditingController();
   // 12 paso
-  Insulin _selectedInsulinR = Insulin((-1), "", "", 0.0, 0);
+  Insulin _selectedInsulinR = Insulin(3, "Humulin R Cristalina", "Bolo", 1, 8);
   int _selectPR = 0;
-  Insulin _selectedInsulinL = Insulin((-2), "", "", 0.0, 0);
+  Insulin _selectedInsulinL = Insulin(9, "Delemir Levemir", "Basal", 1, 18);
   int _selectPL = 0;
   final ctrHoraInsulinL = TextEditingController();
   // 13 paso
@@ -851,11 +850,10 @@ class  _SingupviewState extends State<Singupview>{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButtonFormField(
-              value: _selectedInsulinR,
-              items: listInsulinR.map((e) =>
+            /*DropdownButtonFormField<Insulin>(
+              value: listInsulinR[0],
+              items: listInsulinR.toSet().map((e) =>
                 DropdownMenuItem(
-                  key: ValueKey(e.id),
                   value: e,
                   child: Text(e.name),)
               ).toList(),
@@ -873,7 +871,7 @@ class  _SingupviewState extends State<Singupview>{
                       Icons.edit
                   )
               ),
-            ),
+            ),*/
             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
             const Text(
               "Precisión",),
@@ -902,11 +900,10 @@ class  _SingupviewState extends State<Singupview>{
                 ]
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
-            DropdownButtonFormField(
-              value: _selectedInsulinL,
-              items: listInsulinB.map((e) =>
+            /*DropdownButtonFormField<Insulin>(
+              value: listInsulinB[0],
+              items: listInsulinB.toSet().map((e) =>
                   DropdownMenuItem(
-                    key: ValueKey(e.id),
                     value: e,
                     child: Text(e.name),)
               ).toList(),
@@ -924,7 +921,7 @@ class  _SingupviewState extends State<Singupview>{
                   Icons.edit
                 )
               ),
-            ),
+            ),*/
             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
             const Text(
               "Precisión",),
@@ -1457,8 +1454,6 @@ class  _SingupviewState extends State<Singupview>{
     horaFinalAlmuerzoCtrl.clear();
     horaInicioCenaCtrl.clear();
     horaFinalCenaCtrl.clear();
-    listInsulinR.clear();
-    listInsulinB.clear();
   }
 
   @override
@@ -1493,8 +1488,22 @@ class  _SingupviewState extends State<Singupview>{
                       return const Center(child: CircularProgressIndicator());
                         break;
                       case Singuptatus.success:
-                        listInsulinR = states.getInsulinas().where((insulin) => insulin.type == "bolo").toSet().toList();
-                        listInsulinB = states.getInsulinas().where((insulin) => insulin.type == "basal").toSet().toList();
+                        pruebaR = states.getInsulinas();
+                        if(listInsulinR.isEmpty){
+                          for (var insulin in pruebaR) {
+                            if(insulin.type == "Bolo"){
+                              listInsulinR.add(insulin);
+                            }
+                          }
+                        }
+                        pruebaL = states.getInsulinas();
+                        if(listInsulinB.isEmpty){
+                          for (var insulin in pruebaL) {
+                            if(insulin.type == "Basal"){
+                              listInsulinB.add(insulin);
+                            }
+                          }
+                        }
                       return SingleChildScrollView(
                           child: Container(
                               padding: const EdgeInsets.all(10),
@@ -1620,7 +1629,6 @@ class  _SingupviewState extends State<Singupview>{
                                       setState(() => _currentStep += 1);
                                     }
                                   } else if (_currentStep == 11){
-
                                     if(ctrHoraInsulinL.text.isEmpty){
                                       pushUp("Complete todos los campos por favor");
                                     } else {

@@ -11,6 +11,6 @@ class Routing{
   String reportPdf = "report/pdf/";
   String recomendation = "/recomendationTest/";
   String reportsAll = "report/all/";
-  String validateEmail = "/user/verifyEmail/";
+  String validateEmail = "/user/verifyEmail";
   String allInsulin = "/allInsulin";
 }
