@@ -317,11 +317,11 @@ class  _HistoryReportviewState extends State<HistoryReportview>{
                                     height:MediaQuery.of(context).size.height / 3.6,
                                     child: PieChart(
                                       PieChartData(
-                                        sections: [
+                                        sections:  glucemia.map((valor) => valor).reduce((a, b) => a + b)>0?[
                                           PieChartSectionData(
                                             value:glucemia[0],
                                             titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
-                                            color:Colors.lightBlueAccent,
+                                            color: Colors.lightBlueAccent,
                                             radius:  35,
                                             title: "${((glucemia[0]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
                                             showTitle: true,
@@ -344,6 +344,16 @@ class  _HistoryReportviewState extends State<HistoryReportview>{
                                             radius: 35,
                                             title: "${((glucemia[2]/(glucemia.reduce((a, b) => a + b)))*100).toStringAsFixed(1)}%",
                                             showTitle: true,
+                                          ),
+                                        ]:[
+                                          PieChartSectionData(
+                                            value:100,
+                                            titleStyle:TextStyle( fontWeight: FontWeight.w500, fontSize: 17),
+                                            color: ColorsGenerals().whith,
+                                            radius:  35,
+                                            title: "0%",
+                                            showTitle: true,
+                                            titlePositionPercentageOffset: 1.7,
                                           ),
                                         ],
                                         centerSpaceRadius: 37,
@@ -435,7 +445,7 @@ class  _HistoryReportviewState extends State<HistoryReportview>{
                               child: Container(
                                 height: MediaQuery.of(context).size.height/2.7,
                                 width: MediaQuery.of(context).size.width,
-                                child: reportsAll(context),
+                                child: reports.length > 0 ? reportsAll(context): Text("¡No tienes registrado reportes!", textAlign: TextAlign.center,),
                               ),
                             ),
                           ),

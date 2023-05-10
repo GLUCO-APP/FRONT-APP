@@ -16,7 +16,7 @@ class HistoryReportCubit extends Cubit<HistoryReportState> {
       emit(state.copywhit(status: HistoryReportstatus.success, repos: reports,infoUser: user));
       print(reports);
     }catch(ex){
-      emit(state.copywhit(status: HistoryReportstatus.error));
+      emit(state.copywhit(status: HistoryReportstatus.success, repos: []));
     }
 
   }

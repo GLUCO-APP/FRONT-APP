@@ -32,4 +32,5 @@ export 'src/models/ReportDetail.dart';
 export 'src/Domain/emailValidate_repository.dart';
 export 'src/models/ResponseValidate.dart';
 export 'src/Domain/allinsulin_repository.dart';
+export 'src/models/responePDF.dart';
 

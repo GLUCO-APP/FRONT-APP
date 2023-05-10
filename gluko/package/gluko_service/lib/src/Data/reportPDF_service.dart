@@ -22,7 +22,7 @@ class ReportPdfService {
         body = response.bodyBytes as List;
         return body;
       }else{
-        throw HttpException(response.body);
+        return false;
       }
     } catch(ex){
       print(ex);

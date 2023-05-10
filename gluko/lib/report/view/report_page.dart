@@ -187,13 +187,20 @@ class  _reportviewState extends State<reportview>{
                     ElevatedButton(
                       onPressed: () async {
                         bool  realizo = false;
-                        for(int i = _buttonStates.length -1; 0 < i; i--) {
+                        for(int i = _buttonStates.length -1; 0 <= i; i--) {
                           if (_buttonStates[i]) {
                             realizo = true;
-                            var path = await context.read<ReportCubit>().getPDF(
+                            var field = await context.read<ReportCubit>().getPDF(
                                 dias[i]);
-                            OpenFile.open(path);
-                            break;
+                            if(field.estado){
+                              OpenFile.open(field.pdf.path);
+                              break;
+                            }else{
+                              Fluttertoast.showToast(
+                                  msg: "No tiene reportes", fontSize: 20);
+                              break;
+                            }
+
                           }
                         }
                         if(!realizo){

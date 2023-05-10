@@ -10,10 +10,9 @@ class ActualStatusRepository{
   Future<ActualStateDetail> getActualStatus() async {
     try{
       final prefs = await SharedPreferences.getInstance();
-      var token =  prefs.getString('tokenJWT');
+      var token =  await prefs.getString('tokenJWT');
       var response = await ActualStateService().getActualState(token!);
       var user = await infoUserRepository().getInfoUser();
-      print(response);
       ActualStateDetail estado = ActualStateDetail(
           response['objective_carbs'] != null? double.parse(response['objective_carbs'].toString()):120,
           response['sum_carbs'] != null?double.parse(response['sum_carbs'].toString()):0,

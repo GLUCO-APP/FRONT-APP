@@ -12,10 +12,10 @@ class ReportCubit extends Cubit<ReportState> {
 
   ReportPDFRepository _report;
 
-  Future<String> getPDF( int dia) async{
+  Future<ResponsePDF> getPDF( int dia) async{
     emit(state.copywhit(status: Reportstatus.loading));
     var field = await _report.getPDF(dia);
     emit(state.copywhit(status: Reportstatus.success));
-    return field.path;
+    return field;
   }
 }

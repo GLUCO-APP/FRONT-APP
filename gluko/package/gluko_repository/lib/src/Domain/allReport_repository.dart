@@ -12,6 +12,7 @@ class allReportRepository{
       var token =  prefs.getString('tokenJWT');
       List<ReportDetail> all = [];
       List<dynamic> aux = await AllReportService().getAllReport(token!);
+      print("llega Aqui");
       for(int i = 0; i < aux.length; i++){
         all.add(ReportDetail(aux[i]['fecha'].toString(), aux[i]['glucosa'].toString(), aux[i]['unidades_insulina'].toString(), aux[i]['type'].toString(), aux[i]['Carbohydrates'].toString()));
       }

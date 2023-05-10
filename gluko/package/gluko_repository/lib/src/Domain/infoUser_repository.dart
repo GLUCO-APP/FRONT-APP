@@ -40,22 +40,22 @@ class infoUserRepository{
             aux['usuario']['dinner_end'].toString(),
             Insulin(
                 int.parse(aux['ins'][0]["id"].toString()),
-                aux['ins'][0]["name"],
-                aux['ins'][0]["type"],
+                aux['ins'][0]["name"].toString(),
+                aux['ins'][0]["type"].toString(),
                 double.parse(aux['ins'][0]["iprecision"].toString()),
                 int.parse(aux['ins'][0]["duration"].toString())
             ),
             Insulin(
                 int.parse(aux['ins'][1]["id"].toString()),
-                aux['ins'][1]["name"],
-                aux['ins'][1]["type"],
+                aux['ins'][1]["name"].toString(),
+                aux['ins'][1]["type"].toString(),
                 double.parse(aux['ins'][1]["iprecision"].toString()),
                 int.parse(aux['ins'][1]["duration"].toString())
             ),
             int.parse(aux['usuario']['objective_carbs'].toString()),
             double.parse(aux['usuario']['physical_activity'].toString()).toInt(),
             aux['usuario']['info_adicional'].toString(),
-            aux['usuario']['tipo_usuario']
+            aux['usuario']['tipo_usuario'].toString()
         );
         return user;
       }catch(ex){
