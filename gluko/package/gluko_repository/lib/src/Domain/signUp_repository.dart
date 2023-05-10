@@ -35,7 +35,8 @@ class SignUpRepository{
         usuario.insulinL.id,
         usuario.objective_carbs,
         usuario.physicalctivity,
-        usuario.infoAdicional
+        usuario.infoAdicional,
+        usuario.tipo_usuario
       );
       print("Response repository : ${userResponse}");
       if(userResponse == "Usuario creado"){

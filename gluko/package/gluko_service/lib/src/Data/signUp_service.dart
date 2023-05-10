@@ -38,6 +38,7 @@ class SignUpService {
       int objective_carbs,
       int physicalctivity,
       String infoAdicional,
+      String tipo_usuario
       ) async {
     final uri = Uri.http(Routing().url_api, Routing().createUser);
     final headers = {'Content-Type': 'application/json'};
@@ -72,6 +73,7 @@ class SignUpService {
       'objective_carbs': objective_carbs,
       'physical_activity': physicalctivity,
       'info_adicional': infoAdicional,
+      'tipo_usuario': tipo_usuario
     });
     String bodyRep;
     try {

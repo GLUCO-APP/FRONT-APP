@@ -38,8 +38,20 @@ class infoUserRepository{
             aux['usuario']['lunch_end'].toString(),
             aux['usuario']['dinner_start'].toString() ,
             aux['usuario']['dinner_end'].toString(),
-            Insulin(0,"", "", 0, 0),
-            Insulin(0,"", "", 0, 0),
+            Insulin(
+                int.parse(aux['ins'][0]["id"].toString()),
+                aux['ins'][0]["name"],
+                aux['ins'][0]["type"],
+                double.parse(aux['ins'][0]["iprecision"].toString()),
+                int.parse(aux['ins'][0]["duration"].toString())
+            ),
+            Insulin(
+                int.parse(aux['ins'][1]["id"].toString()),
+                aux['ins'][1]["name"],
+                aux['ins'][1]["type"],
+                double.parse(aux['ins'][1]["iprecision"].toString()),
+                int.parse(aux['ins'][1]["duration"].toString())
+            ),
             int.parse(aux['usuario']['objective_carbs'].toString()),
             double.parse(aux['usuario']['physical_activity'].toString()).toInt(),
             aux['usuario']['info_adicional'].toString(),

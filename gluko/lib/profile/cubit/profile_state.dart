@@ -4,14 +4,22 @@ enum profilestatus{ loading,success,error}
    ProfileState({
       required this.infoUser ,
      this.status = profilestatus.loading,
+     this.insulinas = const <Insulin>[]
    });
    final User infoUser;
    final profilestatus status;
+   final List<Insulin> insulinas;
+
    ProfileState copywhit({
      profilestatus? status,
-     User? infoUser
+     User? infoUser,
+     List<Insulin>? insulinas
    }){
-     return ProfileState(status: status ?? this.status, infoUser: infoUser ?? this.infoUser);
+     return ProfileState(status: status ?? this.status, infoUser: infoUser ?? this.infoUser, insulinas: insulinas ?? this.insulinas);
+   }
+
+   List<Insulin> getInsulinas(){
+     return insulinas;
    }
 
  }

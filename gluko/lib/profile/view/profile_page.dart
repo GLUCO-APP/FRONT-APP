@@ -21,7 +21,7 @@ class profilepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProfileCubit(infoUserRepository(), PercisteRepository())..getInfoUser(),
+      create: (context) => ProfileCubit(infoUserRepository(), PercisteRepository(), allinsulinRepository())..getInfoUser(),
       child: profileview(),
     );
   }
@@ -306,252 +306,262 @@ class  _profileviewState extends State<profileview>{
 
   Future<void> showMyPopupEditMecis(BuildContext context) async {
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    return showDialog<void>(
+    String? _selectedInsulinR = "Humulin R Cristalina";
+    int _selectPR = 0;
+    String? _selectedInsulinL = "Delemir Levemir";
+    int _selectPL = 0;
+    await showDialog(
       context: context,
       builder: (BuildContext context){
-        return  Material(
-          color: Colors.transparent,
-          child: Container(
-            width: MediaQuery.of(context).size.width/3,
+        return StatefulBuilder(builder: (context, setState){
+          return  Material(
             color: Colors.transparent,
-            child: Center(
-              child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                        padding: EdgeInsets.all(20),
-                        width: MediaQuery.of(context).size.width/1.2,
-                        height: MediaQuery.of(context).size.height/1.1,
-                        decoration: BoxDecoration(
-                          color: ColorsGenerals().whith,
-                          borderRadius: const BorderRadius.all(Radius.circular(20)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 7,
-                              offset: const Offset(-5, 6),
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: TextFormField(
-                                controller: ratioCtrl,
-                                keyboardType: TextInputType.number,
-                                cursorColor: Colors.black,
-                                style: TextStyle(color: Colors.black45, fontSize: 15),
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.all(10),
-                                  filled: true,
-                                  labelText: 'Ratio',
-                                  helperText: "Cantidad de carbohidratos que se cubren con 1 unidad de insulina",
-                                  helperMaxLines: 3,
-                                  hintText: ratio,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  suffixIcon: ratioCtrl.text.isEmpty ? Container(width: 0) :
-                                  IconButton(icon: const Icon(Icons.close, color: Colors.black45), onPressed: () => ratioCtrl.clear(),),
-                                ),
-                                textInputAction: TextInputAction.done,
-                              ),
-                            ),
-                            const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: TextFormField(
-                                controller: senbCtrl,
-                                keyboardType: TextInputType.number,
-                                cursorColor: Colors.black,
-                                style: const TextStyle(color: Colors.black45, fontSize: 15),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  labelText: 'Sensibilidad',
-                                  helperText: "Cantidad de glucemia que se reduce con 1 unidad de insulina",
-                                  helperMaxLines: 3,
-                                  hintText: sensibilidad,
-                                  errorText: senbCtrl.text.isEmpty ? null : 'Ingrese un valor por favor',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  suffixIcon: senbCtrl.text.isEmpty ? Container(width: 0) :
-                                  IconButton(icon: const Icon(Icons.close, color: Colors.black45), onPressed: () => senbCtrl.clear(),),
-                                ),
-                                textInputAction: TextInputAction.done,
-                              ),
-                            ),
-                            const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                            Container(
+            child: Container(
+              width: MediaQuery.of(context).size.width/3,
+              color: Colors.transparent,
+              child: Center(
+                child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                          padding: EdgeInsets.all(20),
+                          width: MediaQuery.of(context).size.width/1.2,
+                          height: MediaQuery.of(context).size.height/1.1,
+                          decoration: BoxDecoration(
+                            color: ColorsGenerals().whith,
+                            borderRadius: const BorderRadius.all(Radius.circular(20)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 7,
+                                offset: const Offset(-5, 6),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
                                 width: MediaQuery.of(context).size.width,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    DropdownButtonFormField(
-                                      value: _selectedInsulinR,
-                                      items: tipInsulinR.map((e) =>
-                                          DropdownMenuItem(value: e,child: Text(e),)
-                                      ).toList(),
-                                      onChanged: (value){
-                                        setState(() {
-                                          _selectedInsulinR = value as String;
-                                        });
-                                      },
-                                      icon: const Icon(
-                                          Icons.arrow_drop_down
-                                      ),
-                                      decoration: const InputDecoration(
-                                          labelText: "Insulina Rapida",
-                                          prefixIcon: Icon(
-                                              Icons.edit
-                                          )
-                                      ),
+                                child: TextFormField(
+                                  controller: ratioCtrl,
+                                  keyboardType: TextInputType.number,
+                                  cursorColor: Colors.black,
+                                  style: TextStyle(color: Colors.black45, fontSize: 15),
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.all(10),
+                                    filled: true,
+                                    labelText: 'Ratio',
+                                    helperText: "Cantidad de carbohidratos que se cubren con 1 unidad de insulina",
+                                    helperMaxLines: 3,
+                                    hintText: ratio,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderSide: BorderSide.none,
                                     ),
-                                    Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
-                                    const Text(
-                                      "Precisión",),
-                                    ToggleButtons(
-                                        selectedBorderColor: Colors.red,
-                                        borderRadius: BorderRadius.circular(20),
-                                        borderWidth: 2,
-                                        isSelected: [
-                                          _selectPR == 0,
-                                          _selectPR == 1,
-                                        ],
-                                        onPressed: (int newIndex) {
+                                    suffixIcon: ratioCtrl.text.isEmpty ? Container(width: 0) :
+                                    IconButton(icon: const Icon(Icons.close, color: Colors.black45), onPressed: () => ratioCtrl.clear(),),
+                                  ),
+                                  textInputAction: TextInputAction.done,
+                                ),
+                              ),
+                              const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                child: TextFormField(
+                                  controller: senbCtrl,
+                                  keyboardType: TextInputType.number,
+                                  cursorColor: Colors.black,
+                                  style: const TextStyle(color: Colors.black45, fontSize: 15),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    labelText: 'Sensibilidad',
+                                    helperText: "Cantidad de glucemia que se reduce con 1 unidad de insulina",
+                                    helperMaxLines: 3,
+                                    hintText: sensibilidad,
+                                    errorText: senbCtrl.text.isEmpty ? null : 'Ingrese un valor por favor',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    suffixIcon: senbCtrl.text.isEmpty ? Container(width: 0) :
+                                    IconButton(icon: const Icon(Icons.close, color: Colors.black45), onPressed: () => senbCtrl.clear(),),
+                                  ),
+                                  textInputAction: TextInputAction.done,
+                                ),
+                              ),
+                              const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                              Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      DropdownButtonFormField(
+                                        value: _selectedInsulinR,
+                                        items: listInsulinR.toSet().map((e) =>
+                                            DropdownMenuItem(
+                                              value: e.name,
+                                              child: Text(e.name),)
+                                        ).toList(),
+                                        onChanged: (value){
                                           setState(() {
-                                            _selectPR = newIndex;
+                                            _selectedInsulinR = value!;
                                           });
                                         },
-                                        children: const [
-                                          Text(
-                                            "1",
-                                            style: TextStyle(color: Colors.black, fontSize: 15),
-                                          ),
-                                          Text(
-                                            "0.5",
-                                            style: TextStyle(color: Colors.black, fontSize: 15),
-                                          ),
-                                        ]
-                                    ),
-                                    Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
-                                    DropdownButtonFormField(
-                                      value: _selectedInsulinL,
-                                      items: tipInsulinL.map((e) =>
-                                          DropdownMenuItem(value: e,child: Text(e),)
-                                      ).toList(),
-                                      onChanged: (value){
-                                        setState(() {
-                                          _selectedInsulinL = value as String;
-                                        });
-                                      },
-                                      icon: const Icon(
-                                          Icons.arrow_drop_down
-                                      ),
-                                      decoration: const InputDecoration(
-                                          labelText: "Insulina Lenta",
-                                          prefixIcon: Icon(
-                                              Icons.edit
-                                          )
-                                      ),
-                                    ),
-                                    Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
-                                    const Text(
-                                      "Precisión",),
-                                    ToggleButtons(
-                                        selectedBorderColor: Colors.red,
-                                        borderRadius: BorderRadius.circular(20),
-                                        borderWidth: 2,
-                                        isSelected: [
-                                          _selectPL == 0,
-                                          _selectPL == 1,
-                                        ],
-                                        onPressed: (int newIndex) {
-                                          setState(() {
-                                            _selectPL = newIndex;
-                                          });
-                                        },
-                                        children: const [
-                                          Text(
-                                            "1",
-                                            style: TextStyle(color: Colors.black, fontSize: 15),
-                                          ),
-                                          Text(
-                                            "0.5",
-                                            style: TextStyle(color: Colors.black, fontSize: 15),
-                                          ),
-                                        ]
-                                    ),
-                                    Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
-                                    Container(
-                                        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextFormField(
-                                                controller: ctrHoraInsulinL,
-                                                style: const TextStyle(color: Colors.black, fontSize: 15),
-                                                decoration: InputDecoration(
-                                                  filled: true,
-                                                  labelText: 'Hora aplicación insulina basal',
-                                                  labelStyle: const TextStyle(color: Colors.black, fontSize: 10),
-                                                  contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
-                                                  border: UnderlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(20.0),
-                                                      borderSide: BorderSide.none
-                                                  ),
-                                                ),
-                                                enabled: false,
-                                              ),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.access_time, color: Colors.black45),
-                                              onPressed: () async {
-                                                TimeOfDay? newTime = await showTimePicker(
-                                                  context: context,
-                                                  initialTime: TimeOfDay.now(),
-                                                );
-                                                if(newTime == null) return;
-                                                ctrHoraInsulinL.text = '${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}';
-                                              },
-                                            )
-                                          ],
-                                        )
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        elevation: 8, // elevación de la sombra
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              30), // radio de la esquina redondeada
+                                        icon: const Icon(
+                                            Icons.arrow_drop_down
                                         ),
-                                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                                        backgroundColor: ColorsGenerals().red, // color de fondo
+                                        decoration: const InputDecoration(
+                                            labelText: "Insulina Rapida",
+                                            prefixIcon: Icon(
+                                                Icons.edit
+                                            )
+                                        ),
                                       ),
-                                      child: Text("Guardar Cambios",
-                                        style: TextStyle(color: ColorsGenerals().whith),),
-                                    ),
-                                  ],
-                                )
-                            ),
-                          ],
-                        )
-                    ),
-                  ]
+                                      Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
+                                      const Text(
+                                        "Precisión",),
+                                      ToggleButtons(
+                                          selectedBorderColor: Colors.red,
+                                          borderRadius: BorderRadius.circular(20),
+                                          borderWidth: 2,
+                                          isSelected: [
+                                            _selectPR == 0,
+                                            _selectPR == 1,
+                                          ],
+                                          onPressed: (int newIndex) {
+                                            setState(() {
+                                              _selectPR = newIndex;
+                                            });
+                                          },
+                                          children: const [
+                                            Text(
+                                              "1",
+                                              style: TextStyle(color: Colors.black, fontSize: 15),
+                                            ),
+                                            Text(
+                                              "0.5",
+                                              style: TextStyle(color: Colors.black, fontSize: 15),
+                                            ),
+                                          ]
+                                      ),
+                                      Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
+                                      DropdownButtonFormField(
+                                        value: _selectedInsulinL,
+                                        items: listInsulinB.toSet().map((e) =>
+                                            DropdownMenuItem(
+                                              value: e.name,
+                                              child: Text(e.name),)
+                                        ).toList(),
+                                        onChanged: (value){
+                                          setState(() {
+                                            _selectedInsulinL = value!;
+                                          });
+                                        },
+                                        icon: const Icon(
+                                            Icons.arrow_drop_down
+                                        ),
+                                        decoration: const InputDecoration(
+                                            labelText: "Insulina Lenta",
+                                            prefixIcon: Icon(
+                                                Icons.edit
+                                            )
+                                        ),
+                                      ),
+                                      Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
+                                      const Text(
+                                        "Precisión",),
+                                      ToggleButtons(
+                                          selectedBorderColor: Colors.red,
+                                          borderRadius: BorderRadius.circular(20),
+                                          borderWidth: 2,
+                                          isSelected: [
+                                            _selectPL == 0,
+                                            _selectPL == 1,
+                                          ],
+                                          onPressed: (int newIndex) {
+                                            setState(() {
+                                              _selectPL = newIndex;
+                                            });
+                                          },
+                                          children: const [
+                                            Text(
+                                              "1",
+                                              style: TextStyle(color: Colors.black, fontSize: 15),
+                                            ),
+                                            Text(
+                                              "0.5",
+                                              style: TextStyle(color: Colors.black, fontSize: 15),
+                                            ),
+                                          ]
+                                      ),
+                                      Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
+                                      Container(
+                                          margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextFormField(
+                                                  controller: ctrHoraInsulinL,
+                                                  style: const TextStyle(color: Colors.black, fontSize: 15),
+                                                  decoration: InputDecoration(
+                                                    filled: true,
+                                                    labelText: 'Hora aplicación insulina basal',
+                                                    labelStyle: const TextStyle(color: Colors.black, fontSize: 10),
+                                                    contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
+                                                    border: UnderlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(20.0),
+                                                        borderSide: BorderSide.none
+                                                    ),
+                                                  ),
+                                                  enabled: false,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.access_time, color: Colors.black45),
+                                                onPressed: () async {
+                                                  TimeOfDay? newTime = await showTimePicker(
+                                                    context: context,
+                                                    initialTime: TimeOfDay.now(),
+                                                  );
+                                                  if(newTime == null) return;
+                                                  ctrHoraInsulinL.text = '${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}';
+                                                },
+                                              )
+                                            ],
+                                          )
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 8, // elevación de la sombra
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                30), // radio de la esquina redondeada
+                                          ),
+                                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                          backgroundColor: ColorsGenerals().red, // color de fondo
+                                        ),
+                                        child: Text("Guardar Cambios",
+                                          style: TextStyle(color: ColorsGenerals().whith),),
+                                      ),
+                                    ],
+                                  )
+                              ),
+                            ],
+                          )
+                      ),
+                    ]
+                ),
               ),
             ),
-          ),
-        );
+          );
+        });
       },
     );
   }
@@ -1114,13 +1124,11 @@ class  _profileviewState extends State<profileview>{
 // Editar datos medicos
   final ratioCtrl = TextEditingController();
   final senbCtrl = TextEditingController();
-  final tipInsulinR = ["NovoRapid Aspart", "Glulisina Apidra", "FIASP Aspart", "Humulin R Cristalina"];
-  String? _selectedInsulinR = "NovoRapid Aspart";
-  int _selectPR = 0;
-  final tipInsulinL = ["Delemir Levemir", "Lantus Glargina", "Tresiba Degludec", "Toujeo Glargina"];
-  String? _selectedInsulinL = "Lantus Glargina";
-  int _selectPL = 0;
   final ctrHoraInsulinL = TextEditingController();
+  List<Insulin> listInsulinR = [];
+  List<Insulin> pruebaR = [];
+  List<Insulin> listInsulinB = [];
+  List<Insulin> pruebaL = [];
 // Editar datos de estilo de vida
   final horaInicioDesayunoCtrl = TextEditingController();
   final horaFinalDesayunoCtrl = TextEditingController();
@@ -1214,6 +1222,22 @@ class  _profileviewState extends State<profileview>{
               return const Center(child: CircularProgressIndicator());
               break;
             case profilestatus.success:
+              pruebaR = states.getInsulinas();
+              if(listInsulinR.isEmpty){
+                for (var insulin in pruebaR) {
+                  if(insulin.type == "Bolo"){
+                    listInsulinR.add(insulin);
+                  }
+                }
+              }
+              pruebaL = states.getInsulinas();
+              if(listInsulinB.isEmpty){
+                for (var insulin in pruebaL) {
+                  if(insulin.type == "Basal"){
+                    listInsulinB.add(insulin);
+                  }
+                }
+              }
               user = context.read<ProfileCubit>().getUser();
               if(user.nombre.isNotEmpty){
                 name = user.nombre;
@@ -1223,7 +1247,7 @@ class  _profileviewState extends State<profileview>{
                 Hiper = "${user.hyper} mg/dL";
                 Normal = "${user.estable} mg/dL";
                 Hipo = "${user.hipo} mg/dL";
-                peso = "${user.peso}";
+                peso = user.peso.toStringAsFixed(1);
                 altura = "${user.estatura}";
                 sensibilidad = "${user.sensitivity}";
                 ratio = "${user.rate}";

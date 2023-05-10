@@ -27,10 +27,11 @@ extension SexTypeExtension on SexTypeEnum {
 }
 
 class ButtonData {
+  final int id;
   final String name;
   final String image;
 
-  ButtonData(this.name, this.image);
+  ButtonData(this.id, this.name, this.image);
 }
 
 class Singuppage extends StatelessWidget {
@@ -155,9 +156,9 @@ class  _SingupviewState extends State<Singupview>{
   final senbCtrl = TextEditingController();
   final ratioCtrl = TextEditingController();
   // 12 paso
-  Insulin _selectedInsulinR = Insulin(3, "Humulin R Cristalina", "Bolo", 1, 8);
+  String? _selectedInsulinR = "Humulin R Cristalina";
   int _selectPR = 0;
-  Insulin _selectedInsulinL = Insulin(9, "Delemir Levemir", "Basal", 1, 18);
+  String? _selectedInsulinL = "Delemir Levemir";
   int _selectPL = 0;
   final ctrHoraInsulinL = TextEditingController();
   // 13 paso
@@ -170,10 +171,10 @@ class  _SingupviewState extends State<Singupview>{
   // 14 paso
   int _selectedButtonA = -1;
   final List<ButtonData> _buttons = [
-    ButtonData("Sedentarismo", "assets/Icons/Relajante1.png"),
-    ButtonData("1-3 dias por semana", "assets/Icons/Triangulo1.png"),
-    ButtonData("3-5 dias por semana", "assets/Icons/Corriendo1.png"),
-    ButtonData("5-7 dias por semana", "assets/Icons/Deporte1.png")
+    ButtonData(0, "Sedentarismo", "assets/Icons/Relajante1.png"),
+    ButtonData(1, "1-3 dias por semana", "assets/Icons/Triangulo1.png"),
+    ButtonData(2, "3-5 dias por semana", "assets/Icons/Corriendo1.png"),
+    ButtonData(3, "5-7 dias por semana", "assets/Icons/Deporte1.png")
   ];
   // 15 paso
   int _selectUser = 0;
@@ -850,11 +851,11 @@ class  _SingupviewState extends State<Singupview>{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /*DropdownButtonFormField<Insulin>(
-              value: listInsulinR[0],
+            DropdownButtonFormField<String>(
+              value: _selectedInsulinR,
               items: listInsulinR.toSet().map((e) =>
                 DropdownMenuItem(
-                  value: e,
+                  value: e.name,
                   child: Text(e.name),)
               ).toList(),
               onChanged: (value){
@@ -871,7 +872,7 @@ class  _SingupviewState extends State<Singupview>{
                       Icons.edit
                   )
               ),
-            ),*/
+            ),
             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
             const Text(
               "Precisión",),
@@ -900,11 +901,11 @@ class  _SingupviewState extends State<Singupview>{
                 ]
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
-            /*DropdownButtonFormField<Insulin>(
-              value: listInsulinB[0],
+            DropdownButtonFormField<String>(
+              value: _selectedInsulinL,
               items: listInsulinB.toSet().map((e) =>
                   DropdownMenuItem(
-                    value: e,
+                    value: e.name,
                     child: Text(e.name),)
               ).toList(),
               onChanged: (value){
@@ -921,7 +922,7 @@ class  _SingupviewState extends State<Singupview>{
                   Icons.edit
                 )
               ),
-            ),*/
+            ),
             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
             const Text(
               "Precisión",),
@@ -1632,9 +1633,17 @@ class  _SingupviewState extends State<Singupview>{
                                     if(ctrHoraInsulinL.text.isEmpty){
                                       pushUp("Complete todos los campos por favor");
                                     } else {
-                                      usuario.precis = ctrHoraInsulinL.text;
-                                      usuario.insulinR = _selectedInsulinR;
-                                      usuario.insulinL = _selectedInsulinL;
+                                      usuario.precis = ctrHoraInsulinL.text.toString();
+                                      for (var insulin in listInsulinR) {
+                                        if(insulin.name == _selectedInsulinR){
+                                          usuario.insulinR = insulin;
+                                        }
+                                      }
+                                      for (var insulin in listInsulinB) {
+                                        if(insulin.name == _selectedInsulinL){
+                                          usuario.insulinL = insulin;
+                                        }
+                                      }
                                       setState(() => _currentStep += 1);
                                     }
                                   } else if (_currentStep == 12){
@@ -1650,7 +1659,7 @@ class  _SingupviewState extends State<Singupview>{
                                       setState(() => _currentStep += 1);
                                     }
                                   } else if (_currentStep == 13) {
-                                    usuario.physicalctivity = _buttons[_selectedButtonA].name as int;
+                                    usuario.physicalctivity = _buttons[_selectedButtonA].id;
                                     setState(() => _currentStep += 1);
                                   } else if (_currentStep == 14) {
                                       if(_selectUser == 0){
@@ -1698,7 +1707,7 @@ class  _SingupviewState extends State<Singupview>{
                                                 ),
                                                 backgroundColor: Colors.red, // color de fondo
                                               ),
-                                              child: Text(isLastStep ? 'Confirmar' : 'Continuar', style: const TextStyle(fontSize: 17),),
+                                              child: Text(isLastStep ? 'Registrarse' : 'Continuar', style: const TextStyle(fontSize: 17),),
                                             ),
                                             const SizedBox(width: 12,)
                                           ]
