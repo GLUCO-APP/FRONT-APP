@@ -951,6 +951,8 @@ class _assembleplateviewState extends State<assembleplateview> {
                                                   ScanMode.BARCODE, // Modo de escaneo (código de barras en este caso)
                                                 );
                                                 if(barcode != "-1"){
+                                                  print("Codigo de barras");
+                                                  print(barcode);
                                                   var food = await context.read<AssembleplateCubit>().getFoodBarcode(barcode);
                                                   setState(() {
                                                     int valido = 0;
