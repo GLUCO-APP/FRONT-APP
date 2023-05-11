@@ -12,6 +12,12 @@ class ForgetpasswordState {
   Forgetpasswordtatus confirmar(){
     return Forgetpasswordtatus.success;
   }
+
+  ForgetpasswordState copywhit( {
+    Forgetpasswordtatus? status
+  }){
+    return ForgetpasswordState(status: status ?? this.status);
+  }
 }
 
 

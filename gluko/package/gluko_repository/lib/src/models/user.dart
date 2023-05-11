@@ -81,7 +81,7 @@ class User {
       "hipo": hipo,
       "sensitivity": sensitivity,
       "rate": rate,
-      "precis": precis,
+      "basal": precis,
       "breakfast_start": breakfast_start,
       "breakfast_end": breakfast_end,
       "lunch_start": lunch_start,

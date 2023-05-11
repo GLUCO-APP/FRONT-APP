@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gluko/colors/colorsGenerals.dart';
 import 'package:gluko/login/view/login_page.dart';
@@ -22,12 +23,77 @@ class forgetpasswordview extends StatefulWidget {
 }
 
 class  _forgetpasswordviewState extends State<forgetpasswordview>{
+
+  Future<void> showMyPopupComplete(BuildContext context, var response) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context){
+        return  Material(
+          color: Colors.transparent,
+          child: Container(
+            width: MediaQuery.of(context).size.width/3,
+            height: MediaQuery.of(context).size.height/1.3,
+            color: Colors.transparent,
+            child: Center(
+              child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                        padding: EdgeInsets.all(20),
+                        width: MediaQuery.of(context).size.width/1.2,
+                        decoration: BoxDecoration(
+                          color: ColorsGenerals().whith,
+                          borderRadius: const BorderRadius.all(Radius.circular(20)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: const Offset(-5, 6),
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              response.message,
+                              style: TextStyle(fontSize: 20.0),
+                            ),
+                            const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                            ElevatedButton(
+                              child: const Text('Continuar', style: TextStyle(color: Colors.white)),
+                              onPressed: (){
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          Loginpage()),
+                                      (Route<dynamic> route) => false,
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                    ),
+                  ]
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   final correoCtrl = TextEditingController();
   String password = '';
   bool isPasswordVisible = true;
   bool isPasswordVisible2 = true;
   final passwordCtrl = TextEditingController();
   final repeatPassCtrl = TextEditingController();
+  final codeCtrl = TextEditingController();
+  String code = '';
 
 
   @override
@@ -37,6 +103,7 @@ class  _forgetpasswordviewState extends State<forgetpasswordview>{
     correoCtrl.addListener(() => setState(() {}));
     passwordCtrl.addListener(() => setState(() {}));
     repeatPassCtrl.addListener(() => setState(() {}));
+    codeCtrl.addListener(() => setState(() {}));
   }
 
   int _currentStep = 0;
@@ -90,9 +157,35 @@ class  _forgetpasswordviewState extends State<forgetpasswordview>{
           'Codigo de verificación',
           style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)
       ),
-      content: const SizedBox(
-        width: 110,
-        height: 100,
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/100)),
+          TextFormField(
+            controller: codeCtrl,
+            keyboardType: TextInputType.number,
+            cursorColor: Colors.black,
+            style: const TextStyle(color: Colors.black, fontSize: 15),
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(5),
+              FilteringTextInputFormatter.allow(RegExp(r'\d')),
+            ],
+            decoration: InputDecoration(
+              filled: true,
+              labelText: 'Codigo',
+              helperText: ('Ingrese el codigo que llego a su correo'),
+              helperStyle: const TextStyle(fontSize: 11),
+              contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
+              suffixIcon: codeCtrl.text.isEmpty ? Container(width: 0) :
+              IconButton(icon: const Icon(Icons.close, color: Colors.black45), onPressed: () => codeCtrl.clear(),),
+              border: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide: BorderSide.none
+              ),
+            ),
+            textInputAction: TextInputAction.done,
+          ),
+        ],
       )
     ),
     Step(
@@ -181,8 +274,35 @@ class  _forgetpasswordviewState extends State<forgetpasswordview>{
     }
   }
 
-  void submitFormulario () {
+  void pushUp (String mensaje) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 3),
+          content: Container(
+            padding: const EdgeInsets.all(16),
+            height: 50,
+            decoration: const BoxDecoration(
+                color: Colors.black45,
+                borderRadius: BorderRadius.all(Radius.circular(20))
+            ),
+            child:  Text(
+              mensaje,
+              style: TextStyle(fontSize: 15),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        )
+    );
+  }
 
+  void clean () {
+    correoCtrl.clear();
+    passwordCtrl.clear();
+    repeatPassCtrl.clear();
+    codeCtrl.clear();
   }
 
   @override
@@ -225,64 +345,53 @@ class  _forgetpasswordviewState extends State<forgetpasswordview>{
                 ),
                 child: Stepper(
                   currentStep: _currentStep,
-                  onStepContinue: () {
+                  onStepContinue: async () {
                     final isLastStep = _currentStep == getSteps().length - 1;
                     if(isLastStep) {
+                      var response = await context.read<ForgetpasswordCubit>()
+                      if (response.estatus){
+                        showMyPopupComplete(context, response);
+                      } else {
+                        pushUp(response.message);
+                      }
                       //Boton con confirmar, guardar datos enviarlos a back y limpiar campos
                     } else if (_currentStep == 0){
                         if (correoCtrl.text.isEmpty){
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                duration: const Duration(seconds: 1),
-                                content: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.black45,
-                                    borderRadius: BorderRadius.all(Radius.circular(20))
-                                  ),
-                                  child: const Text(
-                                      "Ingrese un correo",
-                                    style: TextStyle(fontSize: 15),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                              )
-                          );
+                          pushUp("Ingrese un correo");
                         } else if (!validateEmail(correoCtrl.text)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.black45,
-                                      borderRadius: BorderRadius.all(Radius.circular(20))
-                                  ),
-                                  child: const Text(
-                                    "Debe ingresar un correo valido",
-                                    style: TextStyle(fontSize: 15),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                              )
-                          );
+                          pushUp("Debe ingresar un correo valido");
                         } else {
-                          setState(() => _currentStep += 1);
+                          var response = await context.read<ForgetpasswordCubit>().codeValidate(correoCtrl.text.toString());
+                          if(response.estatus){
+                            code = response.code;
+                            setState(() => _currentStep += 1);
+                          } else {
+                            pushUp("Error al encontrar el correo, confirme que el correo este resgistrado en la aplicación");
+                          }
                         }
-                    } else {
+                    } else if (_currentStep == 1){
+                      if(codeCtrl.text.isEmpty){
+                        pushUp("Ingrese el codigo");
+                      } else if (codeCtrl.text != code){
+                        pushUp("Codigo incorrecto, intente nuevamente");
+                        codeCtrl.clear();
+                      } else {
+                        setState(() => _currentStep += 1);
+                      }
+                    } else if (_currentStep == 2){
+                      if(passwordCtrl.text.isEmpty || passwordCtrl.text.length < 7){
+                        pushUp("Ingrese una contraseña valida");
+                      } else {
+                        setState(() => _currentStep += 1);
+                      }
+                    }else {
                       setState(() => _currentStep += 1);
                     }
                   },
-                  onStepTapped: (step) => setState(() => _currentStep = step),
-                  onStepCancel: () {
-                      _currentStep == 0 ? null : () => setState(()  => _currentStep -= 1);
+                  onStepCancel: () async {
+                    if(_currentStep != 0) {
+                      setState(() => _currentStep--);
+                    }
                   },
                   controlsBuilder: (BuildContext context, ControlsDetails details) {
                       final isLastStep = _currentStep == getSteps().length - 1;
@@ -301,7 +410,20 @@ class  _forgetpasswordviewState extends State<forgetpasswordview>{
                                     ),
                                     backgroundColor: Colors.red, // color de fondo
                                   ),
-                                  child: Text(isLastStep ? 'Confirmar' : 'Continuar', style: const TextStyle(fontSize: 17),),
+                                  child: const Text('Atras', style: TextStyle(fontSize: 17),),
+                                ),
+                                const SizedBox(width: 12,),
+                                ElevatedButton(
+                                  onPressed: details.onStepContinue,
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20), // radio de la esquina redondeada
+                                    ),
+                                    backgroundColor: Colors.red, // color de fondo
+                                  ),
+                                  child: Text(isLastStep ? 'Cambiar Contraseña' : 'Continuar', style: const TextStyle(fontSize: 17),),
                                 ),
                                 const SizedBox(width: 12,)
                               ]
