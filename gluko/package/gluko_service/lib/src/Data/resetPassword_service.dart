@@ -7,12 +7,11 @@ class ResetPasswordService {
 
   final http.Client request =  http.Client();
 
-  Future<String> reset(String newPassword, String token) async{
-    final uri = Uri.http(Routing().url_api,Routing().resetPassword+ '/$token' + '/$newPassword',);
-    final headers = {'Content-Type': 'application/json'};
+  Future<String> reset(String newPassword, String email) async{
+    final uri = Uri.http(Routing().url_api,Routing().resetPassword+ '/$email' + '/$newPassword',);
     String bodyRep;
     try{
-      final response = await http.put(uri, headers: headers).timeout(Duration(seconds: 10));
+      final response = await http.put(uri).timeout(Duration(seconds: 10));
       if(response.statusCode == 200){
         bodyRep = jsonDecode(response.body)['status'] as String;
         return bodyRep;

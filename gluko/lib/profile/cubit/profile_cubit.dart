@@ -6,10 +6,12 @@ import 'package:gluko_repository/src/models/insulin.dart';
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit(this.repository, this.pRepository, this.insulinRepository) : super(ProfileState(infoUser:User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", ""),));
+  ProfileCubit(this.repository, this.pRepository, this.insulinRepository, this.changeRepository) : super(ProfileState(infoUser:User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", ""),));
+
   infoUserRepository repository;
   PercisteRepository pRepository;
   allinsulinRepository insulinRepository;
+  ChangePasswordRepository changeRepository;
 
   Future<void> getInfoUser() async{
     var user = await repository.getInfoUser();
@@ -28,7 +30,19 @@ class ProfileCubit extends Cubit<ProfileState> {
     }catch (ex){
       emit(state.copywhit(status: profilestatus.error));
     }
+  }
 
+  Future<ResponseChangePassword> changePassword (String oldPassword, String newPassword) async {
+    emit(state.copywhit(status: profilestatus.loading));
+    String token = await pRepository.GetToken();
+    ResponseChangePassword response = (await changeRepository.changePassword(token, oldPassword, newPassword));
+    if(response.estatus) {
+      emit(state.copywhit(status: profilestatus.success));
+      return response;
+    } else {
+      emit(state.copywhit(status: profilestatus.error));
+      return response;
+    }
   }
 
 }

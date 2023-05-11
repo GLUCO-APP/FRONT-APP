@@ -3,11 +3,11 @@ import 'package:gluko_service/gluko_service.dart';
 
 class ResetPasswordRepository{
 
-  Future<ResponseResetPassword> resetPassword (String token, String newPassword) async {
+  Future<ResponseResetPassword> resetPassword (String email, String newPassword) async {
     try{
-      var userResponse = await ResetPasswordService().reset(newPassword, token);
+      var userResponse = await ResetPasswordService().reset(newPassword, email);
       print("Response repository : ${userResponse}");
-      if(userResponse != "contraseña incorrecta"){
+      if(userResponse == "Contraseña actualizada exitosamente"){
         return ResponseResetPassword(true, userResponse);
       }
       return ResponseResetPassword(false, userResponse);

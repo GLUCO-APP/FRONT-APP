@@ -94,7 +94,7 @@ class  _forgetpasswordviewState extends State<forgetpasswordview>{
   final passwordCtrl = TextEditingController();
   final repeatPassCtrl = TextEditingController();
   final codeCtrl = TextEditingController();
-  String code = '12345';
+  String code = '';
 
 
   @override
@@ -349,13 +349,14 @@ class  _forgetpasswordviewState extends State<forgetpasswordview>{
                     onStepContinue: () async {
                       final isLastStep = _currentStep == getSteps().length - 1;
                       if(isLastStep) {
-                        var response = await context.read<ForgetpasswordCubit>().resetPassword(repeatPassCtrl.text.toString());
-                      if (response.estatus){
-                        clean();
-                        showMyPopupComplete(context, response);
-                      } else {
-                        pushUp(response.message);
-                      }
+                        var response = await context.read<ForgetpasswordCubit>().resetPassword(correoCtrl.text.toString(), repeatPassCtrl.text.toString());
+                        print(response.message);
+                        if (response.estatus){
+                          clean();
+                          showMyPopupComplete(context, response);
+                        } else {
+                          pushUp(response.message);
+                        }
                       } else if (_currentStep == 0){
                         if (correoCtrl.text.isEmpty){
                           pushUp("Ingrese un correo");
