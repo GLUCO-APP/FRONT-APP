@@ -6,8 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gluko_repository/gluko_repository.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../biometricValidation/biometricValidate.dart';
 import '../../calculateinsulin/view/calculateinsulina_page.dart';
 import '../../colors/colorsGenerals.dart';
 import '../cubit/recomemende_plate_cubit.dart';
@@ -158,10 +160,21 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
                             ),
                             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
                             ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (formKey.currentState!.validate()) {
                                   Navigator.pop(context);
-                                  CalculoInsulina();
+                                  var tutor = await PercisteRepository().UserType();
+                                  if(tutor){
+                                    var autent = await LocalAuthApi.authenticate();
+                                    if(autent){
+                                      CalculoInsulina();
+                                    }else{
+                                      Fluttertoast.showToast(
+                                          msg: "Validacion fallida", fontSize: 20);
+                                    }
+                                  }else{
+                                    CalculoInsulina();
+                                  }
                                 }
                               },
                               child: Text("Cálculo unidades",

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gluko_repository/gluko_repository.dart';
+import '../../biometricValidation/biometricValidate.dart';
 import '../../colors/colorsGenerals.dart';
 import '../cubit/emergency_cubit.dart';
 
@@ -144,8 +145,20 @@ class  _emergencyviewState extends State<emergencyview>{
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          _registrarSnak(food);
-                          Navigator.pop(context);
+                          var tutor = await PercisteRepository().UserType();
+                          if(tutor){
+                            var autent = await LocalAuthApi.authenticate();
+                            if(autent){
+                              Navigator.pop(context);
+                              _registrarSnak(food);
+                            }else{
+                              Fluttertoast.showToast(
+                                  msg: "Validacion fallida", fontSize: 20);
+                            }
+                          }else{
+                            Navigator.pop(context);
+                            _registrarSnak(food);
+                          }
                         },
                         child: Text("Registrar snack",
                           style: TextStyle(color: ColorsGenerals().whith, fontSize: 18),),
@@ -512,18 +525,41 @@ class  _emergencyviewState extends State<emergencyview>{
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  var response =  await context.read<EmergencyCubit>().RegisterPlate(PlateRegister([],0,0,0,0,"Registro Insulina",0, 0,0,"","","Sin titulo xd"),int.parse(glucosa.text),unidades);
-                                  if(response){
-                                    glucosa.clear();
-                                    setState(() {
-                                      visible = false;
-                                      estado = 3;
-                                    });
-                                    Fluttertoast.showToast(
-                                        msg: "Reporte registrado", fontSize: 20);
+                                  var tutor = await PercisteRepository().UserType();
+                                  if(tutor){
+                                    var autent = await LocalAuthApi.authenticate();
+                                    if(autent){
+                                      var response =  await context.read<EmergencyCubit>().RegisterPlate(PlateRegister([],0,0,0,0,"Registro Insulina",0, 0,0,"","","Sin titulo xd"),int.parse(glucosa.text),unidades);
+                                      if(response){
+                                        glucosa.clear();
+                                        setState(() {
+                                          visible = false;
+                                          estado = 3;
+                                        });
+                                        Fluttertoast.showToast(
+                                            msg: "Reporte registrado", fontSize: 20);
+                                      }else{
+                                        Fluttertoast.showToast(
+                                            msg: "Error al registrar plato Intenta Mas Tarde", fontSize: 20);
+                                      }
+                                    }else{
+                                      Fluttertoast.showToast(
+                                          msg: "Validacion fallida", fontSize: 20);
+                                    }
                                   }else{
-                                    Fluttertoast.showToast(
-                                        msg: "Error al registrar plato Intenta Mas Tarde", fontSize: 20);
+                                    var response =  await context.read<EmergencyCubit>().RegisterPlate(PlateRegister([],0,0,0,0,"Registro Insulina",0, 0,0,"","","Sin titulo xd"),int.parse(glucosa.text),unidades);
+                                    if(response){
+                                      glucosa.clear();
+                                      setState(() {
+                                        visible = false;
+                                        estado = 3;
+                                      });
+                                      Fluttertoast.showToast(
+                                          msg: "Reporte registrado", fontSize: 20);
+                                    }else{
+                                      Fluttertoast.showToast(
+                                          msg: "Error al registrar plato Intenta Mas Tarde", fontSize: 20);
+                                    }
                                   }
                                 },
                                 child: Text("Registrar",
