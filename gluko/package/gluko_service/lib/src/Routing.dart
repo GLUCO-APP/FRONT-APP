@@ -13,4 +13,5 @@ class Routing{
   String reportsAll = "report/all/";
   String validateEmail = "/user/verifyEmail";
   String allInsulin = "/allInsulin";
+  String typeUser = "/userType/";
 }

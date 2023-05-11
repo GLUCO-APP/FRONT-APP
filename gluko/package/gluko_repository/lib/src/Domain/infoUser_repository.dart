@@ -1,4 +1,3 @@
-import 'package:gluko_repository/src/models/foodDetail.dart';
 import 'package:gluko_repository/src/models/insulin.dart';
 import 'package:gluko_service/gluko_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';

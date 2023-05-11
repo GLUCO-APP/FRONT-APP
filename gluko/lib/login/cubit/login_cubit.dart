@@ -24,6 +24,7 @@ class LoginCubit extends Cubit<LoginState> {
         ResponseLogin response = await loginR.login(email, password);
         print("Respuesta ${response.message}");
         if(response.estatus){
+          await TypeUserRepository().TyperUser();
           return response;
         }else{
           emit(state.copywhit(status: LoginStatestatus.success));

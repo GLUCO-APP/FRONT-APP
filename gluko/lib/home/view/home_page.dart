@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gluko/Begin/view/begin_page.dart';
 import 'package:gluko/emergency/view/emergency_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gluko/profile/view/profile_page.dart';
+import 'package:gluko_repository/gluko_repository.dart';
+import '../../biometricValidation/biometricValidate.dart';
 import '../../colors/colorsGenerals.dart';
 import '../../report/view/report_page.dart';
 import '../cubit/home_cubit.dart';
@@ -45,13 +48,29 @@ class  _HomeviewState extends State<Homeview>{
         backgroundColor: ColorsGenerals().whith,
         leading: IconButton(
           icon: SvgPicture.asset("assets/Icons/usuario.svg",color: ColorsGenerals().black,cacheColorFilter: false, width: MediaQuery.of(context).size.height/30,),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        profilepage())
-            );
+          onPressed: () async {
+            var tutor = await PercisteRepository().UserType();
+            if(tutor){
+              var autent = await LocalAuthApi.authenticate();
+              if(autent){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            profilepage())
+                );
+              }else{
+                Fluttertoast.showToast(
+                    msg: "Validacion fallida", fontSize: 20);
+              }
+            }else{
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          profilepage())
+              );
+            }
           },
         ),
         elevation: 1,

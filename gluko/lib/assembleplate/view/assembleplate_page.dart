@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gluko/colors/colorsGenerals.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gluko_repository/gluko_repository.dart';
+import '../../biometricValidation/biometricValidate.dart';
 import '../../calculateinsulin/view/calculateinsulina_page.dart';
 import '../cubit/assembleplate_cubit.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -451,10 +452,22 @@ class _assembleplateviewState extends State<assembleplateview> {
                             ),
                             Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
                             ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (formKey.currentState!.validate()) {
                                   Navigator.pop(context);
-                                  CalculoInsulina();
+                                  var tutor = await PercisteRepository().UserType();
+                                  if(tutor){
+                                    var autent = await LocalAuthApi.authenticate();
+                                    if(autent){
+                                      CalculoInsulina();
+                                    }else{
+                                      Fluttertoast.showToast(
+                                          msg: "Validacion fallida", fontSize: 20);
+                                    }
+                                  }else{
+                                    CalculoInsulina();
+                                  }
+
                                 }
                               },
                               child: Text("Calculo Insulina",

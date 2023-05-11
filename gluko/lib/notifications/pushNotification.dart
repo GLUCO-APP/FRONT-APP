@@ -104,7 +104,8 @@ class LocalNotificationService {
       });
       var cont = 1;
       print("muestra data");
-      socket.on("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1YW5AZXhhbXBsZS5jb20iLCJpYXQiOjE2ODE2MTkxMjl9.2sN6SSX6sC9OuANUhK3hbWYkwRj8BtUjV9s_kHttpzI", (data)  async => {
+      var token = await PercisteRepository().GetToken();
+      socket.on(token, (data)  async => {
         print("conecta al socket"),
         print(data),
         if( cont == 1){
