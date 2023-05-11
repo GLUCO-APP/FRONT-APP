@@ -11,12 +11,13 @@ class FoodBarcodeService {
 
   Future<dynamic> getFoodBarcode(String barcode) async{
     final uri = Uri.http(Routing().url_api,Routing().foodBarcode + "/$barcode");
+    print(uri);
     http.Response response;
     var body;
     try{
       response = await request.post(uri);
 
-      if(response.statusCode == 201){
+      if(response.statusCode == 200){
         body = jsonDecode(response.body);
         return body;
       }else{

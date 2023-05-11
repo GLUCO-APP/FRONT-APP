@@ -379,7 +379,27 @@ class _beginviewState extends State<beginview> {
                                   height:
                                       MediaQuery.of(context).size.height / 4.3,
                                   width: MediaQuery.of(context).size.width,
-                                  child: states.recomendS ?Alimentos(context):Container(
+                                  child: states.recomendS ? plates.length > 0? Alimentos(context):
+                                  Container(
+                                    padding: EdgeInsets.all(5),
+                                    width: MediaQuery.of(context).size.width / 1.2,
+                                    height: MediaQuery.of(context).size.height / 5,
+                                    decoration: BoxDecoration(
+                                      color: ColorsGenerals().lightgrey,
+                                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 1,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Text("No hay recomendaciones disponibles"),
+                                    ),
+                                  ):Container(
                                     padding: EdgeInsets.all(5),
                                     width: MediaQuery.of(context).size.width / 1.2,
                                     height: MediaQuery.of(context).size.height / 5,
