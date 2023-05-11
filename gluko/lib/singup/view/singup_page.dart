@@ -449,7 +449,7 @@ class  _SingupviewState extends State<Singupview>{
                           lastDate: DateTime.now()
                       );
                       if(newDateN == null) return;
-                      setState(() => bornCtrl.text = DateFormat.yMd().format(newDateN!));
+                      setState(() => bornCtrl.text = DateFormat('yyyy-MM-dd').format(newDateN!));
                     },
                   )
                 ],
@@ -487,7 +487,7 @@ class  _SingupviewState extends State<Singupview>{
                             lastDate: DateTime.now()
                         );
                         if(newDateD == null) return;
-                        setState(() => dateDCtrl.text = DateFormat.yMd().format(newDateD!));
+                        setState(() => dateDCtrl.text = DateFormat('yyyy-MM-dd').format(newDateD!));
                       },
                     )
                   ],
