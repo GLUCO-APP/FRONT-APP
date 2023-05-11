@@ -386,7 +386,7 @@ class  _calculateinsulineviewState extends State<calculateinsulineview>{
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text("${info.carbs}g", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w200,fontSize: 20)),
+                                  Text("${info.carbs.toStringAsFixed(1)}g", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w200,fontSize: 20)),
                                   Text("${info.gluco}", style: TextStyle( color: ColorsGenerals().black, fontWeight: FontWeight.w200,fontSize: 20),),
                                 ],
                               ),
