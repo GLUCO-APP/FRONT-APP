@@ -18,3 +18,4 @@ export 'src/Data/historialReports_service.dart';
 export 'src/Data/emailValidate_service.dart';
 export 'src/Data/allinsulin_service.dart';
 export 'src/Data/typeuser_service.dart';
+export 'src/Data/changePassword_service.dart';

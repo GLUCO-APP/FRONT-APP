@@ -30,7 +30,7 @@ class infoUserRepository{
             int.parse(aux['usuario']['hipo'].toString()),
             double.parse(aux['usuario']['sensitivity'].toString()),
             int.parse(aux['usuario']['rate'].toString()),
-            aux['usuario']['precis'].toString(),
+            aux['usuario']['basal'].toString(),
             aux['usuario']['breakfast_start'].toString(),
             aux['usuario']['breakfast_end'].toString(),
             aux['usuario']['lunch_start'].toString(),
