@@ -34,4 +34,8 @@ export 'src/models/ResponseValidate.dart';
 export 'src/Domain/allinsulin_repository.dart';
 export 'src/models/responePDF.dart';
 export 'src/Domain/TypeUser_repository.dart';
+export 'src/models/ResponseChangePassword.dart';
+export 'src/Domain/changePassword_repository.dart';
+export 'src/models/ResponseResetPassword.dart';
+export 'src/Domain/resetPassword_repository.dart';
 

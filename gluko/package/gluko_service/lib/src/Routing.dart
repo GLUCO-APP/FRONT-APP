@@ -13,7 +13,8 @@ class Routing{
   String reportsAll = "report/all/";
   String validateEmail = "/user/verifyEmail";
   String allInsulin = "/allInsulin";
-  String changePassword = "/changePassword";
+  String changePassword = "/user/changePassword";
   String typeUser = "/userType/";
+  String resetPassword = "/user/resetPassword";
 }
 
