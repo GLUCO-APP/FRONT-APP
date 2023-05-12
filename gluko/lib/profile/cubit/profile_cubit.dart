@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:gluko_repository/gluko_repository.dart';
 import 'package:meta/meta.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gluko_repository/src/models/insulin.dart';
 part 'profile_state.dart';
 
@@ -26,22 +25,10 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> listInsulin () async{
     try{
       List<Insulin> insulinas = await insulinRepository.getInsulin();
-      emit(state.copywhit(status: profilestatus.success, insulinas: insulinas));
+      print(insulinas);
+      emit(state.copywhit(status: profilestatus.success, insulinas: insulinas) as ProfileState);
     }catch (ex){
       emit(state.copywhit(status: profilestatus.error));
-    }
-  }
-
-  Future<ResponseChangePassword> changePassword (String oldPassword, String newPassword) async {
-    emit(state.copywhit(status: profilestatus.loading));
-    String token = await pRepository.GetToken();
-    ResponseChangePassword response = (await changeRepository.changePassword(token, oldPassword, newPassword));
-    if(response.estatus) {
-      emit(state.copywhit(status: profilestatus.success));
-      return response;
-    } else {
-      emit(state.copywhit(status: profilestatus.error));
-      return response;
     }
   }
 

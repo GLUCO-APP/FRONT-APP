@@ -16,5 +16,6 @@ class Routing{
   String changePassword = "/user/changePassword";
   String typeUser = "/userType/";
   String resetPassword = "/user/resetPassword";
+  String editUser = "/update";
 }
 

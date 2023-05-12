@@ -7,7 +7,7 @@ class ChangePasswordService {
 
   final http.Client request =  http.Client();
 
-  Future<String> change( String oldPassword, String newPassword, String token) async{
+  Future<String> change( String token, String oldPassword, String newPassword) async{
     final uri = Uri.http(Routing().url_api,Routing().changePassword+ '/$token' + '/$oldPassword' + '/$newPassword',);
     final headers = {'Content-Type': 'application/json'};
     String bodyRep;

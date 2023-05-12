@@ -5,6 +5,7 @@ import 'package:gluko/login/cubit/login_cubit.dart';
 import 'package:gluko/login/view/login_page.dart';
 import 'package:gluko_repository/gluko_repository.dart';
 import '../../colors/colorsGenerals.dart';
+import '../../home/view/home_page.dart';
 import '../cubit/profile_cubit.dart';
 
 enum SexTypeEnum {masculino, femenino}
@@ -63,11 +64,7 @@ class profileview extends StatefulWidget {
 
 class  _profileviewState extends State<profileview>{
 
-  Future<void> showMyPopupChangePassword(BuildContext context) async {
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    bool isPasswordVisible1 = true;
-    bool isPasswordVisible2 = true;
-    bool isPasswordVisible3 = true;
+  showMyPopupChangePassword(BuildContext context) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context){
@@ -121,8 +118,6 @@ class  _profileviewState extends State<profileview>{
                                         borderRadius: BorderRadius.circular(20.0),
                                         borderSide: BorderSide.none
                                     ),
-                                    helperText: ('Utilice al menos 8 caracteres'),
-                                    helperStyle: TextStyle(fontSize: 11)
                                 ),
                                 obscureText: isPasswordVisible1,
                               ),
@@ -181,33 +176,64 @@ class  _profileviewState extends State<profileview>{
                                 obscureText: isPasswordVisible3,
                               ),
                             ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                if(oldPasswordCtrl.text.isEmpty || newPasswordCtrl.text.isEmpty || newPasswordCtrl.text.length < 7 || newRepeatPasswordCtrl.text.isEmpty || newRepeatPasswordCtrl.text.length < 7){
-                                  pushUp("Ingrese una contraseña valida");
-                                } else {
-                                  var response = await context.read<ProfileCubit>().changePassword(oldPasswordCtrl.text.toString(), newPasswordCtrl.text.toString());
-                                  print(response.message);
-                                  if (response.estatus){
-                                    clean();
-                                    pushUp(response.message);
-                                    Navigator.pop(context);
-                                  } else {
-                                    pushUp(response.message);
-                                  }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                elevation: 8, // elevación de la sombra
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      30), // radio de la esquina redondeada
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    if(oldPasswordCtrl.text.isEmpty || newPasswordCtrl.text.isEmpty || newPasswordCtrl.text.length < 7 || newRepeatPasswordCtrl.text.isEmpty || newRepeatPasswordCtrl.text.length < 7){
+                                      pushUp("Ingrese una contraseña valida");
+                                    } else {
+                                      var token = await PercisteRepository().GetToken();
+                                      var response = await ChangePasswordRepository().changePassword(token, oldPasswordCtrl.text.toString(), newPasswordCtrl.text.toString());
+                                      print(response.message);
+                                      if (response.estatus){
+                                        clean();
+                                        pushUp(response.message);
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomePage()),
+                                              (Route<dynamic> route) => false,
+                                        );
+                                      } else {
+                                        pushUp(response.message);
+                                      }
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // radio de la esquina redondeada
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                    backgroundColor: ColorsGenerals().red, // color de fondo
+                                  ),
+                                  child: Text("Guardar Cambios",
+                                    style: TextStyle(color: ColorsGenerals().whith),),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                                backgroundColor: ColorsGenerals().red, // color de fondo
-                              ),
-                              child: Text("Guardar Cambios",
-                                style: TextStyle(color: ColorsGenerals().whith),),
+                                const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    clean();
+                                    Navigator.pop(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // radio de la esquina redondeada
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                    backgroundColor: ColorsGenerals().red, // color de fondo
+                                  ),
+                                  child: Text("Cancelar",
+                                    style: TextStyle(color: ColorsGenerals().whith),),
+                                ),
+                              ],
                             ),
                           ],
                         )
@@ -221,8 +247,7 @@ class  _profileviewState extends State<profileview>{
     );
   }
 
-  Future<void> showMyPopupEditObjective(BuildContext context) async {
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  showMyPopupEditObjective(BuildContext context) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context){
@@ -326,20 +351,44 @@ class  _profileviewState extends State<profileview>{
                                 textInputAction: TextInputAction.done,
                               ),
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                              },
-                              style: ElevatedButton.styleFrom(
-                                elevation: 8, // elevación de la sombra
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      30), // radio de la esquina redondeada
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    clean();
+                                    Navigator.pop(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // radio de la esquina redondeada
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                    backgroundColor: ColorsGenerals().red, // color de fondo
+                                  ),
+                                  child: Text("Cancelar",
+                                    style: TextStyle(color: ColorsGenerals().whith),),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                                backgroundColor: ColorsGenerals().red, // color de fondo
-                              ),
-                              child: Text("Guardar Cambios",
-                                style: TextStyle(color: ColorsGenerals().whith),),
+                                const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                ElevatedButton(
+                                  onPressed: (){
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // radio de la esquina redondeada
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                    backgroundColor: ColorsGenerals().red, // color de fondo
+                                  ),
+                                  child: Text("Guardar Cambios",
+                                    style: TextStyle(color: ColorsGenerals().whith),),
+                                ),
+                              ],
                             ),
                           ],
                         )
@@ -353,8 +402,7 @@ class  _profileviewState extends State<profileview>{
     );
   }
 
-  Future<void> showMyPopupEditPyshics(BuildContext context) async {
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  showMyPopupEditPyshics(BuildContext context) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context){
@@ -435,20 +483,44 @@ class  _profileviewState extends State<profileview>{
                                 textInputAction: TextInputAction.done,
                               ),
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                              },
-                              style: ElevatedButton.styleFrom(
-                                elevation: 8, // elevación de la sombra
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      30), // radio de la esquina redondeada
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    clean();
+                                    Navigator.pop(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // radio de la esquina redondeada
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                    backgroundColor: ColorsGenerals().red, // color de fondo
+                                  ),
+                                  child: Text("Cancelar",
+                                    style: TextStyle(color: ColorsGenerals().whith),),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                                backgroundColor: ColorsGenerals().red, // color de fondo
-                              ),
-                              child: Text("Guardar Cambios",
-                                style: TextStyle(color: ColorsGenerals().whith),),
+                                const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                ElevatedButton(
+                                  onPressed: (){
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 8, // elevación de la sombra
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // radio de la esquina redondeada
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                    backgroundColor: ColorsGenerals().red, // color de fondo
+                                  ),
+                                  child: Text("Guardar Cambios",
+                                    style: TextStyle(color: ColorsGenerals().whith),),
+                                ),
+                              ],
                             ),
                           ],
                         )
@@ -462,15 +534,29 @@ class  _profileviewState extends State<profileview>{
     );
   }
 
-  Future<void> showMyPopupEditMecis(BuildContext context) async {
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  Future<void>showMyPopupEditMecis(BuildContext context) async {
     String? _selectedInsulinR = "Humulin R Cristalina";
     int _selectPR = 0;
     String? _selectedInsulinL = "Delemir Levemir";
     int _selectPL = 0;
-    await showDialog(
+    pruebaR = await allinsulinRepository().getInsulin();
+    if(listInsulinR.isEmpty){
+      for (var insulin in pruebaR) {
+        if(insulin.type == "Bolo"){
+          listInsulinR.add(insulin);
+        }
+      }
+    }
+    if(listInsulinB.isEmpty){
+      for (var insulin in pruebaR) {
+        if(insulin.type == "Basal"){
+          listInsulinB.add(insulin);
+        }
+      }
+    }
+    return showDialog(
       context: context,
-      builder: (BuildContext context){
+      builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState){
           return  Material(
             color: Colors.transparent,
@@ -693,20 +779,44 @@ class  _profileviewState extends State<profileview>{
                                             ],
                                           )
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 8, // elevación de la sombra
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                30), // radio de la esquina redondeada
+                                      Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              clean();
+                                              Navigator.pop(context);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 8, // elevación de la sombra
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    30), // radio de la esquina redondeada
+                                              ),
+                                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                              backgroundColor: ColorsGenerals().red, // color de fondo
+                                            ),
+                                            child: Text("Cancelar",
+                                              style: TextStyle(color: ColorsGenerals().whith),),
                                           ),
-                                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                                          backgroundColor: ColorsGenerals().red, // color de fondo
-                                        ),
-                                        child: Text("Guardar Cambios",
-                                          style: TextStyle(color: ColorsGenerals().whith),),
+                                          const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                          ElevatedButton(
+                                            onPressed: (){
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 8, // elevación de la sombra
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    30), // radio de la esquina redondeada
+                                              ),
+                                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                              backgroundColor: ColorsGenerals().red, // color de fondo
+                                            ),
+                                            child: Text("Guardar Cambios",
+                                              style: TextStyle(color: ColorsGenerals().whith),),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   )
@@ -724,8 +834,7 @@ class  _profileviewState extends State<profileview>{
     );
   }
 
-  Future<void> showMyPopupEditStyle(BuildContext context) async {
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  showMyPopupEditStyle(BuildContext context) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context){
@@ -1106,20 +1215,44 @@ class  _profileviewState extends State<profileview>{
                                   ),
                                   textInputAction: TextInputAction.done,
                                 ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    elevation: 8, // elevación de la sombra
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          30), // radio de la esquina redondeada
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        clean();
+                                        Navigator.pop(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 8, // elevación de la sombra
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              30), // radio de la esquina redondeada
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                        backgroundColor: ColorsGenerals().red, // color de fondo
+                                      ),
+                                      child: Text("Cancelar",
+                                        style: TextStyle(color: ColorsGenerals().whith),),
                                     ),
-                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                                    backgroundColor: ColorsGenerals().red, // color de fondo
-                                  ),
-                                  child: Text("Guardar Cambios",
-                                    style: TextStyle(color: ColorsGenerals().whith),),
+                                    const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                    ElevatedButton(
+                                      onPressed: (){
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 8, // elevación de la sombra
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              30), // radio de la esquina redondeada
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                        backgroundColor: ColorsGenerals().red, // color de fondo
+                                      ),
+                                      child: Text("Guardar Cambios",
+                                        style: TextStyle(color: ColorsGenerals().whith),),
+                                    ),
+                                  ],
                                 ),
                               ],
                             )
@@ -1136,7 +1269,6 @@ class  _profileviewState extends State<profileview>{
   }
 
   Future<void> showMyPopupLogout(BuildContext context) async {
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return showDialog<void>(
       context: context,
       builder: (BuildContext context){
@@ -1273,6 +1405,9 @@ class  _profileviewState extends State<profileview>{
   final meilCtrl = TextEditingController();
   final edadCtrl = TextEditingController();
   // Editar contraseña
+  bool isPasswordVisible1 = true;
+  bool isPasswordVisible2 = true;
+  bool isPasswordVisible3 = true;
   final oldPasswordCtrl = TextEditingController();
   final newPasswordCtrl = TextEditingController();
   final newRepeatPasswordCtrl = TextEditingController();
@@ -1390,22 +1525,6 @@ class  _profileviewState extends State<profileview>{
               return const Center(child: CircularProgressIndicator());
               break;
             case profilestatus.success:
-              pruebaR = states.getInsulinas();
-              if(listInsulinR.isEmpty){
-                for (var insulin in pruebaR) {
-                  if(insulin.type == "Bolo"){
-                    listInsulinR.add(insulin);
-                  }
-                }
-              }
-              pruebaL = states.getInsulinas();
-              if(listInsulinB.isEmpty){
-                for (var insulin in pruebaL) {
-                  if(insulin.type == "Basal"){
-                    listInsulinB.add(insulin);
-                  }
-                }
-              }
               user = context.read<ProfileCubit>().getUser();
               if(user.nombre.isNotEmpty){
                 name = user.nombre;
