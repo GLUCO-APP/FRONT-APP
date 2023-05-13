@@ -768,10 +768,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                               ),
                                               child: Container(
                                                 child: Stack(
-                                                  children: plato.length < 6
-                                                      ? ComidasEnPlato(plato)
-                                                      : ComidasEnPlato(plato)
-                                                      .sublist(0, 6),
+                                                  children: ComidasEnPlato(plato)
                                                 ),
                                               ),
                                             ),
@@ -1227,22 +1224,71 @@ class _assembleplateviewState extends State<assembleplateview> {
   List<Widget> ComidasEnPlato(List<FoodDetail> frut) {
     List<Widget> widgets = [];
     int platoPos = 0;
+    Map<String, List<int>> imagenRepetida = {};
     for (int i = 0; i < frut.length; i++) {
+      bool repite = false;
       final com = frut[i];
+      print(com.image);
+      print(imagenRepetida.keys);
+      String imagen = com.image.replaceAll('.jpg', '.png');
+      if (imagenRepetida.containsKey(imagen)) {
+        imagenRepetida[imagen]![0] = (imagenRepetida[imagen]![0]) + 1;
+        print("Alimento ${imagen} cantidad ${imagenRepetida[imagen]![0]}");
+      }
       if (platoPos < pos.length && com.tag != "bebida" && com.tag != "sopa") {
+        var posofice = 0;
+        if (imagenRepetida.containsKey(imagen)){
+          posofice = imagenRepetida[imagen]![1];
+          repite = true;
+        }else{
+          print("Se agrega de mas");
+          imagenRepetida.addAll({imagen: [1, platoPos]});
+          posofice = platoPos;
+        }
         widgets.add(
+          imagenRepetida[imagen]![0] == 1 ?
           Positioned(
-            left: pos[platoPos].left,
-            top: pos[platoPos].top,
+            left: pos[posofice].left,
+            top: pos[posofice].top,
             child: Material(
               color: Colors.transparent,
-              child:  Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
+              child: Image.asset(
+                "assets/Food/${com.image.replaceAll('.jpg', '.png')}",
+                height: 80,
+                width: 80,
+              ),
             ),
-          ),
+          ):
+          Positioned(
+            left: pos[posofice].left +20,
+            top: pos[posofice].top +20,
+            child: Material(
+                color: Colors.transparent,
+                child: Container(
+                    decoration: BoxDecoration(
+                      color: ColorsGenerals().red,
+                      borderRadius: const BorderRadius.all(Radius.circular(20)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 0.1,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    height: MediaQuery.of(context).size.height/40,
+                    width: MediaQuery.of(context).size.height/40,
+                    child: Center(child: Text(imagenRepetida[imagen]![0].toString(), style: TextStyle(color: ColorsGenerals().whith, fontWeight: FontWeight.w700),))
+                )
+            ),
+          )
         );
-        platoPos++;
+        if(!repite){
+          platoPos++;
+        }
       } else {
-        if(com.tag == "bebida"){
+        if (com.tag == "bebida") {
           print("Pone la bebida");
           widgets.add(
             Positioned(
@@ -1254,9 +1300,8 @@ class _assembleplateviewState extends State<assembleplateview> {
               ),
             ),
           );
-        }
-        else{
-          if(com.tag == "sopa"){
+        } else {
+          if (com.tag == "sopa") {
             widgets.add(
               Positioned(
                 left: 200,
@@ -1267,7 +1312,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                 ),
               ),
             );
-          }else{
+          } else {
             widgets.add(
               Positioned(
                 left: 400,
@@ -1280,7 +1325,6 @@ class _assembleplateviewState extends State<assembleplateview> {
             );
           }
         }
-
       }
     }
     return widgets;

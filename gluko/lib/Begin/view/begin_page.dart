@@ -433,21 +433,14 @@ class _beginviewState extends State<beginview> {
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    var notifictions = LocalNotificationService();
-                                    notifictions.intialize();
-                                    await notifictions.showNotification(id: 0, title: "Puto", body: "");
-                                  },
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width / 5,
-                                    height: MediaQuery.of(context).size.height / 10,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            "assets/Logo/gluko_bot_hi.png"),
-                                        fit: BoxFit.cover,
-                                      ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 5,
+                                  height: MediaQuery.of(context).size.height / 10,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          "assets/Logo/gluko_bot_hi.png"),
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
