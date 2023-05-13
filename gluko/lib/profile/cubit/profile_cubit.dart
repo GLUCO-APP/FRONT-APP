@@ -1,15 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:gluko_repository/gluko_repository.dart';
 import 'package:meta/meta.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gluko_repository/src/models/insulin.dart';
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit(this.repository, this.pRepository, this.insulinRepository) : super(ProfileState(infoUser:User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", ""),));
+  ProfileCubit(this.repository, this.pRepository, this.insulinRepository, this.changeRepository) : super(ProfileState(infoUser:User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", ""),));
+
   infoUserRepository repository;
   PercisteRepository pRepository;
   allinsulinRepository insulinRepository;
+  ChangePasswordRepository changeRepository;
 
   Future<void> getInfoUser() async{
     var user = await repository.getInfoUser();
@@ -24,11 +25,11 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> listInsulin () async{
     try{
       List<Insulin> insulinas = await insulinRepository.getInsulin();
-      emit(state.copywhit(status: profilestatus.success, insulinas: insulinas));
+      print(insulinas);
+      emit(state.copywhit(status: profilestatus.success, insulinas: insulinas) as ProfileState);
     }catch (ex){
       emit(state.copywhit(status: profilestatus.error));
     }
-
   }
 
 }
