@@ -17,6 +17,8 @@ class ReportService {
       'unidades_insulina': insulina,
     }
     );
+    print("LLegaAqui");
+    print(body);
     try{
       final response = await http.post(uri, headers: headers,  body: body).timeout(Duration(seconds: 100));
       print(response.body);

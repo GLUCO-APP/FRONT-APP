@@ -1,5 +1,3 @@
-import 'dart:ffi';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +11,8 @@ import '../../biometricValidation/biometricValidate.dart';
 import '../../calculateinsulin/view/calculateinsulina_page.dart';
 import '../cubit/assembleplate_cubit.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
+
 
 
 class assembleplatepage extends StatelessWidget {
@@ -957,16 +956,11 @@ class _assembleplateviewState extends State<assembleplateview> {
                                           onPressed: () async {
                                               var permisos = await checkCameraPermissions();
                                               if (permisos){
-                                                String barcode = await FlutterBarcodeScanner.scanBarcode(
-                                                  '#ff6666', // Color de fondo de la pantalla de escaneo
-                                                  'Cancelar', // Texto del botón de cancelar
-                                                  true, // Si debe mostrar una ventana de ayuda
-                                                  ScanMode.BARCODE, // Modo de escaneo (código de barras en este caso)
-                                                );
-                                                if(barcode != "-1"){
+                                                var barcode = await BarcodeScanner.scan();
+                                                if(barcode.rawContent != ""){
                                                   print("Codigo de barras");
-                                                  print(barcode);
-                                                  var food = await context.read<AssembleplateCubit>().getFoodBarcode(barcode);
+                                                  print(barcode.rawContent);
+                                                  var food = await context.read<AssembleplateCubit>().getFoodBarcode(barcode.rawContent);
                                                   setState(() {
                                                     int valido = 0;
                                                     foodsList.map((f) => {
@@ -987,6 +981,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                               }else{
                                                 print("Solicitar permisos");
                                               }
+
                                           }
                                       ),
                                     )
@@ -1504,5 +1499,7 @@ class _assembleplateviewState extends State<assembleplateview> {
             );
           }
       );
+
+
 }
 

@@ -32,7 +32,7 @@ class CalculateinsulinCubit extends Cubit<CalculateinsulinState> {
     emit(state.copyWith(status:Calculateinsulinstatus.loading));
     try{
       var response = await rgplate.RegisterPlate(plate);
-      print("Respuesta ${response}");
+      print("Respuesta ${response.id}");
       if(response.estatus){
         var reportResponse = await rgreport.RegisterReport(RequestReport(response.id, glucosa, insulina));
         if(reportResponse){

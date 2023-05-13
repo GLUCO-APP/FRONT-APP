@@ -44,7 +44,6 @@ dependencies:
   geolocator: ^9.0.2
   google_maps_flutter: ^2.1.0
   geocoding: ^2.1.0
-  flutter_barcode_scanner:
   flutter_launcher_icons: ^0.13.0
   fl_chart: ^0.62.0
   open_file: ^3.2.1
@@ -54,6 +53,7 @@ dependencies:
   flutter_background_service: ^2.4.6
   socket_io_client: ^2.0.0
   local_auth: ^2.1.6
+  barcode_scan2: ^4.2.4
 
 dev_dependencies:
   flutter_test:

@@ -105,6 +105,7 @@ class LocalNotificationService {
       var cont = 1;
       print("muestra data");
       var token = await PercisteRepository().GetToken();
+      print(token);
       socket.on(token, (data)  async => {
         print("conecta al socket"),
         print(data),

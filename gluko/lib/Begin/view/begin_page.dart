@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gluko/colors/colorsGenerals.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +11,7 @@ import 'package:intl/intl.dart';
 import '../../assembleplate/view/assembleplate_page.dart';
 import '../../calculateinsulin/view/calculateinsulina_page.dart';
 import '../../historyReport/view/historyReport_page.dart';
+import '../../notifications/pushNotification.dart';
 import '../cubit/begin_cubit.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -431,14 +433,21 @@ class _beginviewState extends State<beginview> {
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 5,
-                                  height: MediaQuery.of(context).size.height / 10,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          "assets/Logo/gluko_bot_hi.png"),
-                                      fit: BoxFit.cover,
+                                GestureDetector(
+                                  onTap: () async {
+                                    var notifictions = LocalNotificationService();
+                                    notifictions.intialize();
+                                    await notifictions.showNotification(id: 0, title: "Puto", body: "");
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width / 5,
+                                    height: MediaQuery.of(context).size.height / 10,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            "assets/Logo/gluko_bot_hi.png"),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                 ),
