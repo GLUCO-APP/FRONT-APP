@@ -9,9 +9,9 @@ class EditUserRepository{
       var userResponse = await EditUserService().EditUser(user, token);
       print("Response repository : ${userResponse}");
       if(userResponse != "contraseña incorrecta"){
-        return ResponseEditUser(true, userResponse);
+        return ResponseEditUser(true, userResponse.toString());
       }
-      return ResponseEditUser(false, userResponse);
+      return ResponseEditUser(false, userResponse.toString());
     } catch (e) {
       return ResponseEditUser(false, "Ocurrio un error");
     }

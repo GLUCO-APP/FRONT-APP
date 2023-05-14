@@ -141,8 +141,7 @@ class LocalNotificationService {
         Timer.periodic(Duration(minutes:1), (timer) {
           var now = DateTime.now();
           var formattedTime = DateFormat.Hm().format(now);
-          String Basal = "08:00:00";
-          if(Basal.contains(formattedTime.toString())){
+          if(user.precis.contains(formattedTime.toString())){
             notifictions.showNotification(id: 0, title: "Conectar basal", body: "Se debe ingerir insulina Basal");
           }
           if(user.breakfast_start.contains(formattedTime.toString())){
