@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -93,6 +94,7 @@ class LocalNotificationService {
         ), iosConfiguration: IosConfiguration(onForeground: onStart,autoStart: true));
     service.startService();
   }
+
   Future<void> coneccionNoti() async{
     try{
       IO.Socket socket = IO.io('http://prueba2-env.eba-i9peqcmf.us-east-1.elasticbeanstalk.com',
@@ -105,6 +107,7 @@ class LocalNotificationService {
       var cont = 1;
       print("muestra data");
       var token = await PercisteRepository().GetToken();
+      print(token);
       socket.on(token, (data)  async => {
         print("conecta al socket"),
         print(data),
@@ -119,43 +122,54 @@ class LocalNotificationService {
 
       });
     }catch(ex){
-      print("fallas");
+      print("Falla");
     }
   }
 
-  static void onStart(ServiceInstance service){
+  @pragma('vm:entry-point')
+  static Future<void> onStart(ServiceInstance service) async {
     print("Inician las notificaciones");
-    LocalNotificationService().coneccionNoti();
-    var notifictions = LocalNotificationService();
-    notifictions.intialize();
-    infoUserRepository().getInfoUser().then((user) => {
+    try{
+      LocalNotificationService().coneccionNoti();
+    }catch(ex){
+      print("falla");
+    }
+    try{
+      var notifictions = LocalNotificationService();
+      notifictions.intialize();
+      infoUserRepository().getInfoUser().then((user) => {
         Timer.periodic(Duration(minutes:1), (timer) {
-        var now = DateTime.now();
-        var formattedTime = DateFormat.Hm().format(now);
-        String Basal = "8:00:00";
-        if(Basal.contains(formattedTime.toString())){
-        notifictions.showNotification(id: 0, title: "Conectar basal", body: "Se debe ingerir insulina Basal");
-        }
-        if(user.breakfast_start.contains(formattedTime.toString())){
-        notifictions.showNotification(id: 0, title: "Hora Desayuno", body: "Recordatiorio para comer");
-        }
-        if(user.breakfast_end.contains(formattedTime.toString())){
-        notifictions.showNotification(id: 0, title: "Hora Desayuno", body: "Recordatiorio para comer");
-        }
-        if(user.lunch_start.contains(formattedTime.toString())){
-        notifictions.showNotification(id: 0, title: "Hora Almuerzo", body: "Recordatiorio para comer");
-        }
-        if(user.lunch_end.contains(formattedTime.toString())){
-        notifictions.showNotification(id: 0, title: "Hora Almuerzo", body: "Recordatiorio para comer");
-        }
-        if(user.dinner_start.contains(formattedTime.toString())){
-        notifictions.showNotification(id: 0, title: "Hora Cenar", body: "Recordatiorio para comer");
-        }
-        if(user.dinner_end.contains(formattedTime.toString())){
-        notifictions.showNotification(id: 0, title: "Hora Cenar", body: "Recordatiorio para comer");
-        }
+          var now = DateTime.now();
+          var formattedTime = DateFormat.Hm().format(now);
+          String Basal = "08:00:00";
+          if(Basal.contains(formattedTime.toString())){
+            notifictions.showNotification(id: 0, title: "Conectar basal", body: "Se debe ingerir insulina Basal");
+          }
+          if(user.breakfast_start.contains(formattedTime.toString())){
+            notifictions.showNotification(id: 0, title: "Hora Desayuno", body: "Recordatiorio para comer");
+          }
+          if(user.breakfast_end.contains(formattedTime.toString())){
+            notifictions.showNotification(id: 0, title: "Hora Desayuno", body: "Recordatiorio para comer");
+          }
+          if(user.lunch_start.contains(formattedTime.toString())){
+            notifictions.showNotification(id: 0, title: "Hora Almuerzo", body: "Recordatiorio para comer");
+          }
+          if(user.lunch_end.contains(formattedTime.toString())){
+            notifictions.showNotification(id: 0, title: "Hora Almuerzo", body: "Recordatiorio para comer");
+          }
+          if(user.dinner_start.contains(formattedTime.toString())){
+            notifictions.showNotification(id: 0, title: "Hora Cenar", body: "Recordatiorio para comer");
+          }
+          if(user.dinner_end.contains(formattedTime.toString())){
+            notifictions.showNotification(id: 0, title: "Hora Cenar", body: "Recordatiorio para comer");
+          }
         }),
-    });
+      });
+
+    }catch(ex){
+      Fluttertoast.showToast(
+          msg: 'Fallo notificaciones locales', fontSize: 20);
+    }
 
   }
 
