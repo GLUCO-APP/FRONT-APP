@@ -643,7 +643,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
     int platoPos = 0;
     for (int i = 0; i < frut.length; i++) {
       final com = frut[i];
-      if (platoPos < pos.length && com.tag != "bebida" && com.tag != "sopa") {
+      if (platoPos < pos.length && !com.tag.contains("bebida") && !com.tag.contains("sopa")) {
         widgets.add(
           Positioned(
             left: pos[platoPos].left,
@@ -656,7 +656,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
         );
         platoPos++;
       } else {
-        if(com.tag == "bebida"){
+        if(com.tag.contains("bebida")){
           print("Pone la bebida");
           widgets.add(
             Positioned(
@@ -670,7 +670,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
           );
         }
         else{
-          if(com.tag == "sopa"){
+          if(com.tag.contains("sopa")){
             widgets.add(
               Positioned(
                 left: 200,

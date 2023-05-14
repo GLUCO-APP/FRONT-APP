@@ -81,6 +81,7 @@ var hora = 0;
 
 class _assembleplateviewState extends State<assembleplateview> {
 
+
   List<FoodDetail> bebidas = [];
   List<FoodDetail> sopas = [];
   List<Posiciones> pos = [
@@ -622,6 +623,7 @@ class _assembleplateviewState extends State<assembleplateview> {
     carbohidrato = 0;
     verduar = 0;
     grasas = 0;
+    foodsList = prueba;
   }
   int p = 0;
   int selectedIndexPlato = -1;
@@ -1235,7 +1237,7 @@ class _assembleplateviewState extends State<assembleplateview> {
         imagenRepetida[imagen]![0] = (imagenRepetida[imagen]![0]) + 1;
         print("Alimento ${imagen} cantidad ${imagenRepetida[imagen]![0]}");
       }
-      if (platoPos < pos.length && com.tag != "bebida" && com.tag != "sopa") {
+      if (platoPos < pos.length && !com.tag.contains("bebida") && !com.tag.contains("sopa")) {
         var posofice = 0;
         if (imagenRepetida.containsKey(imagen)){
           posofice = imagenRepetida[imagen]![1];
@@ -1288,7 +1290,7 @@ class _assembleplateviewState extends State<assembleplateview> {
           platoPos++;
         }
       } else {
-        if (com.tag == "bebida") {
+        if (com.tag.contains("bebida")) {
           print("Pone la bebida");
           widgets.add(
             Positioned(
@@ -1301,7 +1303,7 @@ class _assembleplateviewState extends State<assembleplateview> {
             ),
           );
         } else {
-          if (com.tag == "sopa") {
+          if (com.tag.contains("sopa")) {
             widgets.add(
               Positioned(
                 left: 200,
