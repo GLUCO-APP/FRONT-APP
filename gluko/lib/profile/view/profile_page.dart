@@ -22,7 +22,13 @@ class profilepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProfileCubit(infoUserRepository(), PercisteRepository(), allinsulinRepository(), ChangePasswordRepository())..getInfoUser(),
+      create: (context) => ProfileCubit(
+        infoUserRepository(),
+        PercisteRepository(),
+        allinsulinRepository(),
+        ChangePasswordRepository(),
+        EditUserRepository()
+      )..getInfoUser(),
       child: profileview(),
     );
   }
@@ -248,6 +254,7 @@ class  _profileviewState extends State<profileview>{
   }
 
   showMyPopupEditObjective(BuildContext context) {
+    print(user.nombre);
     return showDialog<void>(
       context: context,
       builder: (BuildContext context){
@@ -345,7 +352,7 @@ class  _profileviewState extends State<profileview>{
                                     borderRadius: BorderRadius.circular(20.0),
                                     borderSide: BorderSide.none,
                                   ),
-                                  suffixIcon: normCtrl.text.isEmpty ? Container(width: 0) :
+                                  suffixIcon: hipoCtrl.text.isEmpty ? Container(width: 0) :
                                   IconButton(icon: const Icon(Icons.close, color: Colors.lightBlue), onPressed: () => hipoCtrl.clear(),),
                                 ),
                                 textInputAction: TextInputAction.done,
@@ -374,7 +381,38 @@ class  _profileviewState extends State<profileview>{
                                 ),
                                 const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                 ElevatedButton(
-                                  onPressed: (){
+                                  onPressed: () async {
+                                    if(hiperCtrl.text.isEmpty || normCtrl.text.isEmpty || hiperCtrl.text.isEmpty){
+                                      pushUp("Complete todos los campos por favor");
+                                    } else {
+                                        final nHiper = int.tryParse(hiperCtrl.text);
+                                        final nNorm = int.tryParse(normCtrl.text);
+                                        final nHipo = int.tryParse(hipoCtrl.text);
+
+                                        if(nHiper! < 1 || nHiper > 520 || nNorm! < 1 || nNorm > 520 || nHipo! < 1 || nHipo > 520) {
+                                          pushUp("Los valores deben estar entre 1 y 520");
+                                        } else {
+                                          user.hyper = nHiper;
+                                          user.estable = nNorm;
+                                          user.hipo = nHipo;
+                                          var token = await PercisteRepository().GetToken();
+                                          var response = await EditUserRepository().editUser(user, token);
+                                          print(response.message);
+                                          if (response.estatus){
+                                            clean();
+                                            pushUp(response.message);
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HomePage()),
+                                                  (Route<dynamic> route) => false,
+                                            );
+                                          } else {
+                                            pushUp(response.message);
+                                          }
+                                        }
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     elevation: 8, // elevación de la sombra
@@ -506,7 +544,29 @@ class  _profileviewState extends State<profileview>{
                                 ),
                                 const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                 ElevatedButton(
-                                  onPressed: (){
+                                  onPressed: () async {
+                                    if(pesoCtrl.text.isEmpty || alturaCtrl.text.isEmpty){
+                                      pushUp("Complete todos los campos por favor");
+                                    } else {
+                                      user.peso = double.tryParse(pesoCtrl.text)!;
+                                      user.estatura = double.tryParse(alturaCtrl.text)!;
+                                      var token = await PercisteRepository().GetToken();
+                                      var response = await EditUserRepository().editUser(user, token);
+                                      print(response.message);
+                                      if (response.estatus){
+                                        clean();
+                                        pushUp(response.message);
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomePage()),
+                                              (Route<dynamic> route) => false,
+                                        );
+                                      } else {
+                                        pushUp(response.message);
+                                      }
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     elevation: 8, // elevación de la sombra
@@ -802,7 +862,40 @@ class  _profileviewState extends State<profileview>{
                                           ),
                                           const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                           ElevatedButton(
-                                            onPressed: (){
+                                            onPressed: () async {
+                                              if(ratioCtrl.text.isEmpty || senbCtrl.text.isEmpty || ctrHoraInsulinL.text.isEmpty){
+                                                pushUp("Complete todos los campos por favor");
+                                              } else {
+                                                user.rate = int.tryParse(ratioCtrl.text)!;
+                                                user.sensitivity = double.tryParse(senbCtrl.text)!;
+                                                user.precis = ctrHoraInsulinL.text.toString();
+                                                for (var insulin in listInsulinR) {
+                                                  if(insulin.name == _selectedInsulinR){
+                                                    user.insulinR = insulin;
+                                                  }
+                                                }
+                                                for (var insulin in listInsulinB) {
+                                                  if(insulin.name == _selectedInsulinL){
+                                                    user.insulinL = insulin;
+                                                  }
+                                                }
+                                                var token = await PercisteRepository().GetToken();
+                                                var response = await EditUserRepository().editUser(user, token);
+                                                print(response.message);
+                                                if (response.estatus){
+                                                  clean();
+                                                  pushUp(response.message);
+                                                  Navigator.pushAndRemoveUntil(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            HomePage()),
+                                                        (Route<dynamic> route) => false,
+                                                  );
+                                                } else {
+                                                  pushUp(response.message);
+                                                }
+                                              }
                                             },
                                             style: ElevatedButton.styleFrom(
                                               elevation: 8, // elevación de la sombra
@@ -1238,7 +1331,35 @@ class  _profileviewState extends State<profileview>{
                                     ),
                                     const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                     ElevatedButton(
-                                      onPressed: (){
+                                      onPressed: () async {
+                                        if(horaInicioDesayunoCtrl.text.isEmpty || horaFinalDesayunoCtrl.text.isEmpty || horaInicioAlmuerzoCtrl.text.isEmpty || horaFinalAlmuerzoCtrl.text.isEmpty || horaInicioCenaCtrl.text.isEmpty || horaFinalCenaCtrl.text.isEmpty || carboOCtrl.text.isEmpty){
+                                          pushUp("Complete todos los campos por favor");
+                                        } else {
+                                          user.breakfast_start = horaInicioDesayunoCtrl.text.toString();
+                                          user.breakfast_end = horaFinalDesayunoCtrl.text.toString();
+                                          user.lunch_start = horaInicioAlmuerzoCtrl.text.toString();
+                                          user.lunch_end = horaFinalAlmuerzoCtrl.text.toString();
+                                          user.dinner_start = horaInicioCenaCtrl.text.toString();
+                                          user.dinner_end = horaFinalCenaCtrl.text.toString();
+                                          user.objective_carbs = int.tryParse(carboOCtrl.text)!;
+                                          user.physicalctivity = _buttons[_selectedButtonA].code;
+                                          var token = await PercisteRepository().GetToken();
+                                          var response = await EditUserRepository().editUser(user, token);
+                                          print(response.message);
+                                          if (response.estatus){
+                                            clean();
+                                            pushUp(response.message);
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HomePage()),
+                                                  (Route<dynamic> route) => false,
+                                            );
+                                          } else {
+                                            pushUp(response.message);
+                                          }
+                                        }
                                       },
                                       style: ElevatedButton.styleFrom(
                                         elevation: 8, // elevación de la sombra

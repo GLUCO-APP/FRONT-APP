@@ -20,3 +20,4 @@ export 'src/Data/allinsulin_service.dart';
 export 'src/Data/typeuser_service.dart';
 export 'src/Data/changePassword_service.dart';
 export 'src/Data/resetPassword_service.dart';
+export 'src/Data/editUser_service.dart';
