@@ -38,4 +38,6 @@ export 'src/models/ResponseChangePassword.dart';
 export 'src/Domain/changePassword_repository.dart';
 export 'src/models/ResponseResetPassword.dart';
 export 'src/Domain/resetPassword_repository.dart';
+export 'src/Domain/editUser_repository.dart';
+export 'src/models/ResponseEditUser.dart';
 

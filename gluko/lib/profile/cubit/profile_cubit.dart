@@ -5,12 +5,13 @@ import 'package:gluko_repository/src/models/insulin.dart';
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit(this.repository, this.pRepository, this.insulinRepository, this.changeRepository) : super(ProfileState(infoUser:User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", ""),));
+  ProfileCubit(this.repository, this.pRepository, this.insulinRepository, this.changeRepository, this.editRepository) : super(ProfileState(infoUser:User("", "", "", "", "", 0, "", 0, 0, "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", Insulin(0, "", "", 0, 0), Insulin(0, "", "", 0, 0), 0, 0, "", ""),));
 
   infoUserRepository repository;
   PercisteRepository pRepository;
   allinsulinRepository insulinRepository;
   ChangePasswordRepository changeRepository;
+  EditUserRepository editRepository;
 
   Future<void> getInfoUser() async{
     var user = await repository.getInfoUser();
@@ -31,5 +32,4 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(state.copywhit(status: profilestatus.error));
     }
   }
-
 }
