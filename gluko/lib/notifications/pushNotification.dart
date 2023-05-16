@@ -138,11 +138,11 @@ class LocalNotificationService {
       var notifictions = LocalNotificationService();
       notifictions.intialize();
       infoUserRepository().getInfoUser().then((user) => {
-        Timer.periodic(Duration(minutes:1), (timer) {
+        Timer.periodic(Duration(seconds:45), (timer) {
           var now = DateTime.now();
           var formattedTime = DateFormat.Hm().format(now);
           if(user.precis.contains(formattedTime.toString())){
-            notifictions.showNotification(id: 0, title: "Conectar basal", body: "Se debe ingerir insulina Basal");
+            notifictions.showNotification(id: 0, title: "Hora de la dosis", body: "Se debe ingerir insulina Basal");
           }
           if(user.breakfast_start.contains(formattedTime.toString())){
             notifictions.showNotification(id: 0, title: "Hora Desayuno", body: "Recordatiorio para comer");
