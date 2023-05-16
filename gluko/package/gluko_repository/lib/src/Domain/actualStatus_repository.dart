@@ -19,7 +19,8 @@ class ActualStatusRepository{
           response['glucosa'] != null?double.parse(response['glucosa'].toString()):0,
           response['fecha'] != null?response['fecha'].toString():DateTime.now().toString(),
           response['unidades_insulina'] != null? double.parse(response['unidades_insulina'].toString()):0,
-          user.hyper.toDouble()
+          user.hyper.toDouble(),
+          response['unidades_restantes'] != null? double.parse(response['unidades_restantes'].toString()):0
       );
       return estado;
     } on Exception{

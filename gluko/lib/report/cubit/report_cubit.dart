@@ -18,4 +18,11 @@ class ReportCubit extends Cubit<ReportState> {
     emit(state.copywhit(status: Reportstatus.success));
     return field;
   }
+
+  Future<ResponsePDF> getPDFGraft() async{
+    emit(state.copywhit(status: Reportstatus.loading));
+    var field = await _report.getPDFGraft();
+    emit(state.copywhit(status: Reportstatus.success));
+    return field;
+  }
 }

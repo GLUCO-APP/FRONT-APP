@@ -7,7 +7,7 @@ import 'package:meta/meta.dart';
 part 'begin_state.dart';
 
 class BeginCubit extends Cubit<BeginState> {
-  BeginCubit(this.repository) : super(BeginState(actual: ActualStateDetail(0,0,0,"",0,0),recomend: []));
+  BeginCubit(this.repository) : super(BeginState(actual: ActualStateDetail(0,0,0,"",0,0,0),recomend: []));
 
   ActualStatusRepository repository;
 

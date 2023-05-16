@@ -41,7 +41,7 @@ var glucoActual = 148.0;
 var glucoMax = 190.0;
 var hora = "8:30";
 
-ActualStateDetail actualEstado = ActualStateDetail(0, 0, 0, "", 0,0);
+ActualStateDetail actualEstado = ActualStateDetail(0, 0, 0, "", 0,0,0);
 List<PlateRecomend> plates = [];
 
 List<Posiciones> pos = [
@@ -71,8 +71,8 @@ class _beginviewState extends State<beginview> {
               actualEstado = context.read<BeginCubit>().getEstado();
               consumido = actualEstado.sum_carbs;
               objetivo = actualEstado.objective_carbs;
-              insuObje = 10;
-              insuRest = actualEstado.unidades_insulina;
+              insuObje = actualEstado.unidades_insulina;
+              insuRest = actualEstado.unidades_insulina_actuales > 0? actualEstado.unidades_insulina_actuales:0.0;
               glucoActual = actualEstado.glucosa;
               glucoMax = actualEstado.glucemiamax;
               String fechaString = actualEstado.fecha;
@@ -340,7 +340,7 @@ class _beginviewState extends State<beginview> {
                                                       ),
                                                       Center(
                                                         child: Text(
-                                                          "${insuRest}U",
+                                                          "${insuRest.toStringAsFixed(1)}U",
                                                           style: TextStyle(
                                                               color: ColorsGenerals().black,
                                                               fontWeight: FontWeight.w500,

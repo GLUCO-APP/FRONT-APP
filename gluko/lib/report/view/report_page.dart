@@ -24,33 +24,8 @@ class reportview extends StatefulWidget {
 }
 
 class  _reportviewState extends State<reportview>{
-  List<bool> _buttonStates = [false, false, false,false,false,false];
-  List<int> dias = [7,15,30,7,15,30];
-  Widget _buildButton(int index, String text) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _buttonStates[index] = !_buttonStates[index];
-        });
-      },
-      child: Container(
-        height: MediaQuery.of(context).size.height /20,
-        padding: EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          color: _buttonStates[index]
-              ? ColorsGenerals().darkblue
-              : ColorsGenerals().darkgrey,
-        ),
-        child: Row(
-          children: [
-            Text(text, style: TextStyle(fontSize: MediaQuery.of(context).size.height /60, color: ColorsGenerals().whith),),
-            _buttonStates[index] ? Icon(Icons.check, size:  MediaQuery.of(context).size.height /40,color: ColorsGenerals().whith,) : SizedBox(),
-          ],
-        ),
-      ),
-    );
-  }
+  List<bool> _buttonStates = [false, false, false,false];
+  List<int> dias = [7,15,30,2];
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -104,9 +79,83 @@ class  _reportviewState extends State<reportview>{
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                               children: [
-                                                _buildButton(0, 'Últimos 7'),
-                                                _buildButton(1, 'Últimos 15'),
-                                                _buildButton(2, 'Últimos 30'),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _buttonStates[2] = false;
+                                                      _buttonStates[1] = false;
+                                                      _buttonStates[0] = !_buttonStates[0];
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    height: MediaQuery.of(context).size.height /20,
+                                                    padding: EdgeInsets.all(5),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                      color: _buttonStates[0]
+                                                          ? ColorsGenerals().darkblue
+                                                          : ColorsGenerals().darkgrey,
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Text("Últimos 7", style: TextStyle(fontSize: MediaQuery.of(context).size.height /60, color: ColorsGenerals().whith),),
+                                                        _buttonStates[0] ? Icon(Icons.check, size:  MediaQuery.of(context).size.height /40,color: ColorsGenerals().whith,) : SizedBox(),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _buttonStates[0] = false;
+                                                      _buttonStates[2] = false;
+                                                      _buttonStates[3] = false;
+                                                      _buttonStates[1] = !_buttonStates[1];
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    height: MediaQuery.of(context).size.height /20,
+                                                    padding: EdgeInsets.all(5),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                      color: _buttonStates[1]
+                                                          ? ColorsGenerals().darkblue
+                                                          : ColorsGenerals().darkgrey,
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Text('Últimos 15', style: TextStyle(fontSize: MediaQuery.of(context).size.height /60, color: ColorsGenerals().whith),),
+                                                        _buttonStates[1] ? Icon(Icons.check, size:  MediaQuery.of(context).size.height /40,color: ColorsGenerals().whith,) : SizedBox(),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _buttonStates[0] = false;
+                                                      _buttonStates[1] = false;
+                                                      _buttonStates[3] = false;
+                                                      _buttonStates[2] = !_buttonStates[2];
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    height: MediaQuery.of(context).size.height /20,
+                                                    padding: EdgeInsets.all(5),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                      color: _buttonStates[2]
+                                                          ? ColorsGenerals().darkblue
+                                                          : ColorsGenerals().darkgrey,
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Text('Últimos 30', style: TextStyle(fontSize: MediaQuery.of(context).size.height /60, color: ColorsGenerals().whith),),
+                                                        _buttonStates[2] ? Icon(Icons.check, size:  MediaQuery.of(context).size.height /40,color: ColorsGenerals().whith,) : SizedBox(),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             )
                                           ],
@@ -146,15 +195,33 @@ class  _reportviewState extends State<reportview>{
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text("  Días:", style: TextStyle(color: ColorsGenerals().black),),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                children: [
-                                                  _buildButton(3, 'Últimos 7'),
-                                                  _buildButton(4, 'Últimos 15'),
-                                                  _buildButton(5, 'Últimos 30'),
-                                                ],
-                                              )
+                                              Text("  Seleccionar reporte:", style: TextStyle(color: ColorsGenerals().black),),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _buttonStates[0] = false;
+                                                    _buttonStates[1] = false;
+                                                    _buttonStates[2] = false;
+                                                    _buttonStates[3] = !_buttonStates[3];
+                                                  });
+                                                },
+                                                child: Container(
+                                                  height: MediaQuery.of(context).size.height /20,
+                                                  padding: EdgeInsets.all(5),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                    color: _buttonStates[3]
+                                                        ? ColorsGenerals().darkblue
+                                                        : ColorsGenerals().darkgrey,
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Text('Graficos', style: TextStyle(fontSize: MediaQuery.of(context).size.height /60, color: ColorsGenerals().whith),),
+                                                      _buttonStates[3] ? Icon(Icons.check, size:  MediaQuery.of(context).size.height /40,color: ColorsGenerals().whith,) : SizedBox(),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           )
                                       ),
@@ -190,15 +257,27 @@ class  _reportviewState extends State<reportview>{
                         for(int i = _buttonStates.length -1; 0 <= i; i--) {
                           if (_buttonStates[i]) {
                             realizo = true;
-                            var field = await context.read<ReportCubit>().getPDF(
-                                dias[i]);
-                            if(field.estado){
-                              OpenFile.open(field.pdf.path);
-                              break;
+                            if(dias[i] != 2){
+                              var field = await context.read<ReportCubit>().getPDF(
+                                  dias[i]);
+                              if(field.estado){
+                                OpenFile.open(field.pdf.path);
+                                break;
+                              }else{
+                                Fluttertoast.showToast(
+                                    msg: "No tiene reportes", fontSize: 20);
+                                break;
+                              }
                             }else{
-                              Fluttertoast.showToast(
-                                  msg: "No tiene reportes", fontSize: 20);
-                              break;
+                              var field = await context.read<ReportCubit>().getPDFGraft();
+                              if(field.estado){
+                                OpenFile.open(field.pdf.path);
+                                break;
+                              }else{
+                                Fluttertoast.showToast(
+                                    msg: "No tiene reportes", fontSize: 20);
+                                break;
+                              }
                             }
 
                           }
