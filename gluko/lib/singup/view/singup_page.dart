@@ -1566,7 +1566,7 @@ class  _SingupviewState extends State<Singupview>{
                                       usuario.nombre = "${nombreCtrl.text} ${apellidoCtrl.text}";
                                       usuario.fechaNacimiento = bornCtrl.text.toString();
                                       usuario.fechaDiagnostico = dateDCtrl.text.toString();
-                                      int nac = newDateN!.year - DateTime.now().year;
+                                      int nac = (newDateN!.year - DateTime.now().year).abs();
                                       usuario.edad = nac;
                                       usuario.genero = _sexTypeEnum.value;
                                       setState(() => _currentStep += 1);
