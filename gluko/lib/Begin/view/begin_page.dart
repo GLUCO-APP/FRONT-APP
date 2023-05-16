@@ -323,7 +323,7 @@ class _beginviewState extends State<beginview> {
                                                                 radius: 10,
                                                                 showTitle: false),
                                                             PieChartSectionData(
-                                                                value: insuObje - insuRest,
+                                                                value: insuRest  == 0 ? 10 : insuObje - insuRest,
                                                                 color:
                                                                 ColorsGenerals().whith,
                                                                 radius: 10,
