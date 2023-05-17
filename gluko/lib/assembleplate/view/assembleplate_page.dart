@@ -295,7 +295,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text("Camida en plato", style: TextStyle(
+                      Text("Comida en plato", style: TextStyle(
                           color: ColorsGenerals().black,
                           fontWeight: FontWeight.w300,
                           fontSize: MediaQuery
@@ -400,7 +400,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text("Registra tu nivel de Glucosa", textAlign: TextAlign.center,style: TextStyle(
+                      Text("Registra tu nivel de glucosa", textAlign: TextAlign.center,style: TextStyle(
                           color: ColorsGenerals().black,
                           fontWeight: FontWeight.w300,
                           fontSize: MediaQuery
