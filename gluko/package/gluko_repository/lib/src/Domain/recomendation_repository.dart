@@ -11,7 +11,7 @@ class RecomendationRepository{
       var token =  prefs.getString('tokenJWT');
       print(token!);
       List<PlateRecomend> platesrecomd = [];
-      List<dynamic> plates = await RecomendationService().getRecomendations("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1YW5AZXhhbXBsZS5jb20iLCJpYXQiOjE2ODE2MTkxMjl9.2sN6SSX6sC9OuANUhK3hbWYkwRj8BtUjV9s_kHttpzI");
+      List<dynamic> plates = await RecomendationService().getRecomendations(token);
       for(int j = 0; j < plates.length; j++){
         List<FoodDetail> all = [];
         List<dynamic> aux = plates[j]['foods'] as List;

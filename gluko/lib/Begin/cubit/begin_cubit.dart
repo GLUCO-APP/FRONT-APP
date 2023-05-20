@@ -31,6 +31,7 @@ class BeginCubit extends Cubit<BeginState> {
     print("Inicia a Traer la recomendacion");
     var recomend = await RecomendationRepository().getPlateRecomend();
     print("Trae la recomendacion");
+    print(recomend.length);
     emit(state.copywhit(recomendS: true, recomend: recomend));
   }
 

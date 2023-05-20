@@ -376,12 +376,12 @@ class _beginviewState extends State<beginview> {
                                     vertical:
                                         MediaQuery.of(context).size.height / 50,
                                     horizontal:
-                                        MediaQuery.of(context).size.width / 40),
+                                        MediaQuery.of(context).size.width / 50),
                                 child: Container(
                                   height:
                                       MediaQuery.of(context).size.height / 4.3,
                                   width: MediaQuery.of(context).size.width,
-                                  child: states.recomendS ? plates.length > 0? Alimentos(context):
+                                  child: states.recomendS ? (plates.length > 0? Alimentos(context):
                                   Container(
                                     padding: EdgeInsets.all(5),
                                     width: MediaQuery.of(context).size.width / 1.2,
@@ -401,7 +401,7 @@ class _beginviewState extends State<beginview> {
                                     child: Center(
                                       child: Text("No hay recomendaciones disponibles"),
                                     ),
-                                  ):Container(
+                                  )):Container(
                                     padding: EdgeInsets.all(5),
                                     width: MediaQuery.of(context).size.width / 1.2,
                                     height: MediaQuery.of(context).size.height / 5,
@@ -504,7 +504,7 @@ class _beginviewState extends State<beginview> {
       itemBuilder: (context, index) {
         final plComp = plates[index];
         return Padding(
-          padding: EdgeInsets.all(0),
+          padding: EdgeInsets.all(5),
           child: GestureDetector(
             onTap: () async {
               var validation = await checkLocationPermission();

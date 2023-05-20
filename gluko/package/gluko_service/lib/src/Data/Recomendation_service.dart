@@ -15,7 +15,7 @@ class RecomendationService {
     List body;
     try{
       response = await request.get(uri);
-
+      print (response);
       if(response.statusCode == 200){
         body = jsonDecode(response.body)as List;
         return body;
