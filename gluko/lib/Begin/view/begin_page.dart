@@ -656,7 +656,7 @@ class _beginviewState extends State<beginview> {
           if (com.tag.contains("sopa")) {
             widgets.add(
               Positioned(
-                left: 200,
+                left: 95,
                 top: 75,
                 child: Material(
                   color: Colors.transparent,

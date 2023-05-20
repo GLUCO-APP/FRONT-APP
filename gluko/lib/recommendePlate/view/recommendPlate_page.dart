@@ -455,8 +455,8 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
   List<Posiciones> pos = [
     Posiciones(top: 35, left: 30),
     Posiciones(top: 15, left: 80),
-    Posiciones(top: 35, left: 140),
-    Posiciones(top: 60, left: 80)
+    Posiciones(top: 30, left: 130),
+    Posiciones(top: 45, left: 80)
   ];
   editplato(BuildContext context) {
     return showModalBottomSheet(
@@ -673,7 +673,7 @@ class _RecomemendePlateviewState extends State<RecomemendePlateview>{
           if(com.tag.contains("sopa")){
             widgets.add(
               Positioned(
-                left: 200,
+                left: 150,
                 top: 80,
                 child: Material(
                   color: Colors.transparent,
