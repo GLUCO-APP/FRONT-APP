@@ -35,18 +35,19 @@ var tam = 30.0;
 var tam1 = 30.0;
 var tam2 = 30.0;
 
-List<dynamic> days = [DateFormat('MM-dd').format(day),
-  DateFormat('MM-dd').format(day.subtract(Duration(days: 1))),
-  DateFormat('MM-dd').format(day.subtract(Duration(days: 2))),
-  DateFormat('MM-dd').format(day.subtract(Duration(days: 3))),
-  DateFormat('MM-dd').format(day.subtract(Duration(days: 4))),
+List<dynamic> days = [
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 6))),
   DateFormat('MM-dd').format(day.subtract(Duration(days: 5))),
-  DateFormat('MM-dd').format(day.subtract(Duration(days: 6)))];
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 4))),
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 3))),
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 2))),
+  DateFormat('MM-dd').format(day.subtract(Duration(days: 1))),
+  DateFormat('MM-dd').format(day),];
 List<ReportDetail> reports = [];
 
 
 class  _HistoryReportviewState extends State<HistoryReportview>{
-  List<double> barras = [25, 50, 75, 100, 125, 10, 175];
+  List<double> barras = [0, 0, 0, 0, 0, 0, 0];
   List<double> glucemia = [0, 0, 0];
   List<double> objetivoGlu = [25, 120];
   void calculoCarboPromedio(){
