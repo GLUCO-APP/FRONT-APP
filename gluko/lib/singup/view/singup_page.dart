@@ -622,7 +622,7 @@ class  _SingupviewState extends State<Singupview>{
               style: const TextStyle(color: Colors.green, fontSize: 15),
               decoration: InputDecoration(
                 filled: true,
-                labelText: 'Rango deseado',
+                labelText: 'Nivel deseado',
                 contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 30.0),
                 suffixIcon: normCtrl.text.isEmpty ? Container(width: 0) :
                 IconButton(icon: const Icon(Icons.close, color: Colors.green), onPressed: () => normCtrl.clear(),),

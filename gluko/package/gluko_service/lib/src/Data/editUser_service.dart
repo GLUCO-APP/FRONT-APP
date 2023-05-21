@@ -15,12 +15,8 @@ class EditUserService {
     print(body);
     try{
       final response = await http.put(uri, headers: headers, body: body).timeout(Duration(seconds: 100));
-      if(response.statusCode == 201){
-        var bodyRep = jsonDecode(response.body);
-        return bodyRep;
-      }else{
-        return false;
-      }
+      print(response.statusCode);
+      return response;
     } on Exception{
       print(Exception);
       throw Exception();
