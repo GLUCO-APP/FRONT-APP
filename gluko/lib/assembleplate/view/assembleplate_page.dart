@@ -848,7 +848,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                           Text("${double.parse(proteina.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: ColorsGenerals().black)),
-                                          Text("Proteina", style: TextStyle(
+                                          Text("Proteína", style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: ColorsGenerals().black)),
                                         ],
@@ -1170,7 +1170,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                 Text("${double.parse(foodsList[index].protein.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: ColorsGenerals().black)),
-                                Text("Proteina", style: TextStyle(
+                                Text("Proteína", style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     color: ColorsGenerals().black)),
                               ],
@@ -1433,7 +1433,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                               Text("${double.parse(plato[index].protein.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: ColorsGenerals().black)),
-                              Text("Proteina", style: TextStyle(
+                              Text("Proteína", style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: ColorsGenerals().black)),
                             ],
@@ -1532,7 +1532,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                               Text("${double.parse(plato[index].protein.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: ColorsGenerals().black)),
-                              Text("Proteina", style: TextStyle(
+                              Text("Proteína", style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: ColorsGenerals().black)),
                             ],
