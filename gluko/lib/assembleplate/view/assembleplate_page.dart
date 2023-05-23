@@ -1101,8 +1101,11 @@ class _assembleplateviewState extends State<assembleplateview> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(foodsList[index].name, style: TextStyle(
-                              fontSize: 18, color: ColorsGenerals().black)),
+                          Container(
+                            width: MediaQuery.of(context).size.width/2,
+                            child: Text(foodsList[index].name, style: TextStyle(
+                                fontSize: 16, color: ColorsGenerals().black)),
+                          ),
                           Draggable<FoodDetail>(
                             data: foodsList[index],
                             child: Material(
@@ -1182,8 +1185,11 @@ class _assembleplateviewState extends State<assembleplateview> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Text(foodsList[index].name.length > 17 ? foodsList[index].name.substring(0,16):foodsList[index].name, style: TextStyle(
-                            fontSize: 18, color: ColorsGenerals().black)),
+                        Container(
+                          width: MediaQuery.of(context).size.width/1.7,
+                          child: Text(foodsList[index].name, style: TextStyle(
+                              fontSize: 16, color: ColorsGenerals().black)),
+                        ),
                         Draggable<FoodDetail>(
                           data: foodsList[index],
                           child: Material(
