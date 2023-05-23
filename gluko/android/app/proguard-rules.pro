@@ -1,0 +1,2 @@
+-keep class com.dexterous.** { *; }
+-dontwarn com.dexterous.**

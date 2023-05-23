@@ -2,12 +2,25 @@ part of 'profile_cubit.dart';
 enum profilestatus{ loading,success,error}
  class ProfileState {
    ProfileState({
-     this.status = profilestatus.success
+      required this.infoUser ,
+     this.status = profilestatus.loading,
+     this.insulinas = const <Insulin>[]
    });
-
+   final User infoUser;
    final profilestatus status;
+   final List<Insulin> insulinas;
 
-   profilestatus confirmar(){
-     return profilestatus.success;
+   ProfileState copywhit({
+     profilestatus? status,
+     User? infoUser,
+     List<Insulin>? insulinas
+   }){
+     return ProfileState(status: status ?? this.status, infoUser: infoUser ?? this.infoUser, insulinas: insulinas ?? this.insulinas);
    }
+
+   List<Insulin> getInsulinas(){
+     return insulinas;
+   }
+
  }
+

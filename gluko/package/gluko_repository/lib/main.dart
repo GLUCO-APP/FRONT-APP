@@ -1,8 +1,6 @@
-import 'package:gluko_repository/src/Domain/allfood_repository.dart';
-import 'package:gluko_repository/src/Domain/foodBarcode_repository.dart';
-import 'package:gluko_repository/src/models/foodDetail.dart';
+import 'package:gluko_repository/gluko_repository.dart';
 
 Future<void> main() async {
-  FoodDetail comida = await fooBarcodeRepository().foodBargode("7702085014363");
-  print(comida.name);
+  var report = await allReportRepository().getAllReport();
+  print(report);
 }

@@ -10,5 +10,10 @@ class ReportState {
   Reportstatus confirmar(){
     return Reportstatus.success;
   }
+  ReportState copywhit({
+    Reportstatus? status,
+  }){
+    return ReportState(status: status ?? this.status);
+  }
 }
 

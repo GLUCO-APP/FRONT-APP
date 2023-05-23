@@ -1,5 +1,3 @@
-import 'dart:ffi';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -9,35 +7,23 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gluko/colors/colorsGenerals.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gluko_repository/gluko_repository.dart';
+import '../../biometricValidation/biometricValidate.dart';
 import '../../calculateinsulin/view/calculateinsulina_page.dart';
 import '../cubit/assembleplate_cubit.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
+
 
 
 class assembleplatepage extends StatelessWidget {
-  final String glucosa;
-  assembleplatepage({required this.glucosa});
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AssembleplateCubit(allfoodRepository(),fooBarcodeRepository())..getFoods(),
-      child: assembleplateview( glucosa: glucosa ,),
+      child: assembleplateview(),
     );
   }
 }
-
-
-class Posiciones{
-  final double top;
-  final double left;
-
-  Posiciones({
-    required this.top,
-    required this.left
-});
-}
-
 
 Future<bool> checkCameraPermissions() async {
   // Verifica si ya se han concedido los permisos de la cámara
@@ -69,8 +55,6 @@ Future<bool> checkCameraPermissions() async {
 
 
 class assembleplateview extends StatefulWidget {
-  final String glucosa;
-  assembleplateview({required this.glucosa});
   @override
   State<assembleplateview> createState() => _assembleplateviewState();
 }
@@ -78,7 +62,7 @@ class assembleplateview extends StatefulWidget {
 
 
 var buscar = TextEditingController();
-String glucosa = "";
+var glucosa = TextEditingController();
 List<FoodDetail> foodsList = [];
 List<FoodDetail> prueba = [];
 
@@ -96,6 +80,7 @@ var hora = 0;
 
 
 class _assembleplateviewState extends State<assembleplateview> {
+
 
   List<FoodDetail> bebidas = [];
   List<FoodDetail> sopas = [];
@@ -119,6 +104,20 @@ class _assembleplateviewState extends State<assembleplateview> {
       }
       plato.add(food);
     });
+  }
+
+  void CalculoInsulina() async{
+
+    var info = glucosa.text.toString();
+    print(info);
+    glucosa.clear();
+    List<plateId> foods = plato.map((food) => plateId(food.id)).toList();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                calculateinsuline_page(info: DetailInsulin(carbohidrato, info, proteina, grasas), foods: foods,))
+    );
   }
 
   AgregarAlimentoScaneado(BuildContext context, FoodDetail food) {
@@ -268,6 +267,7 @@ class _assembleplateviewState extends State<assembleplateview> {
               });
         });
   }
+
   editplato(BuildContext context) {
     return showModalBottomSheet(
         shape: const ContinuousRectangleBorder(
@@ -295,7 +295,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text("Camida en plato", style: TextStyle(
+                      Text("Comida en plato", style: TextStyle(
                           color: ColorsGenerals().black,
                           fontWeight: FontWeight.w300,
                           fontSize: MediaQuery
@@ -316,7 +316,53 @@ class _assembleplateviewState extends State<assembleplateview> {
                                 .of(context)
                                 .size
                                 .width,
-                            child: PlatoEditar(context),
+                            child: plato.length == 0?
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: ColorsGenerals().lightgrey,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      spreadRadius: 1,
+                                      blurRadius: 0.5,
+                                      offset: Offset(0, 1),
+                                    ),
+                                  ]
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "¡Tu plato esta vacio!",
+                                    style: TextStyle(
+                                        color: ColorsGenerals().black,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 23
+                                    ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width / 2,
+                                    height: MediaQuery.of(context).size.height / 4,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            "assets/Logo/gluko_bot_angry.png"),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Agrega alimentos a tu plato",
+                                    style: TextStyle(
+                                        color: ColorsGenerals().black,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15
+                                    ),
+                                  ),
+                                ],
+                              ) ,
+                            ):PlatoEditar(context),
                           ),
                         ),
                       ),
@@ -326,6 +372,247 @@ class _assembleplateviewState extends State<assembleplateview> {
               });
         });
   }
+
+  recibirGlucosa(BuildContext context) {
+    return showModalBottomSheet(
+        shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(100.0),
+            topRight: Radius.circular(100.0),
+          ),
+        ),
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(color: ColorsGenerals().whith,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text("Registra tu nivel de glucosa", textAlign: TextAlign.center,style: TextStyle(
+                          color: ColorsGenerals().black,
+                          fontWeight: FontWeight.w300,
+                          fontSize: MediaQuery
+                              .of(context)
+                              .size
+                              .height / 30),),
+                      Form(
+                        key: formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            TextFormField(
+                              maxLength: 3,
+                              controller: glucosa,
+                              autofocus: true,
+                              keyboardType: TextInputType.number,
+                              cursorColor: ColorsGenerals().black,
+                              style: TextStyle(color: ColorsGenerals().black),
+                              decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: ColorsGenerals().lightgrey,
+                                  hintText: 'Inserte Nivel de glucosa',
+                                  hintStyle: TextStyle(color: ColorsGenerals().black),
+                                  contentPadding:
+                                  EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  prefixIcon: Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: SvgPicture.asset("assets/Icons/glucometro.svg",color: ColorsGenerals().black,cacheColorFilter: false, width: MediaQuery.of(context).size.height/40,),
+                                  )
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingrese su nivel de glucosa';
+                                }
+                                return null;
+                              },
+                            ),
+                            Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height/200)),
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (formKey.currentState!.validate()) {
+                                  Navigator.pop(context);
+                                  var tutor = await PercisteRepository().UserType();
+                                  if(tutor){
+                                    var autent = await LocalAuthApi.authenticate();
+                                    if(autent){
+                                      CalculoInsulina();
+                                    }else{
+                                      Fluttertoast.showToast(
+                                          msg: "Validacion fallida", fontSize: 20);
+                                    }
+                                  }else{
+                                    CalculoInsulina();
+                                  }
+
+                                }
+                              },
+                              child: Text("Calculo Insulina",
+                                style: TextStyle(color: ColorsGenerals().whith, fontSize: 15),),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 8, // elevación de la sombra
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      30), // radio de la esquina redondeada
+                                ),
+                                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                backgroundColor: ColorsGenerals().red, // color de fondo
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
+        });
+  }
+
+  Future<void> showMyPopupPlateConfirm(BuildContext context) async {
+    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context){
+        return  GestureDetector(
+          onTap: (){
+            Navigator.pop(context);
+          },
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height/1.3,
+              color: Colors.transparent,
+              child: Center(
+                child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                          padding: EdgeInsets.all(20),
+                          width: MediaQuery.of(context).size.width/1.1,
+                          height: MediaQuery.of(context).size.height/1.3,
+                          decoration: BoxDecoration(
+                            color: ColorsGenerals().whith,
+                            borderRadius: const BorderRadius.all(Radius.circular(20)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 7,
+                                offset: const Offset(-5, 6),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text("Alimentos", style: TextStyle(
+                                  color: ColorsGenerals().black,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .height / 35)),
+                              ScrollConfiguration(
+                                behavior: const ScrollBehavior().copyWith(
+                                    physics: BouncingScrollPhysics() // Establecer el color de la animación de desplazamiento
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10,
+                                        vertical: 20),
+                                    width: MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width,
+                                    height: MediaQuery
+                                        .of(context)
+                                        .size
+                                        .height / 1.7,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Platoinfo(context),
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 8, // elevación de la sombra
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            30), // radio de la esquina redondeada
+                                      ),
+                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                      backgroundColor: ColorsGenerals().red, // color de fondo
+                                    ),
+                                    child: Text("Cancelar",
+                                      style: TextStyle(color: ColorsGenerals().whith),),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      recibirGlucosa(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 8, // elevación de la sombra
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            30), // radio de la esquina redondeada
+                                      ),
+                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                      backgroundColor: ColorsGenerals().red, // color de fondo
+                                    ),
+                                    child: Text("Confirmar plato",
+                                      style: TextStyle(color: ColorsGenerals().whith),),
+                                  ),
+                                ],
+                              )
+                            ],
+                          )
+                      ),
+                    ]
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -336,7 +623,7 @@ class _assembleplateviewState extends State<assembleplateview> {
     carbohidrato = 0;
     verduar = 0;
     grasas = 0;
-    glucosa = widget.glucosa;
+    foodsList = prueba;
   }
   int p = 0;
   int selectedIndexPlato = -1;
@@ -352,15 +639,9 @@ class _assembleplateviewState extends State<assembleplateview> {
           padding: EdgeInsets.all(20),
           child: ElevatedButton(
             onPressed: () {
-              List<plateId> foods = plato.map((food) => plateId(food.id)).toList();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          calculateinsuline_page(info: DetailInsulin(carbohidrato, glucosa, proteina, grasas), foods: foods,))
-              );
+              showMyPopupPlateConfirm(context);
             },
-            child: Text("Calculo Insulina",
+            child: Text("Confirmar",
               style: TextStyle(color: ColorsGenerals().whith),),
             style: ElevatedButton.styleFrom(
               elevation: 8, // elevación de la sombra
@@ -392,7 +673,7 @@ class _assembleplateviewState extends State<assembleplateview> {
             actions: [Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [Text(
-                "Armar Plato ",
+                "Armar plato ",
                 style: TextStyle(color: Colors.black, fontSize: 25),
               )
               ],
@@ -489,10 +770,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                               ),
                                               child: Container(
                                                 child: Stack(
-                                                  children: plato.length < 6
-                                                      ? ComidasEnPlato(plato)
-                                                      : ComidasEnPlato(plato)
-                                                      .sublist(0, 6),
+                                                  children: ComidasEnPlato(plato)
                                                 ),
                                               ),
                                             ),
@@ -570,7 +848,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                           Text("${double.parse(proteina.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: ColorsGenerals().black)),
-                                          Text("Proteina", style: TextStyle(
+                                          Text("Proteína", style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: ColorsGenerals().black)),
                                         ],
@@ -677,14 +955,11 @@ class _assembleplateviewState extends State<assembleplateview> {
                                           onPressed: () async {
                                               var permisos = await checkCameraPermissions();
                                               if (permisos){
-                                                String barcode = await FlutterBarcodeScanner.scanBarcode(
-                                                  '#ff6666', // Color de fondo de la pantalla de escaneo
-                                                  'Cancelar', // Texto del botón de cancelar
-                                                  true, // Si debe mostrar una ventana de ayuda
-                                                  ScanMode.BARCODE, // Modo de escaneo (código de barras en este caso)
-                                                );
-                                                if(barcode != "-1"){
-                                                  var food = await context.read<AssembleplateCubit>().getFoodBarcode(barcode);
+                                                var barcode = await BarcodeScanner.scan();
+                                                if(barcode.rawContent != ""){
+                                                  print("Codigo de barras");
+                                                  print(barcode.rawContent);
+                                                  var food = await context.read<AssembleplateCubit>().getFoodBarcode(barcode.rawContent);
                                                   setState(() {
                                                     int valido = 0;
                                                     foodsList.map((f) => {
@@ -705,6 +980,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                               }else{
                                                 print("Solicitar permisos");
                                               }
+
                                           }
                                       ),
                                     )
@@ -825,8 +1101,11 @@ class _assembleplateviewState extends State<assembleplateview> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(foodsList[index].name, style: TextStyle(
-                              fontSize: 18, color: ColorsGenerals().black)),
+                          Container(
+                            width: MediaQuery.of(context).size.width/2,
+                            child: Text(foodsList[index].name, style: TextStyle(
+                                fontSize: 16, color: ColorsGenerals().black)),
+                          ),
                           Draggable<FoodDetail>(
                             data: foodsList[index],
                             child: Material(
@@ -894,7 +1173,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                                 Text("${double.parse(foodsList[index].protein.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: ColorsGenerals().black)),
-                                Text("Proteina", style: TextStyle(
+                                Text("Proteína", style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     color: ColorsGenerals().black)),
                               ],
@@ -906,8 +1185,11 @@ class _assembleplateviewState extends State<assembleplateview> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Text(foodsList[index].name.length > 17 ? foodsList[index].name.substring(0,16):foodsList[index].name, style: TextStyle(
-                            fontSize: 18, color: ColorsGenerals().black)),
+                        Container(
+                          width: MediaQuery.of(context).size.width/1.7,
+                          child: Text(foodsList[index].name, style: TextStyle(
+                              fontSize: 16, color: ColorsGenerals().black)),
+                        ),
                         Draggable<FoodDetail>(
                           data: foodsList[index],
                           child: Material(
@@ -950,22 +1232,71 @@ class _assembleplateviewState extends State<assembleplateview> {
   List<Widget> ComidasEnPlato(List<FoodDetail> frut) {
     List<Widget> widgets = [];
     int platoPos = 0;
+    Map<String, List<int>> imagenRepetida = {};
     for (int i = 0; i < frut.length; i++) {
+      bool repite = false;
       final com = frut[i];
-      if (platoPos < pos.length && com.tag != "bebida" && com.tag != "sopa") {
+      print(com.image);
+      print(imagenRepetida.keys);
+      String imagen = com.image.replaceAll('.jpg', '.png');
+      if (imagenRepetida.containsKey(imagen)) {
+        imagenRepetida[imagen]![0] = (imagenRepetida[imagen]![0]) + 1;
+        print("Alimento ${imagen} cantidad ${imagenRepetida[imagen]![0]}");
+      }
+      if (platoPos < pos.length && !com.tag.contains("bebida") && !com.tag.contains("sopa")) {
+        var posofice = 0;
+        if (imagenRepetida.containsKey(imagen)){
+          posofice = imagenRepetida[imagen]![1];
+          repite = true;
+        }else{
+          print("Se agrega de mas");
+          imagenRepetida.addAll({imagen: [1, platoPos]});
+          posofice = platoPos;
+        }
         widgets.add(
+          imagenRepetida[imagen]![0] == 1 ?
           Positioned(
-            left: pos[platoPos].left,
-            top: pos[platoPos].top,
+            left: pos[posofice].left,
+            top: pos[posofice].top,
             child: Material(
               color: Colors.transparent,
-              child:  Image.asset("assets/Food/${com.image.replaceAll('.jpg', '.png')}", height: 80, width: 80,),
+              child: Image.asset(
+                "assets/Food/${com.image.replaceAll('.jpg', '.png')}",
+                height: 80,
+                width: 80,
+              ),
             ),
-          ),
+          ):
+          Positioned(
+            left: pos[posofice].left +20,
+            top: pos[posofice].top +20,
+            child: Material(
+                color: Colors.transparent,
+                child: Container(
+                    decoration: BoxDecoration(
+                      color: ColorsGenerals().red,
+                      borderRadius: const BorderRadius.all(Radius.circular(20)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 0.1,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    height: MediaQuery.of(context).size.height/40,
+                    width: MediaQuery.of(context).size.height/40,
+                    child: Center(child: Text(imagenRepetida[imagen]![0].toString(), style: TextStyle(color: ColorsGenerals().whith, fontWeight: FontWeight.w700),))
+                )
+            ),
+          )
         );
-        platoPos++;
+        if(!repite){
+          platoPos++;
+        }
       } else {
-        if(com.tag == "bebida"){
+        if (com.tag.contains("bebida")) {
           print("Pone la bebida");
           widgets.add(
             Positioned(
@@ -977,9 +1308,8 @@ class _assembleplateviewState extends State<assembleplateview> {
               ),
             ),
           );
-        }
-        else{
-          if(com.tag == "sopa"){
+        } else {
+          if (com.tag.contains("sopa")) {
             widgets.add(
               Positioned(
                 left: 200,
@@ -990,7 +1320,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                 ),
               ),
             );
-          }else{
+          } else {
             widgets.add(
               Positioned(
                 left: 400,
@@ -1003,11 +1333,12 @@ class _assembleplateviewState extends State<assembleplateview> {
             );
           }
         }
-
       }
     }
     return widgets;
   }
+
+
   Widget PlatoEditar(BuildContext context) =>
       ListView.builder(
           itemCount: plato.length,
@@ -1108,7 +1439,7 @@ class _assembleplateviewState extends State<assembleplateview> {
                               Text("${double.parse(plato[index].protein.toStringAsFixed(1)).abs()}g", style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: ColorsGenerals().black)),
-                              Text("Proteina", style: TextStyle(
+                              Text("Proteína", style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: ColorsGenerals().black)),
                             ],
@@ -1121,5 +1452,106 @@ class _assembleplateviewState extends State<assembleplateview> {
             );
           }
       );
+
+  Widget Platoinfo(BuildContext context) =>
+      ListView.builder(
+          itemCount: plato.length,
+          itemBuilder: (context, index) {
+            final favor = plato[index];
+            return Container(
+                padding: EdgeInsets.only(top: MediaQuery
+                    .of(context)
+                    .size
+                    .height / 150, left: 3, right: 3),
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 5,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: ColorsGenerals().lightgrey,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 0.5,
+                          offset: Offset(0, 1),
+                        ),
+                      ]
+                  ),
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(plato[index].name.length > 17 ? plato[index].name.substring(0,16):plato[index].name, style: TextStyle(
+                              fontSize: 13, color: ColorsGenerals().black)),
+                          Container(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 80,
+                                padding: EdgeInsets.all(10),
+                                child: Image.asset("assets/Food/${plato[index].image.replaceAll('.jpg', '.png')}", height: 60, width: 60,),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment
+                            .spaceAround,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("${double.parse(plato[index].fats.toStringAsFixed(1)).abs()}g", style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: ColorsGenerals().black)),
+                              Text("Grasas", style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorsGenerals().black),),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("${double.parse(plato[index].carbs.toStringAsFixed(1)).abs()}g", style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: ColorsGenerals().black)),
+                              Text("Carbohidratos", style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorsGenerals().black),),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("${double.parse(plato[index].protein.toStringAsFixed(1)).abs()}g", style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: ColorsGenerals().black)),
+                              Text("Proteína", style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorsGenerals().black)),
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+            );
+          }
+      );
+
+
 }
 

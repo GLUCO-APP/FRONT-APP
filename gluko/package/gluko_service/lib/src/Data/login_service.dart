@@ -15,6 +15,7 @@ class LoginService {
     final body = json.encode({'email': email, 'password': password});
     String bodyRep;
     try{
+      print("Antes de ejecutar");
       final response = await http.post(uri, headers: headers, body: body).timeout(Duration(seconds: 10));
       if(response.statusCode == 200){
         bodyRep = jsonDecode(response.body)['status'] as String;
@@ -23,6 +24,7 @@ class LoginService {
         throw HttpException(response.body);
       }
     } on Exception{
+      print(Exception().toString());
       throw Exception();
     }
 
