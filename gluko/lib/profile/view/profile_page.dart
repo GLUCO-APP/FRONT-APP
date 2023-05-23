@@ -1618,6 +1618,8 @@ class  _profileviewState extends State<profileview>{
       appBar: AppBar(
         backgroundColor: ColorsGenerals().whith,
         elevation: 1,
+        title: Text("Perfil", style: TextStyle(color: ColorsGenerals().black),),
+        centerTitle: true,
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/Icons/atras.svg", color: ColorsGenerals().black,

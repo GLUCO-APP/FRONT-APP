@@ -673,7 +673,7 @@ class _assembleplateviewState extends State<assembleplateview> {
             actions: [Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [Text(
-                "Armar Plato ",
+                "Armar plato ",
                 style: TextStyle(color: Colors.black, fontSize: 25),
               )
               ],
