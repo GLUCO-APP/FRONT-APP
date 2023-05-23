@@ -4,12 +4,19 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+
+
     <application
         android:label="gluko"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDrhFrOwBMTx7CW3FE_D_n-g6SCbMQTcIw"/>
+            android:value="AIzaSyDlE7-LR2nJKIePdwQm6KAGiP-t8qWnVp8"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

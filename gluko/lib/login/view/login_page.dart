@@ -5,6 +5,7 @@ import 'package:gluko/colors/colorsGenerals.dart';
 import 'package:gluko_repository/gluko_repository.dart';
 import '../../forgetpassword/view/forgetpassword_page.dart';
 import '../../home/view/home_page.dart';
+import '../../notifications/pushNotification.dart';
 import '../../singup/view/singup_page.dart';
 import '../cubit/login_cubit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,7 +14,7 @@ class Loginpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(LoginRepository()),
+      create: (context) => LoginCubit(LoginRepository(), PercisteRepository())..isAutenticate(context),
       child: loginview(),
     );
   }
@@ -27,8 +28,20 @@ class loginview extends StatefulWidget {
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
 var correo = TextEditingController();
 var contrasena = TextEditingController();
-var  ver = true;
 class _loginviewviewState extends State<loginview>{
+  final correoCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+  String password = '';
+  bool isPasswordVisible = true;
+  var  ver = true;
+
+  @override
+  void initState() {
+    super.initState();
+    correoCtrl.addListener(() => setState(() {}));
+    passwordCtrl.addListener(() => setState(() {}));
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -36,6 +49,7 @@ class _loginviewviewState extends State<loginview>{
         builder: (context, states) {
           switch (states.status) {
             case LoginStatestatus.loading:
+
               return Center(child: CircularProgressIndicator( color: ColorsGenerals().red,));
               break;
             case LoginStatestatus.success:
@@ -164,7 +178,7 @@ class _loginviewviewState extends State<loginview>{
                                           builder: (context) =>
                                               forgetpasswordpage())
                                   );
-                                }, child:Text("¿Olvido su contraseña? ", style: TextStyle(color: Colors.black, fontSize: 12),),style: ButtonStyle(
+                                }, child:Text("¿Olvidó su contraseña? ", style: TextStyle(color: Colors.black, fontSize: 12),),style: ButtonStyle(
                                   overlayColor: MaterialStateProperty.all<Color>(ColorsGenerals().red), // color deseado
                                 )),
                                 ElevatedButton(
@@ -173,6 +187,7 @@ class _loginviewviewState extends State<loginview>{
                                         print(correo.text);
                                         var repnse =  await context.read<LoginCubit>().Login(correo.text, contrasena.text);
                                         if(repnse.estatus){
+                                          LocalNotificationService().initializeService();
                                           Navigator.pushAndRemoveUntil(
                                             context,
                                             MaterialPageRoute(
@@ -188,7 +203,7 @@ class _loginviewviewState extends State<loginview>{
                                     },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-                                      child: Text("Iniciar Sesion", style: TextStyle(fontSize: 17),),
+                                      child: Text("Iniciar Sesión", style: TextStyle(fontSize: 17),),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       elevation: 8, // elevación de la sombra
@@ -223,7 +238,6 @@ class _loginviewviewState extends State<loginview>{
                             )
                         )
                       ],
-
                     ),
                   ),
                 ),

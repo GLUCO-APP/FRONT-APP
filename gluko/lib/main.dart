@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gluko/login/view/login_page.dart';
-import 'package:flutter/services.dart';
-
-import 'login/view/splashScreen.dart';
 
 
 void main()  {
@@ -28,9 +25,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(canvasColor: Colors.white, fontFamily: "GlukoFamily", brightness: Brightness.dark),
-      home:Loginpage(),
+      theme: ThemeData(canvasColor: Colors.white, fontFamily: "GlukoFamily", brightness: Brightness.light, colorScheme: ColorScheme.light(primary: Colors.red)),
+      home: Loginpage(),
     );
   }
 }
+
+
+
+
 
