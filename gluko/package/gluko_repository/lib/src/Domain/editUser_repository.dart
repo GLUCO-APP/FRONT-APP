@@ -11,7 +11,7 @@ class EditUserRepository{
       if(userResponse.statusCode == 201){
         var responseBody = jsonDecode(userResponse.body);
         var message = responseBody['message'];
-        ResponseEditUser response = ResponseEditUser(true, message);
+        ResponseEditUser response = ResponseEditUser(true, message.toString());
         return response;
       }else{
         ResponseEditUser response = ResponseEditUser(false, "No se pudo actualizar el usuario");

@@ -138,9 +138,10 @@ class LocalNotificationService {
       var notifictions = LocalNotificationService();
       notifictions.intialize();
       infoUserRepository().getInfoUser().then((user) => {
-        Timer.periodic(Duration(seconds:45), (timer) {
+        Timer.periodic(Duration(seconds:30), (timer) {
           var now = DateTime.now();
           var formattedTime = DateFormat.Hm().format(now);
+          print(formattedTime);
           if(user.precis.contains(formattedTime.toString())){
             notifictions.showNotification(id: 0, title: "Hora de la dosis", body: "Se debe ingerir insulina Basal");
           }
